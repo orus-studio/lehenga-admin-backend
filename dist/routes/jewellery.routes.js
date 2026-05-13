@@ -1,0 +1,253 @@
+import { Router } from "express";
+import { JewelleryType, ProductStatus } from "../generated/prisma/enums.js";
+import { Prisma } from "../generated/prisma/client.js";
+import { prisma } from "../lib/prisma.js";
+import { asyncHandler } from "../utils/async-handler.js";
+import { AppError } from "../utils/app-error.js";
+import { uploadCatalogImages } from "../utils/s3-upload.js";
+import { slugify } from "../utils/slug.js";
+import { ensureObject, getRouteParam, getOptionalBoolean, getOptionalEnum, getOptionalNumber, getOptionalString, getRequiredNumber, getRequiredString, parseImageArray, } from "../utils/validation.js";
+const jewelleryInclude = {
+    collection: true,
+    images: {
+        orderBy: {
+            sortOrder: "asc",
+        },
+    },
+};
+export const jewelleryRouter = Router();
+async function getCollectionSlug(collectionId) {
+    if (!collectionId) {
+        return undefined;
+    }
+    const collection = await prisma.collection.findUnique({
+        where: { id: collectionId },
+        select: { slug: true },
+    });
+    if (!collection) {
+        throw new AppError("Collection not found", 404);
+    }
+    return collection.slug;
+}
+jewelleryRouter.get("/", asyncHandler(async (_request, response) => {
+    const jewelleryItems = await prisma.jewellery.findMany({
+        orderBy: { createdAt: "desc" },
+        include: jewelleryInclude,
+    });
+    response.json({
+        success: true,
+        data: jewelleryItems,
+    });
+}));
+jewelleryRouter.post("/", asyncHandler(async (request, response) => {
+    const body = ensureObject(request.body);
+    const name = getRequiredString(body, "name");
+    const slug = slugify(getOptionalString(body, "slug") ?? name);
+    const rawImages = parseImageArray(body.images);
+    const collectionId = getOptionalString(body, "collectionId");
+    const collectionSlug = await getCollectionSlug(collectionId);
+    const images = await uploadCatalogImages(rawImages, {
+        category: "jewellery",
+        collectionSlug,
+        productSlug: slug,
+    });
+    const data = {
+        name,
+        slug,
+        sku: getRequiredString(body, "sku"),
+        type: getOptionalEnum(body, "type", Object.values(JewelleryType)) ?? JewelleryType.OTHER,
+        rentalPricePerDay: getRequiredNumber(body, "rentalPricePerDay"),
+        minimumRentalDays: getOptionalNumber(body, "minimumRentalDays") ?? 1,
+        stockQuantity: getOptionalNumber(body, "stockQuantity") ?? 1,
+        pickupAvailable: getOptionalBoolean(body, "pickupAvailable") ?? true,
+        status: getOptionalEnum(body, "status", Object.values(ProductStatus)) ?? ProductStatus.DRAFT,
+        isFeatured: getOptionalBoolean(body, "isFeatured") ?? false,
+        images: {
+            create: images,
+        },
+    };
+    const shortDescription = getOptionalString(body, "shortDescription");
+    const description = getOptionalString(body, "description");
+    const material = getOptionalString(body, "material");
+    const color = getOptionalString(body, "color");
+    const finish = getOptionalString(body, "finish");
+    const stoneDetails = getOptionalString(body, "stoneDetails");
+    const occasion = getOptionalString(body, "occasion");
+    const securityDeposit = getOptionalNumber(body, "securityDeposit");
+    const originalPrice = getOptionalNumber(body, "originalPrice");
+    if (shortDescription !== undefined)
+        data.shortDescription = shortDescription;
+    if (description !== undefined)
+        data.description = description;
+    if (material !== undefined)
+        data.material = material;
+    if (color !== undefined)
+        data.color = color;
+    if (finish !== undefined)
+        data.finish = finish;
+    if (stoneDetails !== undefined)
+        data.stoneDetails = stoneDetails;
+    if (occasion !== undefined)
+        data.occasion = occasion;
+    if (securityDeposit !== undefined)
+        data.securityDeposit = securityDeposit;
+    if (originalPrice !== undefined)
+        data.originalPrice = originalPrice;
+    if (collectionId) {
+        data.collection = {
+            connect: { id: collectionId },
+        };
+    }
+    const jewellery = await prisma.jewellery.create({
+        data,
+        include: jewelleryInclude,
+    });
+    response.status(201).json({
+        success: true,
+        message: "Jewellery created successfully",
+        data: jewellery,
+    });
+}));
+jewelleryRouter.get("/:id", asyncHandler(async (request, response) => {
+    const jewelleryId = getRouteParam(request.params.id, "id");
+    const jewellery = await prisma.jewellery.findUnique({
+        where: { id: jewelleryId },
+        include: jewelleryInclude,
+    });
+    if (!jewellery) {
+        throw new AppError("Jewellery not found", 404);
+    }
+    response.json({
+        success: true,
+        data: jewellery,
+    });
+}));
+jewelleryRouter.patch("/:id", asyncHandler(async (request, response) => {
+    const body = ensureObject(request.body);
+    const name = getOptionalString(body, "name");
+    const slugValue = getOptionalString(body, "slug");
+    const rawImages = body.images === undefined ? undefined : parseImageArray(body.images);
+    const jewelleryId = getRouteParam(request.params.id, "id");
+    const existingJewellery = rawImages !== undefined || Object.prototype.hasOwnProperty.call(body, "collectionId") || name || slugValue
+        ? await prisma.jewellery.findUnique({
+            where: { id: jewelleryId },
+            select: {
+                name: true,
+                slug: true,
+                collection: {
+                    select: {
+                        slug: true,
+                    },
+                },
+            },
+        })
+        : null;
+    const data = {};
+    if ((rawImages !== undefined || name || slugValue) && !existingJewellery) {
+        throw new AppError("Jewellery not found", 404);
+    }
+    if (name !== undefined)
+        data.name = name;
+    if (slugValue) {
+        data.slug = slugify(slugValue);
+    }
+    else if (name) {
+        data.slug = slugify(name);
+    }
+    const sku = getOptionalString(body, "sku");
+    const shortDescription = getOptionalString(body, "shortDescription");
+    const description = getOptionalString(body, "description");
+    const type = getOptionalEnum(body, "type", Object.values(JewelleryType));
+    const material = getOptionalString(body, "material");
+    const color = getOptionalString(body, "color");
+    const finish = getOptionalString(body, "finish");
+    const stoneDetails = getOptionalString(body, "stoneDetails");
+    const occasion = getOptionalString(body, "occasion");
+    const rentalPricePerDay = getOptionalNumber(body, "rentalPricePerDay");
+    const securityDeposit = getOptionalNumber(body, "securityDeposit");
+    const originalPrice = getOptionalNumber(body, "originalPrice");
+    const minimumRentalDays = getOptionalNumber(body, "minimumRentalDays");
+    const stockQuantity = getOptionalNumber(body, "stockQuantity");
+    const pickupAvailable = getOptionalBoolean(body, "pickupAvailable");
+    const status = getOptionalEnum(body, "status", Object.values(ProductStatus));
+    const isFeatured = getOptionalBoolean(body, "isFeatured");
+    if (sku !== undefined)
+        data.sku = sku;
+    if (shortDescription !== undefined)
+        data.shortDescription = shortDescription;
+    if (description !== undefined)
+        data.description = description;
+    if (type !== undefined)
+        data.type = type;
+    if (material !== undefined)
+        data.material = material;
+    if (color !== undefined)
+        data.color = color;
+    if (finish !== undefined)
+        data.finish = finish;
+    if (stoneDetails !== undefined)
+        data.stoneDetails = stoneDetails;
+    if (occasion !== undefined)
+        data.occasion = occasion;
+    if (rentalPricePerDay !== undefined)
+        data.rentalPricePerDay = rentalPricePerDay;
+    if (securityDeposit !== undefined)
+        data.securityDeposit = securityDeposit;
+    if (originalPrice !== undefined)
+        data.originalPrice = originalPrice;
+    if (minimumRentalDays !== undefined)
+        data.minimumRentalDays = minimumRentalDays;
+    if (stockQuantity !== undefined)
+        data.stockQuantity = stockQuantity;
+    if (pickupAvailable !== undefined)
+        data.pickupAvailable = pickupAvailable;
+    if (status !== undefined)
+        data.status = status;
+    if (isFeatured !== undefined)
+        data.isFeatured = isFeatured;
+    if (Object.prototype.hasOwnProperty.call(body, "collectionId")) {
+        const collectionId = getOptionalString(body, "collectionId");
+        data.collection = collectionId
+            ? { connect: { id: collectionId } }
+            : { disconnect: true };
+    }
+    if (rawImages) {
+        const nextCollectionId = Object.prototype.hasOwnProperty.call(body, "collectionId")
+            ? getOptionalString(body, "collectionId")
+            : undefined;
+        const collectionSlug = nextCollectionId !== undefined
+            ? await getCollectionSlug(nextCollectionId)
+            : existingJewellery?.collection?.slug;
+        const nextSlug = slugify(slugValue ?? name ?? existingJewellery?.slug ?? existingJewellery?.name ?? "jewellery");
+        const images = await uploadCatalogImages(rawImages, {
+            category: "jewellery",
+            collectionSlug,
+            productSlug: nextSlug,
+        });
+        data.images = {
+            deleteMany: {},
+            create: images,
+        };
+    }
+    const jewellery = await prisma.jewellery.update({
+        where: { id: jewelleryId },
+        data,
+        include: jewelleryInclude,
+    });
+    response.json({
+        success: true,
+        message: "Jewellery updated successfully",
+        data: jewellery,
+    });
+}));
+jewelleryRouter.delete("/:id", asyncHandler(async (request, response) => {
+    const jewelleryId = getRouteParam(request.params.id, "id");
+    await prisma.jewellery.delete({
+        where: { id: jewelleryId },
+    });
+    response.json({
+        success: true,
+        message: "Jewellery deleted successfully",
+    });
+}));
+//# sourceMappingURL=jewellery.routes.js.map

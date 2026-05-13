@@ -1,0 +1,248 @@
+import * as runtime from "@prisma/client/runtime/index-browser";
+export type * from '../models.js';
+export type * from './prismaNamespace.js';
+export declare const Decimal: typeof runtime.Decimal;
+export declare const NullTypes: {
+    DbNull: (new (secret: never) => typeof runtime.DbNull);
+    JsonNull: (new (secret: never) => typeof runtime.JsonNull);
+    AnyNull: (new (secret: never) => typeof runtime.AnyNull);
+};
+/**
+ * Helper for filtering JSON entries that have `null` on the database (empty on the db)
+ *
+ * @see https://www.prisma.io/docs/concepts/components/prisma-client/working-with-fields/working-with-json-fields#filtering-on-a-json-field
+ */
+export declare const DbNull: import("@prisma/client-runtime-utils").DbNullClass;
+/**
+ * Helper for filtering JSON entries that have JSON `null` values (not empty on the db)
+ *
+ * @see https://www.prisma.io/docs/concepts/components/prisma-client/working-with-fields/working-with-json-fields#filtering-on-a-json-field
+ */
+export declare const JsonNull: import("@prisma/client-runtime-utils").JsonNullClass;
+/**
+ * Helper for filtering JSON entries that are `Prisma.DbNull` or `Prisma.JsonNull`
+ *
+ * @see https://www.prisma.io/docs/concepts/components/prisma-client/working-with-fields/working-with-json-fields#filtering-on-a-json-field
+ */
+export declare const AnyNull: import("@prisma/client-runtime-utils").AnyNullClass;
+export declare const ModelName: {
+    readonly AdminUser: "AdminUser";
+    readonly Customer: "Customer";
+    readonly Collection: "Collection";
+    readonly Lehenga: "Lehenga";
+    readonly LehengaSize: "LehengaSize";
+    readonly LehengaImage: "LehengaImage";
+    readonly Jewellery: "Jewellery";
+    readonly JewelleryImage: "JewelleryImage";
+    readonly StoreLocation: "StoreLocation";
+    readonly RentalOrder: "RentalOrder";
+    readonly RentalOrderItem: "RentalOrderItem";
+};
+export type ModelName = (typeof ModelName)[keyof typeof ModelName];
+export declare const TransactionIsolationLevel: {
+    readonly ReadUncommitted: "ReadUncommitted";
+    readonly ReadCommitted: "ReadCommitted";
+    readonly RepeatableRead: "RepeatableRead";
+    readonly Serializable: "Serializable";
+};
+export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof typeof TransactionIsolationLevel];
+export declare const AdminUserScalarFieldEnum: {
+    readonly id: "id";
+    readonly name: "name";
+    readonly email: "email";
+    readonly passwordHash: "passwordHash";
+    readonly phone: "phone";
+    readonly isActive: "isActive";
+    readonly lastLoginAt: "lastLoginAt";
+    readonly createdAt: "createdAt";
+    readonly updatedAt: "updatedAt";
+};
+export type AdminUserScalarFieldEnum = (typeof AdminUserScalarFieldEnum)[keyof typeof AdminUserScalarFieldEnum];
+export declare const CustomerScalarFieldEnum: {
+    readonly id: "id";
+    readonly firstName: "firstName";
+    readonly lastName: "lastName";
+    readonly email: "email";
+    readonly phone: "phone";
+    readonly passwordHash: "passwordHash";
+    readonly notes: "notes";
+    readonly createdAt: "createdAt";
+    readonly updatedAt: "updatedAt";
+};
+export type CustomerScalarFieldEnum = (typeof CustomerScalarFieldEnum)[keyof typeof CustomerScalarFieldEnum];
+export declare const CollectionScalarFieldEnum: {
+    readonly id: "id";
+    readonly name: "name";
+    readonly slug: "slug";
+    readonly description: "description";
+    readonly season: "season";
+    readonly audience: "audience";
+    readonly isFeatured: "isFeatured";
+    readonly displayOrder: "displayOrder";
+    readonly createdAt: "createdAt";
+    readonly updatedAt: "updatedAt";
+};
+export type CollectionScalarFieldEnum = (typeof CollectionScalarFieldEnum)[keyof typeof CollectionScalarFieldEnum];
+export declare const LehengaScalarFieldEnum: {
+    readonly id: "id";
+    readonly name: "name";
+    readonly slug: "slug";
+    readonly sku: "sku";
+    readonly shortDescription: "shortDescription";
+    readonly description: "description";
+    readonly designer: "designer";
+    readonly color: "color";
+    readonly fabric: "fabric";
+    readonly embroideryDetails: "embroideryDetails";
+    readonly occasion: "occasion";
+    readonly setIncludes: "setIncludes";
+    readonly careInstructions: "careInstructions";
+    readonly rentalPricePerDay: "rentalPricePerDay";
+    readonly securityDeposit: "securityDeposit";
+    readonly originalPrice: "originalPrice";
+    readonly minimumRentalDays: "minimumRentalDays";
+    readonly pickupAvailable: "pickupAvailable";
+    readonly status: "status";
+    readonly isFeatured: "isFeatured";
+    readonly collectionId: "collectionId";
+    readonly createdAt: "createdAt";
+    readonly updatedAt: "updatedAt";
+};
+export type LehengaScalarFieldEnum = (typeof LehengaScalarFieldEnum)[keyof typeof LehengaScalarFieldEnum];
+export declare const LehengaSizeScalarFieldEnum: {
+    readonly id: "id";
+    readonly lehengaId: "lehengaId";
+    readonly sizeLabel: "sizeLabel";
+    readonly blouseSize: "blouseSize";
+    readonly waistInInches: "waistInInches";
+    readonly bustInInches: "bustInInches";
+    readonly hipInInches: "hipInInches";
+    readonly lengthInInches: "lengthInInches";
+    readonly quantityTotal: "quantityTotal";
+    readonly quantityReserved: "quantityReserved";
+    readonly notes: "notes";
+    readonly createdAt: "createdAt";
+    readonly updatedAt: "updatedAt";
+};
+export type LehengaSizeScalarFieldEnum = (typeof LehengaSizeScalarFieldEnum)[keyof typeof LehengaSizeScalarFieldEnum];
+export declare const LehengaImageScalarFieldEnum: {
+    readonly id: "id";
+    readonly lehengaId: "lehengaId";
+    readonly imageUrl: "imageUrl";
+    readonly altText: "altText";
+    readonly isPrimary: "isPrimary";
+    readonly sortOrder: "sortOrder";
+    readonly createdAt: "createdAt";
+};
+export type LehengaImageScalarFieldEnum = (typeof LehengaImageScalarFieldEnum)[keyof typeof LehengaImageScalarFieldEnum];
+export declare const JewelleryScalarFieldEnum: {
+    readonly id: "id";
+    readonly name: "name";
+    readonly slug: "slug";
+    readonly sku: "sku";
+    readonly shortDescription: "shortDescription";
+    readonly description: "description";
+    readonly type: "type";
+    readonly material: "material";
+    readonly color: "color";
+    readonly finish: "finish";
+    readonly stoneDetails: "stoneDetails";
+    readonly occasion: "occasion";
+    readonly rentalPricePerDay: "rentalPricePerDay";
+    readonly securityDeposit: "securityDeposit";
+    readonly originalPrice: "originalPrice";
+    readonly minimumRentalDays: "minimumRentalDays";
+    readonly stockQuantity: "stockQuantity";
+    readonly pickupAvailable: "pickupAvailable";
+    readonly status: "status";
+    readonly isFeatured: "isFeatured";
+    readonly collectionId: "collectionId";
+    readonly createdAt: "createdAt";
+    readonly updatedAt: "updatedAt";
+};
+export type JewelleryScalarFieldEnum = (typeof JewelleryScalarFieldEnum)[keyof typeof JewelleryScalarFieldEnum];
+export declare const JewelleryImageScalarFieldEnum: {
+    readonly id: "id";
+    readonly jewelleryId: "jewelleryId";
+    readonly imageUrl: "imageUrl";
+    readonly altText: "altText";
+    readonly isPrimary: "isPrimary";
+    readonly sortOrder: "sortOrder";
+    readonly createdAt: "createdAt";
+};
+export type JewelleryImageScalarFieldEnum = (typeof JewelleryImageScalarFieldEnum)[keyof typeof JewelleryImageScalarFieldEnum];
+export declare const StoreLocationScalarFieldEnum: {
+    readonly id: "id";
+    readonly name: "name";
+    readonly slug: "slug";
+    readonly phone: "phone";
+    readonly email: "email";
+    readonly addressLine1: "addressLine1";
+    readonly addressLine2: "addressLine2";
+    readonly city: "city";
+    readonly state: "state";
+    readonly postalCode: "postalCode";
+    readonly country: "country";
+    readonly pickupNotes: "pickupNotes";
+    readonly isActive: "isActive";
+    readonly createdAt: "createdAt";
+    readonly updatedAt: "updatedAt";
+};
+export type StoreLocationScalarFieldEnum = (typeof StoreLocationScalarFieldEnum)[keyof typeof StoreLocationScalarFieldEnum];
+export declare const RentalOrderScalarFieldEnum: {
+    readonly id: "id";
+    readonly orderNumber: "orderNumber";
+    readonly customerId: "customerId";
+    readonly pickupLocationId: "pickupLocationId";
+    readonly createdByAdminId: "createdByAdminId";
+    readonly status: "status";
+    readonly paymentStatus: "paymentStatus";
+    readonly rentalStartDate: "rentalStartDate";
+    readonly rentalEndDate: "rentalEndDate";
+    readonly pickupDate: "pickupDate";
+    readonly returnDate: "returnDate";
+    readonly subtotalAmount: "subtotalAmount";
+    readonly securityDeposit: "securityDeposit";
+    readonly discountAmount: "discountAmount";
+    readonly totalAmount: "totalAmount";
+    readonly amountPaid: "amountPaid";
+    readonly specialInstructions: "specialInstructions";
+    readonly internalNotes: "internalNotes";
+    readonly createdAt: "createdAt";
+    readonly updatedAt: "updatedAt";
+};
+export type RentalOrderScalarFieldEnum = (typeof RentalOrderScalarFieldEnum)[keyof typeof RentalOrderScalarFieldEnum];
+export declare const RentalOrderItemScalarFieldEnum: {
+    readonly id: "id";
+    readonly orderId: "orderId";
+    readonly itemType: "itemType";
+    readonly lehengaId: "lehengaId";
+    readonly lehengaSizeId: "lehengaSizeId";
+    readonly jewelleryId: "jewelleryId";
+    readonly productNameSnapshot: "productNameSnapshot";
+    readonly skuSnapshot: "skuSnapshot";
+    readonly sizeLabelSnapshot: "sizeLabelSnapshot";
+    readonly quantity: "quantity";
+    readonly pricePerDay: "pricePerDay";
+    readonly rentalDays: "rentalDays";
+    readonly lineTotal: "lineTotal";
+    readonly depositAmount: "depositAmount";
+    readonly createdAt: "createdAt";
+};
+export type RentalOrderItemScalarFieldEnum = (typeof RentalOrderItemScalarFieldEnum)[keyof typeof RentalOrderItemScalarFieldEnum];
+export declare const SortOrder: {
+    readonly asc: "asc";
+    readonly desc: "desc";
+};
+export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder];
+export declare const QueryMode: {
+    readonly default: "default";
+    readonly insensitive: "insensitive";
+};
+export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode];
+export declare const NullsOrder: {
+    readonly first: "first";
+    readonly last: "last";
+};
+export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder];
+//# sourceMappingURL=prismaNamespaceBrowser.d.ts.map
