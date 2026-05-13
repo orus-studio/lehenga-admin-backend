@@ -105,7 +105,17 @@ export async function uploadCatalogImages(images: InputImage[], context: UploadC
         return image;
       }
 
-      const imageUrl = await uploadDataUrlImage(image.imageUrl, context, index);
+      let imageUrl = image.imageUrl;
+
+      try {
+        imageUrl = await uploadDataUrlImage(image.imageUrl, context, index);
+      } catch (error) {
+        if (error instanceof AppError) {
+          throw error;
+        }
+
+        console.error("S3 upload failed, keeping inline image payload", error);
+      }
 
       return {
         ...image,
