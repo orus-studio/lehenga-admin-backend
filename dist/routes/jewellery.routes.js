@@ -8,7 +8,7 @@ import { uploadCatalogImages } from "../utils/s3-upload.js";
 import { slugify } from "../utils/slug.js";
 import { ensureObject, getRouteParam, getOptionalBoolean, getOptionalEnum, getOptionalNumber, getOptionalString, getRequiredNumber, getRequiredString, parseImageArray, } from "../utils/validation.js";
 const jewelleryInclude = {
-    collection: true,
+    category: true,
     images: {
         orderBy: {
             sortOrder: "asc",
@@ -16,18 +16,18 @@ const jewelleryInclude = {
     },
 };
 export const jewelleryRouter = Router();
-async function getCollectionSlug(collectionId) {
-    if (!collectionId) {
+async function getCategorySlug(categoryId) {
+    if (!categoryId) {
         return undefined;
     }
-    const collection = await prisma.collection.findUnique({
-        where: { id: collectionId },
+    const category = await prisma.category.findUnique({
+        where: { id: categoryId },
         select: { slug: true },
     });
-    if (!collection) {
-        throw new AppError("Collection not found", 404);
+    if (!category) {
+        throw new AppError("Category not found", 404);
     }
-    return collection.slug;
+    return category.slug;
 }
 jewelleryRouter.get("/", asyncHandler(async (_request, response) => {
     const jewelleryItems = await prisma.jewellery.findMany({
@@ -44,11 +44,11 @@ jewelleryRouter.post("/", asyncHandler(async (request, response) => {
     const name = getRequiredString(body, "name");
     const slug = slugify(getOptionalString(body, "slug") ?? name);
     const rawImages = parseImageArray(body.images);
-    const collectionId = getOptionalString(body, "collectionId");
-    const collectionSlug = await getCollectionSlug(collectionId);
+    const categoryId = getOptionalString(body, "categoryId");
+    const categorySlug = await getCategorySlug(categoryId);
     const images = await uploadCatalogImages(rawImages, {
         category: "jewellery",
-        collectionSlug,
+        categorySlug,
         productSlug: slug,
     });
     const data = {
@@ -93,9 +93,9 @@ jewelleryRouter.post("/", asyncHandler(async (request, response) => {
         data.securityDeposit = securityDeposit;
     if (originalPrice !== undefined)
         data.originalPrice = originalPrice;
-    if (collectionId) {
-        data.collection = {
-            connect: { id: collectionId },
+    if (categoryId) {
+        data.category = {
+            connect: { id: categoryId },
         };
     }
     const jewellery = await prisma.jewellery.create({
@@ -128,13 +128,13 @@ jewelleryRouter.patch("/:id", asyncHandler(async (request, response) => {
     const slugValue = getOptionalString(body, "slug");
     const rawImages = body.images === undefined ? undefined : parseImageArray(body.images);
     const jewelleryId = getRouteParam(request.params.id, "id");
-    const existingJewellery = rawImages !== undefined || Object.prototype.hasOwnProperty.call(body, "collectionId") || name || slugValue
+    const existingJewellery = rawImages !== undefined || Object.prototype.hasOwnProperty.call(body, "categoryId") || name || slugValue
         ? await prisma.jewellery.findUnique({
             where: { id: jewelleryId },
             select: {
                 name: true,
                 slug: true,
-                collection: {
+                category: {
                     select: {
                         slug: true,
                     },
@@ -205,23 +205,23 @@ jewelleryRouter.patch("/:id", asyncHandler(async (request, response) => {
         data.status = status;
     if (isFeatured !== undefined)
         data.isFeatured = isFeatured;
-    if (Object.prototype.hasOwnProperty.call(body, "collectionId")) {
-        const collectionId = getOptionalString(body, "collectionId");
-        data.collection = collectionId
-            ? { connect: { id: collectionId } }
+    if (Object.prototype.hasOwnProperty.call(body, "categoryId")) {
+        const categoryId = getOptionalString(body, "categoryId");
+        data.category = categoryId
+            ? { connect: { id: categoryId } }
             : { disconnect: true };
     }
     if (rawImages) {
-        const nextCollectionId = Object.prototype.hasOwnProperty.call(body, "collectionId")
-            ? getOptionalString(body, "collectionId")
+        const nextCategoryId = Object.prototype.hasOwnProperty.call(body, "categoryId")
+            ? getOptionalString(body, "categoryId")
             : undefined;
-        const collectionSlug = nextCollectionId !== undefined
-            ? await getCollectionSlug(nextCollectionId)
-            : existingJewellery?.collection?.slug;
+        const categorySlug = nextCategoryId !== undefined
+            ? await getCategorySlug(nextCategoryId)
+            : existingJewellery?.category?.slug;
         const nextSlug = slugify(slugValue ?? name ?? existingJewellery?.slug ?? existingJewellery?.name ?? "jewellery");
         const images = await uploadCatalogImages(rawImages, {
             category: "jewellery",
-            collectionSlug,
+            categorySlug,
             productSlug: nextSlug,
         });
         data.images = {

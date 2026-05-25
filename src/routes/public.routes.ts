@@ -21,7 +21,7 @@ const orderedImageInclude = {
 };
 
 const publicLehengaInclude = {
-  collection: true,
+  category: true,
   images: orderedImageInclude,
   sizes: {
     orderBy: {
@@ -31,11 +31,11 @@ const publicLehengaInclude = {
 };
 
 const publicJewelleryInclude = {
-  collection: true,
+  category: true,
   images: orderedImageInclude,
 };
 
-const publicCollectionInclude = {
+const publicCategoryInclude = {
   lehengas: {
     where: {
       status: {
@@ -315,12 +315,12 @@ publicRouter.get(
 );
 
 publicRouter.get(
-  "/collections",
+  "/categories",
   asyncHandler(async (request, response) => {
     const limit = getOptionalPositiveInteger(request.query.limit, 0);
     const featuredOnly = request.query.featured === "true";
 
-    const collections = await prisma.collection.findMany({
+    const categories = await prisma.category.findMany({
       ...(featuredOnly
         ? {
             where: {
@@ -328,14 +328,14 @@ publicRouter.get(
             },
           }
         : {}),
-      orderBy: [{ displayOrder: "asc" }, { createdAt: "desc" }],
+      orderBy: [{ createdAt: "asc" }],
       ...(limit > 0 ? { take: limit } : {}),
-      include: publicCollectionInclude,
+      include: publicCategoryInclude,
     });
 
     response.json({
       success: true,
-      data: collections,
+      data: categories,
     });
   }),
 );

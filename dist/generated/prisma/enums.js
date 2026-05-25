@@ -12,20 +12,11 @@ export const ProductStatus = {
     ACTIVE: 'ACTIVE',
     ARCHIVED: 'ARCHIVED'
 };
-export const CollectionSeason = {
-    SPRING: 'SPRING',
-    SUMMER: 'SUMMER',
-    MONSOON: 'MONSOON',
-    AUTUMN: 'AUTUMN',
-    WINTER: 'WINTER',
-    FESTIVE: 'FESTIVE',
-    ALL_SEASON: 'ALL_SEASON'
-};
-export const Audience = {
-    WOMEN: 'WOMEN',
-    MEN: 'MEN',
-    UNISEX: 'UNISEX',
-    KIDS: 'KIDS'
+export const CategoryStyle = {
+    BRIDAL: 'BRIDAL',
+    SEMI_BRIDAL: 'SEMI_BRIDAL',
+    GOWN: 'GOWN',
+    JEWELLERY: 'JEWELLERY'
 };
 export const JewelleryType = {
     NECKLACE: 'NECKLACE',
@@ -47,6 +38,7 @@ export const OrderStatus = {
     READY_FOR_PICKUP: 'READY_FOR_PICKUP',
     PICKED_UP: 'PICKED_UP',
     RETURNED: 'RETURNED',
+    FULFILLED: 'FULFILLED',
     CANCELLED: 'CANCELLED'
 };
 export const PaymentStatus = {

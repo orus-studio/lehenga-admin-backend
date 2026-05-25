@@ -18,21 +18,11 @@ enum ProductStatus {
   ARCHIVED
 }
 
-enum CollectionSeason {
-  SPRING
-  SUMMER
-  MONSOON
-  AUTUMN
-  WINTER
-  FESTIVE
-  ALL_SEASON
-}
-
-enum Audience {
-  WOMEN
-  MEN
-  UNISEX
-  KIDS
+enum CategoryStyle {
+  BRIDAL
+  SEMI_BRIDAL
+  GOWN
+  JEWELLERY
 }
 
 enum JewelleryType {
@@ -56,6 +46,7 @@ enum OrderStatus {
   READY_FOR_PICKUP
   PICKED_UP
   RETURNED
+  FULFILLED
   CANCELLED
 }
 
@@ -98,19 +89,17 @@ model Customer {
   updatedAt DateTime      @updatedAt
 }
 
-model Collection {
-  id             String           @id @default(cuid())
-  name           String
-  slug           String           @unique
+model Category {
+  id             String          @id @default(cuid())
+  name           String          @unique
+  slug           String          @unique
+  style          CategoryStyle   @unique
   description    String?
-  season         CollectionSeason @default(ALL_SEASON)
-  audience       Audience         @default(WOMEN)
-  isFeatured     Boolean          @default(false)
-  displayOrder   Int              @default(0)
+  isFeatured     Boolean         @default(false)
   lehengas       Lehenga[]
   jewelleryItems Jewellery[]
-  createdAt      DateTime         @default(now())
-  updatedAt      DateTime         @updatedAt
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
 }
 
 model Lehenga {
@@ -134,15 +123,15 @@ model Lehenga {
   pickupAvailable   Boolean           @default(true)
   status            ProductStatus     @default(DRAFT)
   isFeatured        Boolean           @default(false)
-  collectionId      String?
-  collection        Collection?       @relation(fields: [collectionId], references: [id], onDelete: SetNull)
+  categoryId        String?
+  category          Category?         @relation(fields: [categoryId], references: [id], onDelete: SetNull)
   sizes             LehengaSize[]
   images            LehengaImage[]
   orderItems        RentalOrderItem[]
   createdAt         DateTime          @default(now())
   updatedAt         DateTime          @updatedAt
 
-  @@index([collectionId])
+  @@index([categoryId])
   @@index([status])
   @@index([isFeatured])
 }
@@ -202,14 +191,14 @@ model Jewellery {
   pickupAvailable   Boolean           @default(true)
   status            ProductStatus     @default(DRAFT)
   isFeatured        Boolean           @default(false)
-  collectionId      String?
-  collection        Collection?       @relation(fields: [collectionId], references: [id], onDelete: SetNull)
+  categoryId        String?
+  category          Category?         @relation(fields: [categoryId], references: [id], onDelete: SetNull)
   images            JewelleryImage[]
   orderItems        RentalOrderItem[]
   createdAt         DateTime          @default(now())
   updatedAt         DateTime          @updatedAt
 
-  @@index([collectionId])
+  @@index([categoryId])
   @@index([status])
   @@index([isFeatured])
 }

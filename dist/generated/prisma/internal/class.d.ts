@@ -140,14 +140,14 @@ export interface PrismaClient<in LogOpts extends Prisma.LogLevel = never, in out
         omit: OmitOpts;
     }>;
     /**
-     * `prisma.collection`: Exposes CRUD operations for the **Collection** model.
+     * `prisma.category`: Exposes CRUD operations for the **Category** model.
       * Example usage:
       * ```ts
-      * // Fetch zero or more Collections
-      * const collections = await prisma.collection.findMany()
+      * // Fetch zero or more Categories
+      * const categories = await prisma.category.findMany()
       * ```
       */
-    get collection(): Prisma.CollectionDelegate<ExtArgs, {
+    get category(): Prisma.CategoryDelegate<ExtArgs, {
         omit: OmitOpts;
     }>;
     /**

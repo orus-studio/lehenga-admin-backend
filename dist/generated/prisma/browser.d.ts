@@ -13,10 +13,10 @@ export type AdminUser = Prisma.AdminUserModel;
  */
 export type Customer = Prisma.CustomerModel;
 /**
- * Model Collection
+ * Model Category
  *
  */
-export type Collection = Prisma.CollectionModel;
+export type Category = Prisma.CategoryModel;
 /**
  * Model Lehenga
  *

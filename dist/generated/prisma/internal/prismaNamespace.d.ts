@@ -233,7 +233,7 @@ type FieldRefInputType<Model, FieldType> = Model extends never ? never : FieldRe
 export declare const ModelName: {
     readonly AdminUser: "AdminUser";
     readonly Customer: "Customer";
-    readonly Collection: "Collection";
+    readonly Category: "Category";
     readonly Lehenga: "Lehenga";
     readonly LehengaSize: "LehengaSize";
     readonly LehengaImage: "LehengaImage";
@@ -254,7 +254,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         omit: GlobalOmitOptions;
     };
     meta: {
-        modelProps: "adminUser" | "customer" | "collection" | "lehenga" | "lehengaSize" | "lehengaImage" | "jewellery" | "jewelleryImage" | "storeLocation" | "rentalOrder" | "rentalOrderItem";
+        modelProps: "adminUser" | "customer" | "category" | "lehenga" | "lehengaSize" | "lehengaImage" | "jewellery" | "jewelleryImage" | "storeLocation" | "rentalOrder" | "rentalOrderItem";
         txIsolationLevel: TransactionIsolationLevel;
     };
     model: {
@@ -406,77 +406,77 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
                 };
             };
         };
-        Collection: {
-            payload: Prisma.$CollectionPayload<ExtArgs>;
-            fields: Prisma.CollectionFieldRefs;
+        Category: {
+            payload: Prisma.$CategoryPayload<ExtArgs>;
+            fields: Prisma.CategoryFieldRefs;
             operations: {
                 findUnique: {
-                    args: Prisma.CollectionFindUniqueArgs<ExtArgs>;
-                    result: runtime.Types.Utils.PayloadToResult<Prisma.$CollectionPayload> | null;
+                    args: Prisma.CategoryFindUniqueArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$CategoryPayload> | null;
                 };
                 findUniqueOrThrow: {
-                    args: Prisma.CollectionFindUniqueOrThrowArgs<ExtArgs>;
-                    result: runtime.Types.Utils.PayloadToResult<Prisma.$CollectionPayload>;
+                    args: Prisma.CategoryFindUniqueOrThrowArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$CategoryPayload>;
                 };
                 findFirst: {
-                    args: Prisma.CollectionFindFirstArgs<ExtArgs>;
-                    result: runtime.Types.Utils.PayloadToResult<Prisma.$CollectionPayload> | null;
+                    args: Prisma.CategoryFindFirstArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$CategoryPayload> | null;
                 };
                 findFirstOrThrow: {
-                    args: Prisma.CollectionFindFirstOrThrowArgs<ExtArgs>;
-                    result: runtime.Types.Utils.PayloadToResult<Prisma.$CollectionPayload>;
+                    args: Prisma.CategoryFindFirstOrThrowArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$CategoryPayload>;
                 };
                 findMany: {
-                    args: Prisma.CollectionFindManyArgs<ExtArgs>;
-                    result: runtime.Types.Utils.PayloadToResult<Prisma.$CollectionPayload>[];
+                    args: Prisma.CategoryFindManyArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$CategoryPayload>[];
                 };
                 create: {
-                    args: Prisma.CollectionCreateArgs<ExtArgs>;
-                    result: runtime.Types.Utils.PayloadToResult<Prisma.$CollectionPayload>;
+                    args: Prisma.CategoryCreateArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$CategoryPayload>;
                 };
                 createMany: {
-                    args: Prisma.CollectionCreateManyArgs<ExtArgs>;
+                    args: Prisma.CategoryCreateManyArgs<ExtArgs>;
                     result: BatchPayload;
                 };
                 createManyAndReturn: {
-                    args: Prisma.CollectionCreateManyAndReturnArgs<ExtArgs>;
-                    result: runtime.Types.Utils.PayloadToResult<Prisma.$CollectionPayload>[];
+                    args: Prisma.CategoryCreateManyAndReturnArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$CategoryPayload>[];
                 };
                 delete: {
-                    args: Prisma.CollectionDeleteArgs<ExtArgs>;
-                    result: runtime.Types.Utils.PayloadToResult<Prisma.$CollectionPayload>;
+                    args: Prisma.CategoryDeleteArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$CategoryPayload>;
                 };
                 update: {
-                    args: Prisma.CollectionUpdateArgs<ExtArgs>;
-                    result: runtime.Types.Utils.PayloadToResult<Prisma.$CollectionPayload>;
+                    args: Prisma.CategoryUpdateArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$CategoryPayload>;
                 };
                 deleteMany: {
-                    args: Prisma.CollectionDeleteManyArgs<ExtArgs>;
+                    args: Prisma.CategoryDeleteManyArgs<ExtArgs>;
                     result: BatchPayload;
                 };
                 updateMany: {
-                    args: Prisma.CollectionUpdateManyArgs<ExtArgs>;
+                    args: Prisma.CategoryUpdateManyArgs<ExtArgs>;
                     result: BatchPayload;
                 };
                 updateManyAndReturn: {
-                    args: Prisma.CollectionUpdateManyAndReturnArgs<ExtArgs>;
-                    result: runtime.Types.Utils.PayloadToResult<Prisma.$CollectionPayload>[];
+                    args: Prisma.CategoryUpdateManyAndReturnArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$CategoryPayload>[];
                 };
                 upsert: {
-                    args: Prisma.CollectionUpsertArgs<ExtArgs>;
-                    result: runtime.Types.Utils.PayloadToResult<Prisma.$CollectionPayload>;
+                    args: Prisma.CategoryUpsertArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$CategoryPayload>;
                 };
                 aggregate: {
-                    args: Prisma.CollectionAggregateArgs<ExtArgs>;
-                    result: runtime.Types.Utils.Optional<Prisma.AggregateCollection>;
+                    args: Prisma.CategoryAggregateArgs<ExtArgs>;
+                    result: runtime.Types.Utils.Optional<Prisma.AggregateCategory>;
                 };
                 groupBy: {
-                    args: Prisma.CollectionGroupByArgs<ExtArgs>;
-                    result: runtime.Types.Utils.Optional<Prisma.CollectionGroupByOutputType>[];
+                    args: Prisma.CategoryGroupByArgs<ExtArgs>;
+                    result: runtime.Types.Utils.Optional<Prisma.CategoryGroupByOutputType>[];
                 };
                 count: {
-                    args: Prisma.CollectionCountArgs<ExtArgs>;
-                    result: runtime.Types.Utils.Optional<Prisma.CollectionCountAggregateOutputType> | number;
+                    args: Prisma.CategoryCountArgs<ExtArgs>;
+                    result: runtime.Types.Utils.Optional<Prisma.CategoryCountAggregateOutputType> | number;
                 };
             };
         };
@@ -1130,19 +1130,17 @@ export declare const CustomerScalarFieldEnum: {
     readonly updatedAt: "updatedAt";
 };
 export type CustomerScalarFieldEnum = (typeof CustomerScalarFieldEnum)[keyof typeof CustomerScalarFieldEnum];
-export declare const CollectionScalarFieldEnum: {
+export declare const CategoryScalarFieldEnum: {
     readonly id: "id";
     readonly name: "name";
     readonly slug: "slug";
+    readonly style: "style";
     readonly description: "description";
-    readonly season: "season";
-    readonly audience: "audience";
     readonly isFeatured: "isFeatured";
-    readonly displayOrder: "displayOrder";
     readonly createdAt: "createdAt";
     readonly updatedAt: "updatedAt";
 };
-export type CollectionScalarFieldEnum = (typeof CollectionScalarFieldEnum)[keyof typeof CollectionScalarFieldEnum];
+export type CategoryScalarFieldEnum = (typeof CategoryScalarFieldEnum)[keyof typeof CategoryScalarFieldEnum];
 export declare const LehengaScalarFieldEnum: {
     readonly id: "id";
     readonly name: "name";
@@ -1164,7 +1162,7 @@ export declare const LehengaScalarFieldEnum: {
     readonly pickupAvailable: "pickupAvailable";
     readonly status: "status";
     readonly isFeatured: "isFeatured";
-    readonly collectionId: "collectionId";
+    readonly categoryId: "categoryId";
     readonly createdAt: "createdAt";
     readonly updatedAt: "updatedAt";
 };
@@ -1216,7 +1214,7 @@ export declare const JewelleryScalarFieldEnum: {
     readonly pickupAvailable: "pickupAvailable";
     readonly status: "status";
     readonly isFeatured: "isFeatured";
-    readonly collectionId: "collectionId";
+    readonly categoryId: "categoryId";
     readonly createdAt: "createdAt";
     readonly updatedAt: "updatedAt";
 };
@@ -1329,29 +1327,13 @@ export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel
  */
 export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime[]'>;
 /**
- * Reference to a field of type 'CollectionSeason'
+ * Reference to a field of type 'CategoryStyle'
  */
-export type EnumCollectionSeasonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CollectionSeason'>;
+export type EnumCategoryStyleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CategoryStyle'>;
 /**
- * Reference to a field of type 'CollectionSeason[]'
+ * Reference to a field of type 'CategoryStyle[]'
  */
-export type ListEnumCollectionSeasonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CollectionSeason[]'>;
-/**
- * Reference to a field of type 'Audience'
- */
-export type EnumAudienceFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Audience'>;
-/**
- * Reference to a field of type 'Audience[]'
- */
-export type ListEnumAudienceFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Audience[]'>;
-/**
- * Reference to a field of type 'Int'
- */
-export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>;
-/**
- * Reference to a field of type 'Int[]'
- */
-export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>;
+export type ListEnumCategoryStyleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CategoryStyle[]'>;
 /**
  * Reference to a field of type 'Decimal'
  */
@@ -1360,6 +1342,14 @@ export type DecimalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel,
  * Reference to a field of type 'Decimal[]'
  */
 export type ListDecimalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Decimal[]'>;
+/**
+ * Reference to a field of type 'Int'
+ */
+export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>;
+/**
+ * Reference to a field of type 'Int[]'
+ */
+export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>;
 /**
  * Reference to a field of type 'ProductStatus'
  */
@@ -1519,7 +1509,7 @@ export type PrismaClientOptions = ({
 export type GlobalOmitConfig = {
     adminUser?: Prisma.AdminUserOmit;
     customer?: Prisma.CustomerOmit;
-    collection?: Prisma.CollectionOmit;
+    category?: Prisma.CategoryOmit;
     lehenga?: Prisma.LehengaOmit;
     lehengaSize?: Prisma.LehengaSizeOmit;
     lehengaImage?: Prisma.LehengaImageOmit;

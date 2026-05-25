@@ -48,7 +48,7 @@ export type JewelleryMinAggregateOutputType = {
     pickupAvailable: boolean | null;
     status: $Enums.ProductStatus | null;
     isFeatured: boolean | null;
-    collectionId: string | null;
+    categoryId: string | null;
     createdAt: Date | null;
     updatedAt: Date | null;
 };
@@ -73,7 +73,7 @@ export type JewelleryMaxAggregateOutputType = {
     pickupAvailable: boolean | null;
     status: $Enums.ProductStatus | null;
     isFeatured: boolean | null;
-    collectionId: string | null;
+    categoryId: string | null;
     createdAt: Date | null;
     updatedAt: Date | null;
 };
@@ -98,7 +98,7 @@ export type JewelleryCountAggregateOutputType = {
     pickupAvailable: number;
     status: number;
     isFeatured: number;
-    collectionId: number;
+    categoryId: number;
     createdAt: number;
     updatedAt: number;
     _all: number;
@@ -138,7 +138,7 @@ export type JewelleryMinAggregateInputType = {
     pickupAvailable?: true;
     status?: true;
     isFeatured?: true;
-    collectionId?: true;
+    categoryId?: true;
     createdAt?: true;
     updatedAt?: true;
 };
@@ -163,7 +163,7 @@ export type JewelleryMaxAggregateInputType = {
     pickupAvailable?: true;
     status?: true;
     isFeatured?: true;
-    collectionId?: true;
+    categoryId?: true;
     createdAt?: true;
     updatedAt?: true;
 };
@@ -188,7 +188,7 @@ export type JewelleryCountAggregateInputType = {
     pickupAvailable?: true;
     status?: true;
     isFeatured?: true;
-    collectionId?: true;
+    categoryId?: true;
     createdAt?: true;
     updatedAt?: true;
     _all?: true;
@@ -290,7 +290,7 @@ export type JewelleryGroupByOutputType = {
     pickupAvailable: boolean;
     status: $Enums.ProductStatus;
     isFeatured: boolean;
-    collectionId: string | null;
+    categoryId: string | null;
     createdAt: Date;
     updatedAt: Date;
     _count: JewelleryCountAggregateOutputType | null;
@@ -326,10 +326,10 @@ export type JewelleryWhereInput = {
     pickupAvailable?: Prisma.BoolFilter<"Jewellery"> | boolean;
     status?: Prisma.EnumProductStatusFilter<"Jewellery"> | $Enums.ProductStatus;
     isFeatured?: Prisma.BoolFilter<"Jewellery"> | boolean;
-    collectionId?: Prisma.StringNullableFilter<"Jewellery"> | string | null;
+    categoryId?: Prisma.StringNullableFilter<"Jewellery"> | string | null;
     createdAt?: Prisma.DateTimeFilter<"Jewellery"> | Date | string;
     updatedAt?: Prisma.DateTimeFilter<"Jewellery"> | Date | string;
-    collection?: Prisma.XOR<Prisma.CollectionNullableScalarRelationFilter, Prisma.CollectionWhereInput> | null;
+    category?: Prisma.XOR<Prisma.CategoryNullableScalarRelationFilter, Prisma.CategoryWhereInput> | null;
     images?: Prisma.JewelleryImageListRelationFilter;
     orderItems?: Prisma.RentalOrderItemListRelationFilter;
 };
@@ -354,10 +354,10 @@ export type JewelleryOrderByWithRelationInput = {
     pickupAvailable?: Prisma.SortOrder;
     status?: Prisma.SortOrder;
     isFeatured?: Prisma.SortOrder;
-    collectionId?: Prisma.SortOrderInput | Prisma.SortOrder;
+    categoryId?: Prisma.SortOrderInput | Prisma.SortOrder;
     createdAt?: Prisma.SortOrder;
     updatedAt?: Prisma.SortOrder;
-    collection?: Prisma.CollectionOrderByWithRelationInput;
+    category?: Prisma.CategoryOrderByWithRelationInput;
     images?: Prisma.JewelleryImageOrderByRelationAggregateInput;
     orderItems?: Prisma.RentalOrderItemOrderByRelationAggregateInput;
 };
@@ -385,10 +385,10 @@ export type JewelleryWhereUniqueInput = Prisma.AtLeast<{
     pickupAvailable?: Prisma.BoolFilter<"Jewellery"> | boolean;
     status?: Prisma.EnumProductStatusFilter<"Jewellery"> | $Enums.ProductStatus;
     isFeatured?: Prisma.BoolFilter<"Jewellery"> | boolean;
-    collectionId?: Prisma.StringNullableFilter<"Jewellery"> | string | null;
+    categoryId?: Prisma.StringNullableFilter<"Jewellery"> | string | null;
     createdAt?: Prisma.DateTimeFilter<"Jewellery"> | Date | string;
     updatedAt?: Prisma.DateTimeFilter<"Jewellery"> | Date | string;
-    collection?: Prisma.XOR<Prisma.CollectionNullableScalarRelationFilter, Prisma.CollectionWhereInput> | null;
+    category?: Prisma.XOR<Prisma.CategoryNullableScalarRelationFilter, Prisma.CategoryWhereInput> | null;
     images?: Prisma.JewelleryImageListRelationFilter;
     orderItems?: Prisma.RentalOrderItemListRelationFilter;
 }, "id" | "slug" | "sku">;
@@ -413,7 +413,7 @@ export type JewelleryOrderByWithAggregationInput = {
     pickupAvailable?: Prisma.SortOrder;
     status?: Prisma.SortOrder;
     isFeatured?: Prisma.SortOrder;
-    collectionId?: Prisma.SortOrderInput | Prisma.SortOrder;
+    categoryId?: Prisma.SortOrderInput | Prisma.SortOrder;
     createdAt?: Prisma.SortOrder;
     updatedAt?: Prisma.SortOrder;
     _count?: Prisma.JewelleryCountOrderByAggregateInput;
@@ -446,7 +446,7 @@ export type JewelleryScalarWhereWithAggregatesInput = {
     pickupAvailable?: Prisma.BoolWithAggregatesFilter<"Jewellery"> | boolean;
     status?: Prisma.EnumProductStatusWithAggregatesFilter<"Jewellery"> | $Enums.ProductStatus;
     isFeatured?: Prisma.BoolWithAggregatesFilter<"Jewellery"> | boolean;
-    collectionId?: Prisma.StringNullableWithAggregatesFilter<"Jewellery"> | string | null;
+    categoryId?: Prisma.StringNullableWithAggregatesFilter<"Jewellery"> | string | null;
     createdAt?: Prisma.DateTimeWithAggregatesFilter<"Jewellery"> | Date | string;
     updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Jewellery"> | Date | string;
 };
@@ -473,7 +473,7 @@ export type JewelleryCreateInput = {
     isFeatured?: boolean;
     createdAt?: Date | string;
     updatedAt?: Date | string;
-    collection?: Prisma.CollectionCreateNestedOneWithoutJewelleryItemsInput;
+    category?: Prisma.CategoryCreateNestedOneWithoutJewelleryItemsInput;
     images?: Prisma.JewelleryImageCreateNestedManyWithoutJewelleryInput;
     orderItems?: Prisma.RentalOrderItemCreateNestedManyWithoutJewelleryInput;
 };
@@ -498,7 +498,7 @@ export type JewelleryUncheckedCreateInput = {
     pickupAvailable?: boolean;
     status?: $Enums.ProductStatus;
     isFeatured?: boolean;
-    collectionId?: string | null;
+    categoryId?: string | null;
     createdAt?: Date | string;
     updatedAt?: Date | string;
     images?: Prisma.JewelleryImageUncheckedCreateNestedManyWithoutJewelleryInput;
@@ -527,7 +527,7 @@ export type JewelleryUpdateInput = {
     isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-    collection?: Prisma.CollectionUpdateOneWithoutJewelleryItemsNestedInput;
+    category?: Prisma.CategoryUpdateOneWithoutJewelleryItemsNestedInput;
     images?: Prisma.JewelleryImageUpdateManyWithoutJewelleryNestedInput;
     orderItems?: Prisma.RentalOrderItemUpdateManyWithoutJewelleryNestedInput;
 };
@@ -552,7 +552,7 @@ export type JewelleryUncheckedUpdateInput = {
     pickupAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus;
     isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean;
-    collectionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    categoryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     images?: Prisma.JewelleryImageUncheckedUpdateManyWithoutJewelleryNestedInput;
@@ -579,7 +579,7 @@ export type JewelleryCreateManyInput = {
     pickupAvailable?: boolean;
     status?: $Enums.ProductStatus;
     isFeatured?: boolean;
-    collectionId?: string | null;
+    categoryId?: string | null;
     createdAt?: Date | string;
     updatedAt?: Date | string;
 };
@@ -628,7 +628,7 @@ export type JewelleryUncheckedUpdateManyInput = {
     pickupAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus;
     isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean;
-    collectionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    categoryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
 };
@@ -661,7 +661,7 @@ export type JewelleryCountOrderByAggregateInput = {
     pickupAvailable?: Prisma.SortOrder;
     status?: Prisma.SortOrder;
     isFeatured?: Prisma.SortOrder;
-    collectionId?: Prisma.SortOrder;
+    categoryId?: Prisma.SortOrder;
     createdAt?: Prisma.SortOrder;
     updatedAt?: Prisma.SortOrder;
 };
@@ -693,7 +693,7 @@ export type JewelleryMaxOrderByAggregateInput = {
     pickupAvailable?: Prisma.SortOrder;
     status?: Prisma.SortOrder;
     isFeatured?: Prisma.SortOrder;
-    collectionId?: Prisma.SortOrder;
+    categoryId?: Prisma.SortOrder;
     createdAt?: Prisma.SortOrder;
     updatedAt?: Prisma.SortOrder;
 };
@@ -718,7 +718,7 @@ export type JewelleryMinOrderByAggregateInput = {
     pickupAvailable?: Prisma.SortOrder;
     status?: Prisma.SortOrder;
     isFeatured?: Prisma.SortOrder;
-    collectionId?: Prisma.SortOrder;
+    categoryId?: Prisma.SortOrder;
     createdAt?: Prisma.SortOrder;
     updatedAt?: Prisma.SortOrder;
 };
@@ -737,42 +737,42 @@ export type JewelleryNullableScalarRelationFilter = {
     is?: Prisma.JewelleryWhereInput | null;
     isNot?: Prisma.JewelleryWhereInput | null;
 };
-export type JewelleryCreateNestedManyWithoutCollectionInput = {
-    create?: Prisma.XOR<Prisma.JewelleryCreateWithoutCollectionInput, Prisma.JewelleryUncheckedCreateWithoutCollectionInput> | Prisma.JewelleryCreateWithoutCollectionInput[] | Prisma.JewelleryUncheckedCreateWithoutCollectionInput[];
-    connectOrCreate?: Prisma.JewelleryCreateOrConnectWithoutCollectionInput | Prisma.JewelleryCreateOrConnectWithoutCollectionInput[];
-    createMany?: Prisma.JewelleryCreateManyCollectionInputEnvelope;
+export type JewelleryCreateNestedManyWithoutCategoryInput = {
+    create?: Prisma.XOR<Prisma.JewelleryCreateWithoutCategoryInput, Prisma.JewelleryUncheckedCreateWithoutCategoryInput> | Prisma.JewelleryCreateWithoutCategoryInput[] | Prisma.JewelleryUncheckedCreateWithoutCategoryInput[];
+    connectOrCreate?: Prisma.JewelleryCreateOrConnectWithoutCategoryInput | Prisma.JewelleryCreateOrConnectWithoutCategoryInput[];
+    createMany?: Prisma.JewelleryCreateManyCategoryInputEnvelope;
     connect?: Prisma.JewelleryWhereUniqueInput | Prisma.JewelleryWhereUniqueInput[];
 };
-export type JewelleryUncheckedCreateNestedManyWithoutCollectionInput = {
-    create?: Prisma.XOR<Prisma.JewelleryCreateWithoutCollectionInput, Prisma.JewelleryUncheckedCreateWithoutCollectionInput> | Prisma.JewelleryCreateWithoutCollectionInput[] | Prisma.JewelleryUncheckedCreateWithoutCollectionInput[];
-    connectOrCreate?: Prisma.JewelleryCreateOrConnectWithoutCollectionInput | Prisma.JewelleryCreateOrConnectWithoutCollectionInput[];
-    createMany?: Prisma.JewelleryCreateManyCollectionInputEnvelope;
+export type JewelleryUncheckedCreateNestedManyWithoutCategoryInput = {
+    create?: Prisma.XOR<Prisma.JewelleryCreateWithoutCategoryInput, Prisma.JewelleryUncheckedCreateWithoutCategoryInput> | Prisma.JewelleryCreateWithoutCategoryInput[] | Prisma.JewelleryUncheckedCreateWithoutCategoryInput[];
+    connectOrCreate?: Prisma.JewelleryCreateOrConnectWithoutCategoryInput | Prisma.JewelleryCreateOrConnectWithoutCategoryInput[];
+    createMany?: Prisma.JewelleryCreateManyCategoryInputEnvelope;
     connect?: Prisma.JewelleryWhereUniqueInput | Prisma.JewelleryWhereUniqueInput[];
 };
-export type JewelleryUpdateManyWithoutCollectionNestedInput = {
-    create?: Prisma.XOR<Prisma.JewelleryCreateWithoutCollectionInput, Prisma.JewelleryUncheckedCreateWithoutCollectionInput> | Prisma.JewelleryCreateWithoutCollectionInput[] | Prisma.JewelleryUncheckedCreateWithoutCollectionInput[];
-    connectOrCreate?: Prisma.JewelleryCreateOrConnectWithoutCollectionInput | Prisma.JewelleryCreateOrConnectWithoutCollectionInput[];
-    upsert?: Prisma.JewelleryUpsertWithWhereUniqueWithoutCollectionInput | Prisma.JewelleryUpsertWithWhereUniqueWithoutCollectionInput[];
-    createMany?: Prisma.JewelleryCreateManyCollectionInputEnvelope;
+export type JewelleryUpdateManyWithoutCategoryNestedInput = {
+    create?: Prisma.XOR<Prisma.JewelleryCreateWithoutCategoryInput, Prisma.JewelleryUncheckedCreateWithoutCategoryInput> | Prisma.JewelleryCreateWithoutCategoryInput[] | Prisma.JewelleryUncheckedCreateWithoutCategoryInput[];
+    connectOrCreate?: Prisma.JewelleryCreateOrConnectWithoutCategoryInput | Prisma.JewelleryCreateOrConnectWithoutCategoryInput[];
+    upsert?: Prisma.JewelleryUpsertWithWhereUniqueWithoutCategoryInput | Prisma.JewelleryUpsertWithWhereUniqueWithoutCategoryInput[];
+    createMany?: Prisma.JewelleryCreateManyCategoryInputEnvelope;
     set?: Prisma.JewelleryWhereUniqueInput | Prisma.JewelleryWhereUniqueInput[];
     disconnect?: Prisma.JewelleryWhereUniqueInput | Prisma.JewelleryWhereUniqueInput[];
     delete?: Prisma.JewelleryWhereUniqueInput | Prisma.JewelleryWhereUniqueInput[];
     connect?: Prisma.JewelleryWhereUniqueInput | Prisma.JewelleryWhereUniqueInput[];
-    update?: Prisma.JewelleryUpdateWithWhereUniqueWithoutCollectionInput | Prisma.JewelleryUpdateWithWhereUniqueWithoutCollectionInput[];
-    updateMany?: Prisma.JewelleryUpdateManyWithWhereWithoutCollectionInput | Prisma.JewelleryUpdateManyWithWhereWithoutCollectionInput[];
+    update?: Prisma.JewelleryUpdateWithWhereUniqueWithoutCategoryInput | Prisma.JewelleryUpdateWithWhereUniqueWithoutCategoryInput[];
+    updateMany?: Prisma.JewelleryUpdateManyWithWhereWithoutCategoryInput | Prisma.JewelleryUpdateManyWithWhereWithoutCategoryInput[];
     deleteMany?: Prisma.JewelleryScalarWhereInput | Prisma.JewelleryScalarWhereInput[];
 };
-export type JewelleryUncheckedUpdateManyWithoutCollectionNestedInput = {
-    create?: Prisma.XOR<Prisma.JewelleryCreateWithoutCollectionInput, Prisma.JewelleryUncheckedCreateWithoutCollectionInput> | Prisma.JewelleryCreateWithoutCollectionInput[] | Prisma.JewelleryUncheckedCreateWithoutCollectionInput[];
-    connectOrCreate?: Prisma.JewelleryCreateOrConnectWithoutCollectionInput | Prisma.JewelleryCreateOrConnectWithoutCollectionInput[];
-    upsert?: Prisma.JewelleryUpsertWithWhereUniqueWithoutCollectionInput | Prisma.JewelleryUpsertWithWhereUniqueWithoutCollectionInput[];
-    createMany?: Prisma.JewelleryCreateManyCollectionInputEnvelope;
+export type JewelleryUncheckedUpdateManyWithoutCategoryNestedInput = {
+    create?: Prisma.XOR<Prisma.JewelleryCreateWithoutCategoryInput, Prisma.JewelleryUncheckedCreateWithoutCategoryInput> | Prisma.JewelleryCreateWithoutCategoryInput[] | Prisma.JewelleryUncheckedCreateWithoutCategoryInput[];
+    connectOrCreate?: Prisma.JewelleryCreateOrConnectWithoutCategoryInput | Prisma.JewelleryCreateOrConnectWithoutCategoryInput[];
+    upsert?: Prisma.JewelleryUpsertWithWhereUniqueWithoutCategoryInput | Prisma.JewelleryUpsertWithWhereUniqueWithoutCategoryInput[];
+    createMany?: Prisma.JewelleryCreateManyCategoryInputEnvelope;
     set?: Prisma.JewelleryWhereUniqueInput | Prisma.JewelleryWhereUniqueInput[];
     disconnect?: Prisma.JewelleryWhereUniqueInput | Prisma.JewelleryWhereUniqueInput[];
     delete?: Prisma.JewelleryWhereUniqueInput | Prisma.JewelleryWhereUniqueInput[];
     connect?: Prisma.JewelleryWhereUniqueInput | Prisma.JewelleryWhereUniqueInput[];
-    update?: Prisma.JewelleryUpdateWithWhereUniqueWithoutCollectionInput | Prisma.JewelleryUpdateWithWhereUniqueWithoutCollectionInput[];
-    updateMany?: Prisma.JewelleryUpdateManyWithWhereWithoutCollectionInput | Prisma.JewelleryUpdateManyWithWhereWithoutCollectionInput[];
+    update?: Prisma.JewelleryUpdateWithWhereUniqueWithoutCategoryInput | Prisma.JewelleryUpdateWithWhereUniqueWithoutCategoryInput[];
+    updateMany?: Prisma.JewelleryUpdateManyWithWhereWithoutCategoryInput | Prisma.JewelleryUpdateManyWithWhereWithoutCategoryInput[];
     deleteMany?: Prisma.JewelleryScalarWhereInput | Prisma.JewelleryScalarWhereInput[];
 };
 export type EnumJewelleryTypeFieldUpdateOperationsInput = {
@@ -804,7 +804,7 @@ export type JewelleryUpdateOneWithoutOrderItemsNestedInput = {
     connect?: Prisma.JewelleryWhereUniqueInput;
     update?: Prisma.XOR<Prisma.XOR<Prisma.JewelleryUpdateToOneWithWhereWithoutOrderItemsInput, Prisma.JewelleryUpdateWithoutOrderItemsInput>, Prisma.JewelleryUncheckedUpdateWithoutOrderItemsInput>;
 };
-export type JewelleryCreateWithoutCollectionInput = {
+export type JewelleryCreateWithoutCategoryInput = {
     id?: string;
     name: string;
     slug: string;
@@ -830,7 +830,7 @@ export type JewelleryCreateWithoutCollectionInput = {
     images?: Prisma.JewelleryImageCreateNestedManyWithoutJewelleryInput;
     orderItems?: Prisma.RentalOrderItemCreateNestedManyWithoutJewelleryInput;
 };
-export type JewelleryUncheckedCreateWithoutCollectionInput = {
+export type JewelleryUncheckedCreateWithoutCategoryInput = {
     id?: string;
     name: string;
     slug: string;
@@ -856,26 +856,26 @@ export type JewelleryUncheckedCreateWithoutCollectionInput = {
     images?: Prisma.JewelleryImageUncheckedCreateNestedManyWithoutJewelleryInput;
     orderItems?: Prisma.RentalOrderItemUncheckedCreateNestedManyWithoutJewelleryInput;
 };
-export type JewelleryCreateOrConnectWithoutCollectionInput = {
+export type JewelleryCreateOrConnectWithoutCategoryInput = {
     where: Prisma.JewelleryWhereUniqueInput;
-    create: Prisma.XOR<Prisma.JewelleryCreateWithoutCollectionInput, Prisma.JewelleryUncheckedCreateWithoutCollectionInput>;
+    create: Prisma.XOR<Prisma.JewelleryCreateWithoutCategoryInput, Prisma.JewelleryUncheckedCreateWithoutCategoryInput>;
 };
-export type JewelleryCreateManyCollectionInputEnvelope = {
-    data: Prisma.JewelleryCreateManyCollectionInput | Prisma.JewelleryCreateManyCollectionInput[];
+export type JewelleryCreateManyCategoryInputEnvelope = {
+    data: Prisma.JewelleryCreateManyCategoryInput | Prisma.JewelleryCreateManyCategoryInput[];
     skipDuplicates?: boolean;
 };
-export type JewelleryUpsertWithWhereUniqueWithoutCollectionInput = {
+export type JewelleryUpsertWithWhereUniqueWithoutCategoryInput = {
     where: Prisma.JewelleryWhereUniqueInput;
-    update: Prisma.XOR<Prisma.JewelleryUpdateWithoutCollectionInput, Prisma.JewelleryUncheckedUpdateWithoutCollectionInput>;
-    create: Prisma.XOR<Prisma.JewelleryCreateWithoutCollectionInput, Prisma.JewelleryUncheckedCreateWithoutCollectionInput>;
+    update: Prisma.XOR<Prisma.JewelleryUpdateWithoutCategoryInput, Prisma.JewelleryUncheckedUpdateWithoutCategoryInput>;
+    create: Prisma.XOR<Prisma.JewelleryCreateWithoutCategoryInput, Prisma.JewelleryUncheckedCreateWithoutCategoryInput>;
 };
-export type JewelleryUpdateWithWhereUniqueWithoutCollectionInput = {
+export type JewelleryUpdateWithWhereUniqueWithoutCategoryInput = {
     where: Prisma.JewelleryWhereUniqueInput;
-    data: Prisma.XOR<Prisma.JewelleryUpdateWithoutCollectionInput, Prisma.JewelleryUncheckedUpdateWithoutCollectionInput>;
+    data: Prisma.XOR<Prisma.JewelleryUpdateWithoutCategoryInput, Prisma.JewelleryUncheckedUpdateWithoutCategoryInput>;
 };
-export type JewelleryUpdateManyWithWhereWithoutCollectionInput = {
+export type JewelleryUpdateManyWithWhereWithoutCategoryInput = {
     where: Prisma.JewelleryScalarWhereInput;
-    data: Prisma.XOR<Prisma.JewelleryUpdateManyMutationInput, Prisma.JewelleryUncheckedUpdateManyWithoutCollectionInput>;
+    data: Prisma.XOR<Prisma.JewelleryUpdateManyMutationInput, Prisma.JewelleryUncheckedUpdateManyWithoutCategoryInput>;
 };
 export type JewelleryScalarWhereInput = {
     AND?: Prisma.JewelleryScalarWhereInput | Prisma.JewelleryScalarWhereInput[];
@@ -901,7 +901,7 @@ export type JewelleryScalarWhereInput = {
     pickupAvailable?: Prisma.BoolFilter<"Jewellery"> | boolean;
     status?: Prisma.EnumProductStatusFilter<"Jewellery"> | $Enums.ProductStatus;
     isFeatured?: Prisma.BoolFilter<"Jewellery"> | boolean;
-    collectionId?: Prisma.StringNullableFilter<"Jewellery"> | string | null;
+    categoryId?: Prisma.StringNullableFilter<"Jewellery"> | string | null;
     createdAt?: Prisma.DateTimeFilter<"Jewellery"> | Date | string;
     updatedAt?: Prisma.DateTimeFilter<"Jewellery"> | Date | string;
 };
@@ -928,7 +928,7 @@ export type JewelleryCreateWithoutImagesInput = {
     isFeatured?: boolean;
     createdAt?: Date | string;
     updatedAt?: Date | string;
-    collection?: Prisma.CollectionCreateNestedOneWithoutJewelleryItemsInput;
+    category?: Prisma.CategoryCreateNestedOneWithoutJewelleryItemsInput;
     orderItems?: Prisma.RentalOrderItemCreateNestedManyWithoutJewelleryInput;
 };
 export type JewelleryUncheckedCreateWithoutImagesInput = {
@@ -952,7 +952,7 @@ export type JewelleryUncheckedCreateWithoutImagesInput = {
     pickupAvailable?: boolean;
     status?: $Enums.ProductStatus;
     isFeatured?: boolean;
-    collectionId?: string | null;
+    categoryId?: string | null;
     createdAt?: Date | string;
     updatedAt?: Date | string;
     orderItems?: Prisma.RentalOrderItemUncheckedCreateNestedManyWithoutJewelleryInput;
@@ -993,7 +993,7 @@ export type JewelleryUpdateWithoutImagesInput = {
     isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-    collection?: Prisma.CollectionUpdateOneWithoutJewelleryItemsNestedInput;
+    category?: Prisma.CategoryUpdateOneWithoutJewelleryItemsNestedInput;
     orderItems?: Prisma.RentalOrderItemUpdateManyWithoutJewelleryNestedInput;
 };
 export type JewelleryUncheckedUpdateWithoutImagesInput = {
@@ -1017,7 +1017,7 @@ export type JewelleryUncheckedUpdateWithoutImagesInput = {
     pickupAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus;
     isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean;
-    collectionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    categoryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     orderItems?: Prisma.RentalOrderItemUncheckedUpdateManyWithoutJewelleryNestedInput;
@@ -1045,7 +1045,7 @@ export type JewelleryCreateWithoutOrderItemsInput = {
     isFeatured?: boolean;
     createdAt?: Date | string;
     updatedAt?: Date | string;
-    collection?: Prisma.CollectionCreateNestedOneWithoutJewelleryItemsInput;
+    category?: Prisma.CategoryCreateNestedOneWithoutJewelleryItemsInput;
     images?: Prisma.JewelleryImageCreateNestedManyWithoutJewelleryInput;
 };
 export type JewelleryUncheckedCreateWithoutOrderItemsInput = {
@@ -1069,7 +1069,7 @@ export type JewelleryUncheckedCreateWithoutOrderItemsInput = {
     pickupAvailable?: boolean;
     status?: $Enums.ProductStatus;
     isFeatured?: boolean;
-    collectionId?: string | null;
+    categoryId?: string | null;
     createdAt?: Date | string;
     updatedAt?: Date | string;
     images?: Prisma.JewelleryImageUncheckedCreateNestedManyWithoutJewelleryInput;
@@ -1110,7 +1110,7 @@ export type JewelleryUpdateWithoutOrderItemsInput = {
     isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-    collection?: Prisma.CollectionUpdateOneWithoutJewelleryItemsNestedInput;
+    category?: Prisma.CategoryUpdateOneWithoutJewelleryItemsNestedInput;
     images?: Prisma.JewelleryImageUpdateManyWithoutJewelleryNestedInput;
 };
 export type JewelleryUncheckedUpdateWithoutOrderItemsInput = {
@@ -1134,12 +1134,12 @@ export type JewelleryUncheckedUpdateWithoutOrderItemsInput = {
     pickupAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus;
     isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean;
-    collectionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    categoryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     images?: Prisma.JewelleryImageUncheckedUpdateManyWithoutJewelleryNestedInput;
 };
-export type JewelleryCreateManyCollectionInput = {
+export type JewelleryCreateManyCategoryInput = {
     id?: string;
     name: string;
     slug: string;
@@ -1163,7 +1163,7 @@ export type JewelleryCreateManyCollectionInput = {
     createdAt?: Date | string;
     updatedAt?: Date | string;
 };
-export type JewelleryUpdateWithoutCollectionInput = {
+export type JewelleryUpdateWithoutCategoryInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
     name?: Prisma.StringFieldUpdateOperationsInput | string;
     slug?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -1189,7 +1189,7 @@ export type JewelleryUpdateWithoutCollectionInput = {
     images?: Prisma.JewelleryImageUpdateManyWithoutJewelleryNestedInput;
     orderItems?: Prisma.RentalOrderItemUpdateManyWithoutJewelleryNestedInput;
 };
-export type JewelleryUncheckedUpdateWithoutCollectionInput = {
+export type JewelleryUncheckedUpdateWithoutCategoryInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
     name?: Prisma.StringFieldUpdateOperationsInput | string;
     slug?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -1215,7 +1215,7 @@ export type JewelleryUncheckedUpdateWithoutCollectionInput = {
     images?: Prisma.JewelleryImageUncheckedUpdateManyWithoutJewelleryNestedInput;
     orderItems?: Prisma.RentalOrderItemUncheckedUpdateManyWithoutJewelleryNestedInput;
 };
-export type JewelleryUncheckedUpdateManyWithoutCollectionInput = {
+export type JewelleryUncheckedUpdateManyWithoutCategoryInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
     name?: Prisma.StringFieldUpdateOperationsInput | string;
     slug?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -1292,10 +1292,10 @@ export type JewellerySelect<ExtArgs extends runtime.Types.Extensions.InternalArg
     pickupAvailable?: boolean;
     status?: boolean;
     isFeatured?: boolean;
-    collectionId?: boolean;
+    categoryId?: boolean;
     createdAt?: boolean;
     updatedAt?: boolean;
-    collection?: boolean | Prisma.Jewellery$collectionArgs<ExtArgs>;
+    category?: boolean | Prisma.Jewellery$categoryArgs<ExtArgs>;
     images?: boolean | Prisma.Jewellery$imagesArgs<ExtArgs>;
     orderItems?: boolean | Prisma.Jewellery$orderItemsArgs<ExtArgs>;
     _count?: boolean | Prisma.JewelleryCountOutputTypeDefaultArgs<ExtArgs>;
@@ -1321,10 +1321,10 @@ export type JewellerySelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ext
     pickupAvailable?: boolean;
     status?: boolean;
     isFeatured?: boolean;
-    collectionId?: boolean;
+    categoryId?: boolean;
     createdAt?: boolean;
     updatedAt?: boolean;
-    collection?: boolean | Prisma.Jewellery$collectionArgs<ExtArgs>;
+    category?: boolean | Prisma.Jewellery$categoryArgs<ExtArgs>;
 }, ExtArgs["result"]["jewellery"]>;
 export type JewellerySelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
     id?: boolean;
@@ -1347,10 +1347,10 @@ export type JewellerySelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ext
     pickupAvailable?: boolean;
     status?: boolean;
     isFeatured?: boolean;
-    collectionId?: boolean;
+    categoryId?: boolean;
     createdAt?: boolean;
     updatedAt?: boolean;
-    collection?: boolean | Prisma.Jewellery$collectionArgs<ExtArgs>;
+    category?: boolean | Prisma.Jewellery$categoryArgs<ExtArgs>;
 }, ExtArgs["result"]["jewellery"]>;
 export type JewellerySelectScalar = {
     id?: boolean;
@@ -1373,27 +1373,27 @@ export type JewellerySelectScalar = {
     pickupAvailable?: boolean;
     status?: boolean;
     isFeatured?: boolean;
-    collectionId?: boolean;
+    categoryId?: boolean;
     createdAt?: boolean;
     updatedAt?: boolean;
 };
-export type JewelleryOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "slug" | "sku" | "shortDescription" | "description" | "type" | "material" | "color" | "finish" | "stoneDetails" | "occasion" | "rentalPricePerDay" | "securityDeposit" | "originalPrice" | "minimumRentalDays" | "stockQuantity" | "pickupAvailable" | "status" | "isFeatured" | "collectionId" | "createdAt" | "updatedAt", ExtArgs["result"]["jewellery"]>;
+export type JewelleryOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "slug" | "sku" | "shortDescription" | "description" | "type" | "material" | "color" | "finish" | "stoneDetails" | "occasion" | "rentalPricePerDay" | "securityDeposit" | "originalPrice" | "minimumRentalDays" | "stockQuantity" | "pickupAvailable" | "status" | "isFeatured" | "categoryId" | "createdAt" | "updatedAt", ExtArgs["result"]["jewellery"]>;
 export type JewelleryInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-    collection?: boolean | Prisma.Jewellery$collectionArgs<ExtArgs>;
+    category?: boolean | Prisma.Jewellery$categoryArgs<ExtArgs>;
     images?: boolean | Prisma.Jewellery$imagesArgs<ExtArgs>;
     orderItems?: boolean | Prisma.Jewellery$orderItemsArgs<ExtArgs>;
     _count?: boolean | Prisma.JewelleryCountOutputTypeDefaultArgs<ExtArgs>;
 };
 export type JewelleryIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-    collection?: boolean | Prisma.Jewellery$collectionArgs<ExtArgs>;
+    category?: boolean | Prisma.Jewellery$categoryArgs<ExtArgs>;
 };
 export type JewelleryIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-    collection?: boolean | Prisma.Jewellery$collectionArgs<ExtArgs>;
+    category?: boolean | Prisma.Jewellery$categoryArgs<ExtArgs>;
 };
 export type $JewelleryPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     name: "Jewellery";
     objects: {
-        collection: Prisma.$CollectionPayload<ExtArgs> | null;
+        category: Prisma.$CategoryPayload<ExtArgs> | null;
         images: Prisma.$JewelleryImagePayload<ExtArgs>[];
         orderItems: Prisma.$RentalOrderItemPayload<ExtArgs>[];
     };
@@ -1418,7 +1418,7 @@ export type $JewelleryPayload<ExtArgs extends runtime.Types.Extensions.InternalA
         pickupAvailable: boolean;
         status: $Enums.ProductStatus;
         isFeatured: boolean;
-        collectionId: string | null;
+        categoryId: string | null;
         createdAt: Date;
         updatedAt: Date;
     }, ExtArgs["result"]["jewellery"]>;
@@ -1750,7 +1750,7 @@ export interface JewelleryDelegate<ExtArgs extends runtime.Types.Extensions.Inte
  */
 export interface Prisma__JewelleryClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise";
-    collection<T extends Prisma.Jewellery$collectionArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Jewellery$collectionArgs<ExtArgs>>): Prisma.Prisma__CollectionClient<runtime.Types.Result.GetResult<Prisma.$CollectionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>;
+    category<T extends Prisma.Jewellery$categoryArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Jewellery$categoryArgs<ExtArgs>>): Prisma.Prisma__CategoryClient<runtime.Types.Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>;
     images<T extends Prisma.Jewellery$imagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Jewellery$imagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$JewelleryImagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>;
     orderItems<T extends Prisma.Jewellery$orderItemsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Jewellery$orderItemsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RentalOrderItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>;
     /**
@@ -1798,7 +1798,7 @@ export interface JewelleryFieldRefs {
     readonly pickupAvailable: Prisma.FieldRef<"Jewellery", 'Boolean'>;
     readonly status: Prisma.FieldRef<"Jewellery", 'ProductStatus'>;
     readonly isFeatured: Prisma.FieldRef<"Jewellery", 'Boolean'>;
-    readonly collectionId: Prisma.FieldRef<"Jewellery", 'String'>;
+    readonly categoryId: Prisma.FieldRef<"Jewellery", 'String'>;
     readonly createdAt: Prisma.FieldRef<"Jewellery", 'DateTime'>;
     readonly updatedAt: Prisma.FieldRef<"Jewellery", 'DateTime'>;
 }
@@ -2185,22 +2185,22 @@ export type JewelleryDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Int
     limit?: number;
 };
 /**
- * Jewellery.collection
+ * Jewellery.category
  */
-export type Jewellery$collectionArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type Jewellery$categoryArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the Collection
+     * Select specific fields to fetch from the Category
      */
-    select?: Prisma.CollectionSelect<ExtArgs> | null;
+    select?: Prisma.CategorySelect<ExtArgs> | null;
     /**
-     * Omit specific fields from the Collection
+     * Omit specific fields from the Category
      */
-    omit?: Prisma.CollectionOmit<ExtArgs> | null;
+    omit?: Prisma.CategoryOmit<ExtArgs> | null;
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: Prisma.CollectionInclude<ExtArgs> | null;
-    where?: Prisma.CollectionWhereInput;
+    include?: Prisma.CategoryInclude<ExtArgs> | null;
+    where?: Prisma.CategoryWhereInput;
 };
 /**
  * Jewellery.images

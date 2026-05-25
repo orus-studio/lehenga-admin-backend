@@ -1,6 +1,6 @@
 export type * from './models/AdminUser.js';
 export type * from './models/Customer.js';
-export type * from './models/Collection.js';
+export type * from './models/Category.js';
 export type * from './models/Lehenga.js';
 export type * from './models/LehengaSize.js';
 export type * from './models/LehengaImage.js';

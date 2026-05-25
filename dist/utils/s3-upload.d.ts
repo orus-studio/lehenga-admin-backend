@@ -1,6 +1,6 @@
 type UploadContext = {
     category: "lehengas" | "jewellery";
-    collectionSlug: string | undefined;
+    categorySlug: string | undefined;
     productSlug: string;
 };
 type InputImage = {

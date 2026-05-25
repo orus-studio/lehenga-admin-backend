@@ -70,7 +70,7 @@ export const AnyNull = runtime.AnyNull;
 export const ModelName = {
     AdminUser: 'AdminUser',
     Customer: 'Customer',
-    Collection: 'Collection',
+    Category: 'Category',
     Lehenga: 'Lehenga',
     LehengaSize: 'LehengaSize',
     LehengaImage: 'LehengaImage',
@@ -111,15 +111,13 @@ export const CustomerScalarFieldEnum = {
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
 };
-export const CollectionScalarFieldEnum = {
+export const CategoryScalarFieldEnum = {
     id: 'id',
     name: 'name',
     slug: 'slug',
+    style: 'style',
     description: 'description',
-    season: 'season',
-    audience: 'audience',
     isFeatured: 'isFeatured',
-    displayOrder: 'displayOrder',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
 };
@@ -144,7 +142,7 @@ export const LehengaScalarFieldEnum = {
     pickupAvailable: 'pickupAvailable',
     status: 'status',
     isFeatured: 'isFeatured',
-    collectionId: 'collectionId',
+    categoryId: 'categoryId',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
 };
@@ -193,7 +191,7 @@ export const JewelleryScalarFieldEnum = {
     pickupAvailable: 'pickupAvailable',
     status: 'status',
     isFeatured: 'isFeatured',
-    collectionId: 'collectionId',
+    categoryId: 'categoryId',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
 };

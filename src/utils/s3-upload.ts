@@ -45,7 +45,7 @@ function getPublicUrl(key: string) {
 
 type UploadContext = {
   category: "lehengas" | "jewellery";
-  collectionSlug: string | undefined;
+  categorySlug: string | undefined;
   productSlug: string;
 };
 
@@ -80,7 +80,7 @@ async function uploadDataUrlImage(dataUrl: string, context: UploadContext, sortO
   const extension = getExtensionFromMimeType(mimeType);
   const key = [
     "catalog",
-    sanitizeSegment(context.collectionSlug ?? "uncategorized"),
+    sanitizeSegment(context.categorySlug ?? "uncategorized"),
     context.category,
     sanitizeSegment(context.productSlug),
     `${String(sortOrder + 1).padStart(2, "0")}-${randomUUID()}.${extension}`,

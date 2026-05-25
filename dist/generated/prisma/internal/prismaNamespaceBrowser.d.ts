@@ -28,7 +28,7 @@ export declare const AnyNull: import("@prisma/client-runtime-utils").AnyNullClas
 export declare const ModelName: {
     readonly AdminUser: "AdminUser";
     readonly Customer: "Customer";
-    readonly Collection: "Collection";
+    readonly Category: "Category";
     readonly Lehenga: "Lehenga";
     readonly LehengaSize: "LehengaSize";
     readonly LehengaImage: "LehengaImage";
@@ -70,19 +70,17 @@ export declare const CustomerScalarFieldEnum: {
     readonly updatedAt: "updatedAt";
 };
 export type CustomerScalarFieldEnum = (typeof CustomerScalarFieldEnum)[keyof typeof CustomerScalarFieldEnum];
-export declare const CollectionScalarFieldEnum: {
+export declare const CategoryScalarFieldEnum: {
     readonly id: "id";
     readonly name: "name";
     readonly slug: "slug";
+    readonly style: "style";
     readonly description: "description";
-    readonly season: "season";
-    readonly audience: "audience";
     readonly isFeatured: "isFeatured";
-    readonly displayOrder: "displayOrder";
     readonly createdAt: "createdAt";
     readonly updatedAt: "updatedAt";
 };
-export type CollectionScalarFieldEnum = (typeof CollectionScalarFieldEnum)[keyof typeof CollectionScalarFieldEnum];
+export type CategoryScalarFieldEnum = (typeof CategoryScalarFieldEnum)[keyof typeof CategoryScalarFieldEnum];
 export declare const LehengaScalarFieldEnum: {
     readonly id: "id";
     readonly name: "name";
@@ -104,7 +102,7 @@ export declare const LehengaScalarFieldEnum: {
     readonly pickupAvailable: "pickupAvailable";
     readonly status: "status";
     readonly isFeatured: "isFeatured";
-    readonly collectionId: "collectionId";
+    readonly categoryId: "categoryId";
     readonly createdAt: "createdAt";
     readonly updatedAt: "updatedAt";
 };
@@ -156,7 +154,7 @@ export declare const JewelleryScalarFieldEnum: {
     readonly pickupAvailable: "pickupAvailable";
     readonly status: "status";
     readonly isFeatured: "isFeatured";
-    readonly collectionId: "collectionId";
+    readonly categoryId: "categoryId";
     readonly createdAt: "createdAt";
     readonly updatedAt: "updatedAt";
 };

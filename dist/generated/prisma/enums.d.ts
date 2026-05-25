@@ -4,23 +4,13 @@ export declare const ProductStatus: {
     readonly ARCHIVED: "ARCHIVED";
 };
 export type ProductStatus = (typeof ProductStatus)[keyof typeof ProductStatus];
-export declare const CollectionSeason: {
-    readonly SPRING: "SPRING";
-    readonly SUMMER: "SUMMER";
-    readonly MONSOON: "MONSOON";
-    readonly AUTUMN: "AUTUMN";
-    readonly WINTER: "WINTER";
-    readonly FESTIVE: "FESTIVE";
-    readonly ALL_SEASON: "ALL_SEASON";
+export declare const CategoryStyle: {
+    readonly BRIDAL: "BRIDAL";
+    readonly SEMI_BRIDAL: "SEMI_BRIDAL";
+    readonly GOWN: "GOWN";
+    readonly JEWELLERY: "JEWELLERY";
 };
-export type CollectionSeason = (typeof CollectionSeason)[keyof typeof CollectionSeason];
-export declare const Audience: {
-    readonly WOMEN: "WOMEN";
-    readonly MEN: "MEN";
-    readonly UNISEX: "UNISEX";
-    readonly KIDS: "KIDS";
-};
-export type Audience = (typeof Audience)[keyof typeof Audience];
+export type CategoryStyle = (typeof CategoryStyle)[keyof typeof CategoryStyle];
 export declare const JewelleryType: {
     readonly NECKLACE: "NECKLACE";
     readonly EARRINGS: "EARRINGS";
@@ -42,6 +32,7 @@ export declare const OrderStatus: {
     readonly READY_FOR_PICKUP: "READY_FOR_PICKUP";
     readonly PICKED_UP: "PICKED_UP";
     readonly RETURNED: "RETURNED";
+    readonly FULFILLED: "FULFILLED";
     readonly CANCELLED: "CANCELLED";
 };
 export type OrderStatus = (typeof OrderStatus)[keyof typeof OrderStatus];

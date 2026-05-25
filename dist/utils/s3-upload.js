@@ -52,7 +52,7 @@ async function uploadDataUrlImage(dataUrl, context, sortOrder) {
     const extension = getExtensionFromMimeType(mimeType);
     const key = [
         "catalog",
-        sanitizeSegment(context.collectionSlug ?? "uncategorized"),
+        sanitizeSegment(context.categorySlug ?? "uncategorized"),
         context.category,
         sanitizeSegment(context.productSlug),
         `${String(sortOrder + 1).padStart(2, "0")}-${randomUUID()}.${extension}`,

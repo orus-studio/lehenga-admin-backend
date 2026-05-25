@@ -46,7 +46,7 @@ export type LehengaMinAggregateOutputType = {
     pickupAvailable: boolean | null;
     status: $Enums.ProductStatus | null;
     isFeatured: boolean | null;
-    collectionId: string | null;
+    categoryId: string | null;
     createdAt: Date | null;
     updatedAt: Date | null;
 };
@@ -71,7 +71,7 @@ export type LehengaMaxAggregateOutputType = {
     pickupAvailable: boolean | null;
     status: $Enums.ProductStatus | null;
     isFeatured: boolean | null;
-    collectionId: string | null;
+    categoryId: string | null;
     createdAt: Date | null;
     updatedAt: Date | null;
 };
@@ -96,7 +96,7 @@ export type LehengaCountAggregateOutputType = {
     pickupAvailable: number;
     status: number;
     isFeatured: number;
-    collectionId: number;
+    categoryId: number;
     createdAt: number;
     updatedAt: number;
     _all: number;
@@ -134,7 +134,7 @@ export type LehengaMinAggregateInputType = {
     pickupAvailable?: true;
     status?: true;
     isFeatured?: true;
-    collectionId?: true;
+    categoryId?: true;
     createdAt?: true;
     updatedAt?: true;
 };
@@ -159,7 +159,7 @@ export type LehengaMaxAggregateInputType = {
     pickupAvailable?: true;
     status?: true;
     isFeatured?: true;
-    collectionId?: true;
+    categoryId?: true;
     createdAt?: true;
     updatedAt?: true;
 };
@@ -184,7 +184,7 @@ export type LehengaCountAggregateInputType = {
     pickupAvailable?: true;
     status?: true;
     isFeatured?: true;
-    collectionId?: true;
+    categoryId?: true;
     createdAt?: true;
     updatedAt?: true;
     _all?: true;
@@ -286,7 +286,7 @@ export type LehengaGroupByOutputType = {
     pickupAvailable: boolean;
     status: $Enums.ProductStatus;
     isFeatured: boolean;
-    collectionId: string | null;
+    categoryId: string | null;
     createdAt: Date;
     updatedAt: Date;
     _count: LehengaCountAggregateOutputType | null;
@@ -322,10 +322,10 @@ export type LehengaWhereInput = {
     pickupAvailable?: Prisma.BoolFilter<"Lehenga"> | boolean;
     status?: Prisma.EnumProductStatusFilter<"Lehenga"> | $Enums.ProductStatus;
     isFeatured?: Prisma.BoolFilter<"Lehenga"> | boolean;
-    collectionId?: Prisma.StringNullableFilter<"Lehenga"> | string | null;
+    categoryId?: Prisma.StringNullableFilter<"Lehenga"> | string | null;
     createdAt?: Prisma.DateTimeFilter<"Lehenga"> | Date | string;
     updatedAt?: Prisma.DateTimeFilter<"Lehenga"> | Date | string;
-    collection?: Prisma.XOR<Prisma.CollectionNullableScalarRelationFilter, Prisma.CollectionWhereInput> | null;
+    category?: Prisma.XOR<Prisma.CategoryNullableScalarRelationFilter, Prisma.CategoryWhereInput> | null;
     sizes?: Prisma.LehengaSizeListRelationFilter;
     images?: Prisma.LehengaImageListRelationFilter;
     orderItems?: Prisma.RentalOrderItemListRelationFilter;
@@ -351,10 +351,10 @@ export type LehengaOrderByWithRelationInput = {
     pickupAvailable?: Prisma.SortOrder;
     status?: Prisma.SortOrder;
     isFeatured?: Prisma.SortOrder;
-    collectionId?: Prisma.SortOrderInput | Prisma.SortOrder;
+    categoryId?: Prisma.SortOrderInput | Prisma.SortOrder;
     createdAt?: Prisma.SortOrder;
     updatedAt?: Prisma.SortOrder;
-    collection?: Prisma.CollectionOrderByWithRelationInput;
+    category?: Prisma.CategoryOrderByWithRelationInput;
     sizes?: Prisma.LehengaSizeOrderByRelationAggregateInput;
     images?: Prisma.LehengaImageOrderByRelationAggregateInput;
     orderItems?: Prisma.RentalOrderItemOrderByRelationAggregateInput;
@@ -383,10 +383,10 @@ export type LehengaWhereUniqueInput = Prisma.AtLeast<{
     pickupAvailable?: Prisma.BoolFilter<"Lehenga"> | boolean;
     status?: Prisma.EnumProductStatusFilter<"Lehenga"> | $Enums.ProductStatus;
     isFeatured?: Prisma.BoolFilter<"Lehenga"> | boolean;
-    collectionId?: Prisma.StringNullableFilter<"Lehenga"> | string | null;
+    categoryId?: Prisma.StringNullableFilter<"Lehenga"> | string | null;
     createdAt?: Prisma.DateTimeFilter<"Lehenga"> | Date | string;
     updatedAt?: Prisma.DateTimeFilter<"Lehenga"> | Date | string;
-    collection?: Prisma.XOR<Prisma.CollectionNullableScalarRelationFilter, Prisma.CollectionWhereInput> | null;
+    category?: Prisma.XOR<Prisma.CategoryNullableScalarRelationFilter, Prisma.CategoryWhereInput> | null;
     sizes?: Prisma.LehengaSizeListRelationFilter;
     images?: Prisma.LehengaImageListRelationFilter;
     orderItems?: Prisma.RentalOrderItemListRelationFilter;
@@ -412,7 +412,7 @@ export type LehengaOrderByWithAggregationInput = {
     pickupAvailable?: Prisma.SortOrder;
     status?: Prisma.SortOrder;
     isFeatured?: Prisma.SortOrder;
-    collectionId?: Prisma.SortOrderInput | Prisma.SortOrder;
+    categoryId?: Prisma.SortOrderInput | Prisma.SortOrder;
     createdAt?: Prisma.SortOrder;
     updatedAt?: Prisma.SortOrder;
     _count?: Prisma.LehengaCountOrderByAggregateInput;
@@ -445,7 +445,7 @@ export type LehengaScalarWhereWithAggregatesInput = {
     pickupAvailable?: Prisma.BoolWithAggregatesFilter<"Lehenga"> | boolean;
     status?: Prisma.EnumProductStatusWithAggregatesFilter<"Lehenga"> | $Enums.ProductStatus;
     isFeatured?: Prisma.BoolWithAggregatesFilter<"Lehenga"> | boolean;
-    collectionId?: Prisma.StringNullableWithAggregatesFilter<"Lehenga"> | string | null;
+    categoryId?: Prisma.StringNullableWithAggregatesFilter<"Lehenga"> | string | null;
     createdAt?: Prisma.DateTimeWithAggregatesFilter<"Lehenga"> | Date | string;
     updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Lehenga"> | Date | string;
 };
@@ -472,7 +472,7 @@ export type LehengaCreateInput = {
     isFeatured?: boolean;
     createdAt?: Date | string;
     updatedAt?: Date | string;
-    collection?: Prisma.CollectionCreateNestedOneWithoutLehengasInput;
+    category?: Prisma.CategoryCreateNestedOneWithoutLehengasInput;
     sizes?: Prisma.LehengaSizeCreateNestedManyWithoutLehengaInput;
     images?: Prisma.LehengaImageCreateNestedManyWithoutLehengaInput;
     orderItems?: Prisma.RentalOrderItemCreateNestedManyWithoutLehengaInput;
@@ -498,7 +498,7 @@ export type LehengaUncheckedCreateInput = {
     pickupAvailable?: boolean;
     status?: $Enums.ProductStatus;
     isFeatured?: boolean;
-    collectionId?: string | null;
+    categoryId?: string | null;
     createdAt?: Date | string;
     updatedAt?: Date | string;
     sizes?: Prisma.LehengaSizeUncheckedCreateNestedManyWithoutLehengaInput;
@@ -528,7 +528,7 @@ export type LehengaUpdateInput = {
     isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-    collection?: Prisma.CollectionUpdateOneWithoutLehengasNestedInput;
+    category?: Prisma.CategoryUpdateOneWithoutLehengasNestedInput;
     sizes?: Prisma.LehengaSizeUpdateManyWithoutLehengaNestedInput;
     images?: Prisma.LehengaImageUpdateManyWithoutLehengaNestedInput;
     orderItems?: Prisma.RentalOrderItemUpdateManyWithoutLehengaNestedInput;
@@ -554,7 +554,7 @@ export type LehengaUncheckedUpdateInput = {
     pickupAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus;
     isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean;
-    collectionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    categoryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     sizes?: Prisma.LehengaSizeUncheckedUpdateManyWithoutLehengaNestedInput;
@@ -582,7 +582,7 @@ export type LehengaCreateManyInput = {
     pickupAvailable?: boolean;
     status?: $Enums.ProductStatus;
     isFeatured?: boolean;
-    collectionId?: string | null;
+    categoryId?: string | null;
     createdAt?: Date | string;
     updatedAt?: Date | string;
 };
@@ -631,7 +631,7 @@ export type LehengaUncheckedUpdateManyInput = {
     pickupAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus;
     isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean;
-    collectionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    categoryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
 };
@@ -664,7 +664,7 @@ export type LehengaCountOrderByAggregateInput = {
     pickupAvailable?: Prisma.SortOrder;
     status?: Prisma.SortOrder;
     isFeatured?: Prisma.SortOrder;
-    collectionId?: Prisma.SortOrder;
+    categoryId?: Prisma.SortOrder;
     createdAt?: Prisma.SortOrder;
     updatedAt?: Prisma.SortOrder;
 };
@@ -695,7 +695,7 @@ export type LehengaMaxOrderByAggregateInput = {
     pickupAvailable?: Prisma.SortOrder;
     status?: Prisma.SortOrder;
     isFeatured?: Prisma.SortOrder;
-    collectionId?: Prisma.SortOrder;
+    categoryId?: Prisma.SortOrder;
     createdAt?: Prisma.SortOrder;
     updatedAt?: Prisma.SortOrder;
 };
@@ -720,7 +720,7 @@ export type LehengaMinOrderByAggregateInput = {
     pickupAvailable?: Prisma.SortOrder;
     status?: Prisma.SortOrder;
     isFeatured?: Prisma.SortOrder;
-    collectionId?: Prisma.SortOrder;
+    categoryId?: Prisma.SortOrder;
     createdAt?: Prisma.SortOrder;
     updatedAt?: Prisma.SortOrder;
 };
@@ -738,42 +738,42 @@ export type LehengaNullableScalarRelationFilter = {
     is?: Prisma.LehengaWhereInput | null;
     isNot?: Prisma.LehengaWhereInput | null;
 };
-export type LehengaCreateNestedManyWithoutCollectionInput = {
-    create?: Prisma.XOR<Prisma.LehengaCreateWithoutCollectionInput, Prisma.LehengaUncheckedCreateWithoutCollectionInput> | Prisma.LehengaCreateWithoutCollectionInput[] | Prisma.LehengaUncheckedCreateWithoutCollectionInput[];
-    connectOrCreate?: Prisma.LehengaCreateOrConnectWithoutCollectionInput | Prisma.LehengaCreateOrConnectWithoutCollectionInput[];
-    createMany?: Prisma.LehengaCreateManyCollectionInputEnvelope;
+export type LehengaCreateNestedManyWithoutCategoryInput = {
+    create?: Prisma.XOR<Prisma.LehengaCreateWithoutCategoryInput, Prisma.LehengaUncheckedCreateWithoutCategoryInput> | Prisma.LehengaCreateWithoutCategoryInput[] | Prisma.LehengaUncheckedCreateWithoutCategoryInput[];
+    connectOrCreate?: Prisma.LehengaCreateOrConnectWithoutCategoryInput | Prisma.LehengaCreateOrConnectWithoutCategoryInput[];
+    createMany?: Prisma.LehengaCreateManyCategoryInputEnvelope;
     connect?: Prisma.LehengaWhereUniqueInput | Prisma.LehengaWhereUniqueInput[];
 };
-export type LehengaUncheckedCreateNestedManyWithoutCollectionInput = {
-    create?: Prisma.XOR<Prisma.LehengaCreateWithoutCollectionInput, Prisma.LehengaUncheckedCreateWithoutCollectionInput> | Prisma.LehengaCreateWithoutCollectionInput[] | Prisma.LehengaUncheckedCreateWithoutCollectionInput[];
-    connectOrCreate?: Prisma.LehengaCreateOrConnectWithoutCollectionInput | Prisma.LehengaCreateOrConnectWithoutCollectionInput[];
-    createMany?: Prisma.LehengaCreateManyCollectionInputEnvelope;
+export type LehengaUncheckedCreateNestedManyWithoutCategoryInput = {
+    create?: Prisma.XOR<Prisma.LehengaCreateWithoutCategoryInput, Prisma.LehengaUncheckedCreateWithoutCategoryInput> | Prisma.LehengaCreateWithoutCategoryInput[] | Prisma.LehengaUncheckedCreateWithoutCategoryInput[];
+    connectOrCreate?: Prisma.LehengaCreateOrConnectWithoutCategoryInput | Prisma.LehengaCreateOrConnectWithoutCategoryInput[];
+    createMany?: Prisma.LehengaCreateManyCategoryInputEnvelope;
     connect?: Prisma.LehengaWhereUniqueInput | Prisma.LehengaWhereUniqueInput[];
 };
-export type LehengaUpdateManyWithoutCollectionNestedInput = {
-    create?: Prisma.XOR<Prisma.LehengaCreateWithoutCollectionInput, Prisma.LehengaUncheckedCreateWithoutCollectionInput> | Prisma.LehengaCreateWithoutCollectionInput[] | Prisma.LehengaUncheckedCreateWithoutCollectionInput[];
-    connectOrCreate?: Prisma.LehengaCreateOrConnectWithoutCollectionInput | Prisma.LehengaCreateOrConnectWithoutCollectionInput[];
-    upsert?: Prisma.LehengaUpsertWithWhereUniqueWithoutCollectionInput | Prisma.LehengaUpsertWithWhereUniqueWithoutCollectionInput[];
-    createMany?: Prisma.LehengaCreateManyCollectionInputEnvelope;
+export type LehengaUpdateManyWithoutCategoryNestedInput = {
+    create?: Prisma.XOR<Prisma.LehengaCreateWithoutCategoryInput, Prisma.LehengaUncheckedCreateWithoutCategoryInput> | Prisma.LehengaCreateWithoutCategoryInput[] | Prisma.LehengaUncheckedCreateWithoutCategoryInput[];
+    connectOrCreate?: Prisma.LehengaCreateOrConnectWithoutCategoryInput | Prisma.LehengaCreateOrConnectWithoutCategoryInput[];
+    upsert?: Prisma.LehengaUpsertWithWhereUniqueWithoutCategoryInput | Prisma.LehengaUpsertWithWhereUniqueWithoutCategoryInput[];
+    createMany?: Prisma.LehengaCreateManyCategoryInputEnvelope;
     set?: Prisma.LehengaWhereUniqueInput | Prisma.LehengaWhereUniqueInput[];
     disconnect?: Prisma.LehengaWhereUniqueInput | Prisma.LehengaWhereUniqueInput[];
     delete?: Prisma.LehengaWhereUniqueInput | Prisma.LehengaWhereUniqueInput[];
     connect?: Prisma.LehengaWhereUniqueInput | Prisma.LehengaWhereUniqueInput[];
-    update?: Prisma.LehengaUpdateWithWhereUniqueWithoutCollectionInput | Prisma.LehengaUpdateWithWhereUniqueWithoutCollectionInput[];
-    updateMany?: Prisma.LehengaUpdateManyWithWhereWithoutCollectionInput | Prisma.LehengaUpdateManyWithWhereWithoutCollectionInput[];
+    update?: Prisma.LehengaUpdateWithWhereUniqueWithoutCategoryInput | Prisma.LehengaUpdateWithWhereUniqueWithoutCategoryInput[];
+    updateMany?: Prisma.LehengaUpdateManyWithWhereWithoutCategoryInput | Prisma.LehengaUpdateManyWithWhereWithoutCategoryInput[];
     deleteMany?: Prisma.LehengaScalarWhereInput | Prisma.LehengaScalarWhereInput[];
 };
-export type LehengaUncheckedUpdateManyWithoutCollectionNestedInput = {
-    create?: Prisma.XOR<Prisma.LehengaCreateWithoutCollectionInput, Prisma.LehengaUncheckedCreateWithoutCollectionInput> | Prisma.LehengaCreateWithoutCollectionInput[] | Prisma.LehengaUncheckedCreateWithoutCollectionInput[];
-    connectOrCreate?: Prisma.LehengaCreateOrConnectWithoutCollectionInput | Prisma.LehengaCreateOrConnectWithoutCollectionInput[];
-    upsert?: Prisma.LehengaUpsertWithWhereUniqueWithoutCollectionInput | Prisma.LehengaUpsertWithWhereUniqueWithoutCollectionInput[];
-    createMany?: Prisma.LehengaCreateManyCollectionInputEnvelope;
+export type LehengaUncheckedUpdateManyWithoutCategoryNestedInput = {
+    create?: Prisma.XOR<Prisma.LehengaCreateWithoutCategoryInput, Prisma.LehengaUncheckedCreateWithoutCategoryInput> | Prisma.LehengaCreateWithoutCategoryInput[] | Prisma.LehengaUncheckedCreateWithoutCategoryInput[];
+    connectOrCreate?: Prisma.LehengaCreateOrConnectWithoutCategoryInput | Prisma.LehengaCreateOrConnectWithoutCategoryInput[];
+    upsert?: Prisma.LehengaUpsertWithWhereUniqueWithoutCategoryInput | Prisma.LehengaUpsertWithWhereUniqueWithoutCategoryInput[];
+    createMany?: Prisma.LehengaCreateManyCategoryInputEnvelope;
     set?: Prisma.LehengaWhereUniqueInput | Prisma.LehengaWhereUniqueInput[];
     disconnect?: Prisma.LehengaWhereUniqueInput | Prisma.LehengaWhereUniqueInput[];
     delete?: Prisma.LehengaWhereUniqueInput | Prisma.LehengaWhereUniqueInput[];
     connect?: Prisma.LehengaWhereUniqueInput | Prisma.LehengaWhereUniqueInput[];
-    update?: Prisma.LehengaUpdateWithWhereUniqueWithoutCollectionInput | Prisma.LehengaUpdateWithWhereUniqueWithoutCollectionInput[];
-    updateMany?: Prisma.LehengaUpdateManyWithWhereWithoutCollectionInput | Prisma.LehengaUpdateManyWithWhereWithoutCollectionInput[];
+    update?: Prisma.LehengaUpdateWithWhereUniqueWithoutCategoryInput | Prisma.LehengaUpdateWithWhereUniqueWithoutCategoryInput[];
+    updateMany?: Prisma.LehengaUpdateManyWithWhereWithoutCategoryInput | Prisma.LehengaUpdateManyWithWhereWithoutCategoryInput[];
     deleteMany?: Prisma.LehengaScalarWhereInput | Prisma.LehengaScalarWhereInput[];
 };
 export type DecimalFieldUpdateOperationsInput = {
@@ -789,6 +789,13 @@ export type NullableDecimalFieldUpdateOperationsInput = {
     decrement?: runtime.Decimal | runtime.DecimalJsLike | number | string;
     multiply?: runtime.Decimal | runtime.DecimalJsLike | number | string;
     divide?: runtime.Decimal | runtime.DecimalJsLike | number | string;
+};
+export type IntFieldUpdateOperationsInput = {
+    set?: number;
+    increment?: number;
+    decrement?: number;
+    multiply?: number;
+    divide?: number;
 };
 export type EnumProductStatusFieldUpdateOperationsInput = {
     set?: $Enums.ProductStatus;
@@ -831,7 +838,7 @@ export type LehengaUpdateOneWithoutOrderItemsNestedInput = {
     connect?: Prisma.LehengaWhereUniqueInput;
     update?: Prisma.XOR<Prisma.XOR<Prisma.LehengaUpdateToOneWithWhereWithoutOrderItemsInput, Prisma.LehengaUpdateWithoutOrderItemsInput>, Prisma.LehengaUncheckedUpdateWithoutOrderItemsInput>;
 };
-export type LehengaCreateWithoutCollectionInput = {
+export type LehengaCreateWithoutCategoryInput = {
     id?: string;
     name: string;
     slug: string;
@@ -858,7 +865,7 @@ export type LehengaCreateWithoutCollectionInput = {
     images?: Prisma.LehengaImageCreateNestedManyWithoutLehengaInput;
     orderItems?: Prisma.RentalOrderItemCreateNestedManyWithoutLehengaInput;
 };
-export type LehengaUncheckedCreateWithoutCollectionInput = {
+export type LehengaUncheckedCreateWithoutCategoryInput = {
     id?: string;
     name: string;
     slug: string;
@@ -885,26 +892,26 @@ export type LehengaUncheckedCreateWithoutCollectionInput = {
     images?: Prisma.LehengaImageUncheckedCreateNestedManyWithoutLehengaInput;
     orderItems?: Prisma.RentalOrderItemUncheckedCreateNestedManyWithoutLehengaInput;
 };
-export type LehengaCreateOrConnectWithoutCollectionInput = {
+export type LehengaCreateOrConnectWithoutCategoryInput = {
     where: Prisma.LehengaWhereUniqueInput;
-    create: Prisma.XOR<Prisma.LehengaCreateWithoutCollectionInput, Prisma.LehengaUncheckedCreateWithoutCollectionInput>;
+    create: Prisma.XOR<Prisma.LehengaCreateWithoutCategoryInput, Prisma.LehengaUncheckedCreateWithoutCategoryInput>;
 };
-export type LehengaCreateManyCollectionInputEnvelope = {
-    data: Prisma.LehengaCreateManyCollectionInput | Prisma.LehengaCreateManyCollectionInput[];
+export type LehengaCreateManyCategoryInputEnvelope = {
+    data: Prisma.LehengaCreateManyCategoryInput | Prisma.LehengaCreateManyCategoryInput[];
     skipDuplicates?: boolean;
 };
-export type LehengaUpsertWithWhereUniqueWithoutCollectionInput = {
+export type LehengaUpsertWithWhereUniqueWithoutCategoryInput = {
     where: Prisma.LehengaWhereUniqueInput;
-    update: Prisma.XOR<Prisma.LehengaUpdateWithoutCollectionInput, Prisma.LehengaUncheckedUpdateWithoutCollectionInput>;
-    create: Prisma.XOR<Prisma.LehengaCreateWithoutCollectionInput, Prisma.LehengaUncheckedCreateWithoutCollectionInput>;
+    update: Prisma.XOR<Prisma.LehengaUpdateWithoutCategoryInput, Prisma.LehengaUncheckedUpdateWithoutCategoryInput>;
+    create: Prisma.XOR<Prisma.LehengaCreateWithoutCategoryInput, Prisma.LehengaUncheckedCreateWithoutCategoryInput>;
 };
-export type LehengaUpdateWithWhereUniqueWithoutCollectionInput = {
+export type LehengaUpdateWithWhereUniqueWithoutCategoryInput = {
     where: Prisma.LehengaWhereUniqueInput;
-    data: Prisma.XOR<Prisma.LehengaUpdateWithoutCollectionInput, Prisma.LehengaUncheckedUpdateWithoutCollectionInput>;
+    data: Prisma.XOR<Prisma.LehengaUpdateWithoutCategoryInput, Prisma.LehengaUncheckedUpdateWithoutCategoryInput>;
 };
-export type LehengaUpdateManyWithWhereWithoutCollectionInput = {
+export type LehengaUpdateManyWithWhereWithoutCategoryInput = {
     where: Prisma.LehengaScalarWhereInput;
-    data: Prisma.XOR<Prisma.LehengaUpdateManyMutationInput, Prisma.LehengaUncheckedUpdateManyWithoutCollectionInput>;
+    data: Prisma.XOR<Prisma.LehengaUpdateManyMutationInput, Prisma.LehengaUncheckedUpdateManyWithoutCategoryInput>;
 };
 export type LehengaScalarWhereInput = {
     AND?: Prisma.LehengaScalarWhereInput | Prisma.LehengaScalarWhereInput[];
@@ -930,7 +937,7 @@ export type LehengaScalarWhereInput = {
     pickupAvailable?: Prisma.BoolFilter<"Lehenga"> | boolean;
     status?: Prisma.EnumProductStatusFilter<"Lehenga"> | $Enums.ProductStatus;
     isFeatured?: Prisma.BoolFilter<"Lehenga"> | boolean;
-    collectionId?: Prisma.StringNullableFilter<"Lehenga"> | string | null;
+    categoryId?: Prisma.StringNullableFilter<"Lehenga"> | string | null;
     createdAt?: Prisma.DateTimeFilter<"Lehenga"> | Date | string;
     updatedAt?: Prisma.DateTimeFilter<"Lehenga"> | Date | string;
 };
@@ -957,7 +964,7 @@ export type LehengaCreateWithoutSizesInput = {
     isFeatured?: boolean;
     createdAt?: Date | string;
     updatedAt?: Date | string;
-    collection?: Prisma.CollectionCreateNestedOneWithoutLehengasInput;
+    category?: Prisma.CategoryCreateNestedOneWithoutLehengasInput;
     images?: Prisma.LehengaImageCreateNestedManyWithoutLehengaInput;
     orderItems?: Prisma.RentalOrderItemCreateNestedManyWithoutLehengaInput;
 };
@@ -982,7 +989,7 @@ export type LehengaUncheckedCreateWithoutSizesInput = {
     pickupAvailable?: boolean;
     status?: $Enums.ProductStatus;
     isFeatured?: boolean;
-    collectionId?: string | null;
+    categoryId?: string | null;
     createdAt?: Date | string;
     updatedAt?: Date | string;
     images?: Prisma.LehengaImageUncheckedCreateNestedManyWithoutLehengaInput;
@@ -1024,7 +1031,7 @@ export type LehengaUpdateWithoutSizesInput = {
     isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-    collection?: Prisma.CollectionUpdateOneWithoutLehengasNestedInput;
+    category?: Prisma.CategoryUpdateOneWithoutLehengasNestedInput;
     images?: Prisma.LehengaImageUpdateManyWithoutLehengaNestedInput;
     orderItems?: Prisma.RentalOrderItemUpdateManyWithoutLehengaNestedInput;
 };
@@ -1049,7 +1056,7 @@ export type LehengaUncheckedUpdateWithoutSizesInput = {
     pickupAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus;
     isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean;
-    collectionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    categoryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     images?: Prisma.LehengaImageUncheckedUpdateManyWithoutLehengaNestedInput;
@@ -1078,7 +1085,7 @@ export type LehengaCreateWithoutImagesInput = {
     isFeatured?: boolean;
     createdAt?: Date | string;
     updatedAt?: Date | string;
-    collection?: Prisma.CollectionCreateNestedOneWithoutLehengasInput;
+    category?: Prisma.CategoryCreateNestedOneWithoutLehengasInput;
     sizes?: Prisma.LehengaSizeCreateNestedManyWithoutLehengaInput;
     orderItems?: Prisma.RentalOrderItemCreateNestedManyWithoutLehengaInput;
 };
@@ -1103,7 +1110,7 @@ export type LehengaUncheckedCreateWithoutImagesInput = {
     pickupAvailable?: boolean;
     status?: $Enums.ProductStatus;
     isFeatured?: boolean;
-    collectionId?: string | null;
+    categoryId?: string | null;
     createdAt?: Date | string;
     updatedAt?: Date | string;
     sizes?: Prisma.LehengaSizeUncheckedCreateNestedManyWithoutLehengaInput;
@@ -1145,7 +1152,7 @@ export type LehengaUpdateWithoutImagesInput = {
     isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-    collection?: Prisma.CollectionUpdateOneWithoutLehengasNestedInput;
+    category?: Prisma.CategoryUpdateOneWithoutLehengasNestedInput;
     sizes?: Prisma.LehengaSizeUpdateManyWithoutLehengaNestedInput;
     orderItems?: Prisma.RentalOrderItemUpdateManyWithoutLehengaNestedInput;
 };
@@ -1170,7 +1177,7 @@ export type LehengaUncheckedUpdateWithoutImagesInput = {
     pickupAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus;
     isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean;
-    collectionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    categoryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     sizes?: Prisma.LehengaSizeUncheckedUpdateManyWithoutLehengaNestedInput;
@@ -1199,7 +1206,7 @@ export type LehengaCreateWithoutOrderItemsInput = {
     isFeatured?: boolean;
     createdAt?: Date | string;
     updatedAt?: Date | string;
-    collection?: Prisma.CollectionCreateNestedOneWithoutLehengasInput;
+    category?: Prisma.CategoryCreateNestedOneWithoutLehengasInput;
     sizes?: Prisma.LehengaSizeCreateNestedManyWithoutLehengaInput;
     images?: Prisma.LehengaImageCreateNestedManyWithoutLehengaInput;
 };
@@ -1224,7 +1231,7 @@ export type LehengaUncheckedCreateWithoutOrderItemsInput = {
     pickupAvailable?: boolean;
     status?: $Enums.ProductStatus;
     isFeatured?: boolean;
-    collectionId?: string | null;
+    categoryId?: string | null;
     createdAt?: Date | string;
     updatedAt?: Date | string;
     sizes?: Prisma.LehengaSizeUncheckedCreateNestedManyWithoutLehengaInput;
@@ -1266,7 +1273,7 @@ export type LehengaUpdateWithoutOrderItemsInput = {
     isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-    collection?: Prisma.CollectionUpdateOneWithoutLehengasNestedInput;
+    category?: Prisma.CategoryUpdateOneWithoutLehengasNestedInput;
     sizes?: Prisma.LehengaSizeUpdateManyWithoutLehengaNestedInput;
     images?: Prisma.LehengaImageUpdateManyWithoutLehengaNestedInput;
 };
@@ -1291,13 +1298,13 @@ export type LehengaUncheckedUpdateWithoutOrderItemsInput = {
     pickupAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus;
     isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean;
-    collectionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    categoryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     sizes?: Prisma.LehengaSizeUncheckedUpdateManyWithoutLehengaNestedInput;
     images?: Prisma.LehengaImageUncheckedUpdateManyWithoutLehengaNestedInput;
 };
-export type LehengaCreateManyCollectionInput = {
+export type LehengaCreateManyCategoryInput = {
     id?: string;
     name: string;
     slug: string;
@@ -1321,7 +1328,7 @@ export type LehengaCreateManyCollectionInput = {
     createdAt?: Date | string;
     updatedAt?: Date | string;
 };
-export type LehengaUpdateWithoutCollectionInput = {
+export type LehengaUpdateWithoutCategoryInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
     name?: Prisma.StringFieldUpdateOperationsInput | string;
     slug?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -1348,7 +1355,7 @@ export type LehengaUpdateWithoutCollectionInput = {
     images?: Prisma.LehengaImageUpdateManyWithoutLehengaNestedInput;
     orderItems?: Prisma.RentalOrderItemUpdateManyWithoutLehengaNestedInput;
 };
-export type LehengaUncheckedUpdateWithoutCollectionInput = {
+export type LehengaUncheckedUpdateWithoutCategoryInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
     name?: Prisma.StringFieldUpdateOperationsInput | string;
     slug?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -1375,7 +1382,7 @@ export type LehengaUncheckedUpdateWithoutCollectionInput = {
     images?: Prisma.LehengaImageUncheckedUpdateManyWithoutLehengaNestedInput;
     orderItems?: Prisma.RentalOrderItemUncheckedUpdateManyWithoutLehengaNestedInput;
 };
-export type LehengaUncheckedUpdateManyWithoutCollectionInput = {
+export type LehengaUncheckedUpdateManyWithoutCategoryInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
     name?: Prisma.StringFieldUpdateOperationsInput | string;
     slug?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -1460,10 +1467,10 @@ export type LehengaSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     pickupAvailable?: boolean;
     status?: boolean;
     isFeatured?: boolean;
-    collectionId?: boolean;
+    categoryId?: boolean;
     createdAt?: boolean;
     updatedAt?: boolean;
-    collection?: boolean | Prisma.Lehenga$collectionArgs<ExtArgs>;
+    category?: boolean | Prisma.Lehenga$categoryArgs<ExtArgs>;
     sizes?: boolean | Prisma.Lehenga$sizesArgs<ExtArgs>;
     images?: boolean | Prisma.Lehenga$imagesArgs<ExtArgs>;
     orderItems?: boolean | Prisma.Lehenga$orderItemsArgs<ExtArgs>;
@@ -1490,10 +1497,10 @@ export type LehengaSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
     pickupAvailable?: boolean;
     status?: boolean;
     isFeatured?: boolean;
-    collectionId?: boolean;
+    categoryId?: boolean;
     createdAt?: boolean;
     updatedAt?: boolean;
-    collection?: boolean | Prisma.Lehenga$collectionArgs<ExtArgs>;
+    category?: boolean | Prisma.Lehenga$categoryArgs<ExtArgs>;
 }, ExtArgs["result"]["lehenga"]>;
 export type LehengaSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
     id?: boolean;
@@ -1516,10 +1523,10 @@ export type LehengaSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
     pickupAvailable?: boolean;
     status?: boolean;
     isFeatured?: boolean;
-    collectionId?: boolean;
+    categoryId?: boolean;
     createdAt?: boolean;
     updatedAt?: boolean;
-    collection?: boolean | Prisma.Lehenga$collectionArgs<ExtArgs>;
+    category?: boolean | Prisma.Lehenga$categoryArgs<ExtArgs>;
 }, ExtArgs["result"]["lehenga"]>;
 export type LehengaSelectScalar = {
     id?: boolean;
@@ -1542,28 +1549,28 @@ export type LehengaSelectScalar = {
     pickupAvailable?: boolean;
     status?: boolean;
     isFeatured?: boolean;
-    collectionId?: boolean;
+    categoryId?: boolean;
     createdAt?: boolean;
     updatedAt?: boolean;
 };
-export type LehengaOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "slug" | "sku" | "shortDescription" | "description" | "designer" | "color" | "fabric" | "embroideryDetails" | "occasion" | "setIncludes" | "careInstructions" | "rentalPricePerDay" | "securityDeposit" | "originalPrice" | "minimumRentalDays" | "pickupAvailable" | "status" | "isFeatured" | "collectionId" | "createdAt" | "updatedAt", ExtArgs["result"]["lehenga"]>;
+export type LehengaOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "slug" | "sku" | "shortDescription" | "description" | "designer" | "color" | "fabric" | "embroideryDetails" | "occasion" | "setIncludes" | "careInstructions" | "rentalPricePerDay" | "securityDeposit" | "originalPrice" | "minimumRentalDays" | "pickupAvailable" | "status" | "isFeatured" | "categoryId" | "createdAt" | "updatedAt", ExtArgs["result"]["lehenga"]>;
 export type LehengaInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-    collection?: boolean | Prisma.Lehenga$collectionArgs<ExtArgs>;
+    category?: boolean | Prisma.Lehenga$categoryArgs<ExtArgs>;
     sizes?: boolean | Prisma.Lehenga$sizesArgs<ExtArgs>;
     images?: boolean | Prisma.Lehenga$imagesArgs<ExtArgs>;
     orderItems?: boolean | Prisma.Lehenga$orderItemsArgs<ExtArgs>;
     _count?: boolean | Prisma.LehengaCountOutputTypeDefaultArgs<ExtArgs>;
 };
 export type LehengaIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-    collection?: boolean | Prisma.Lehenga$collectionArgs<ExtArgs>;
+    category?: boolean | Prisma.Lehenga$categoryArgs<ExtArgs>;
 };
 export type LehengaIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-    collection?: boolean | Prisma.Lehenga$collectionArgs<ExtArgs>;
+    category?: boolean | Prisma.Lehenga$categoryArgs<ExtArgs>;
 };
 export type $LehengaPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     name: "Lehenga";
     objects: {
-        collection: Prisma.$CollectionPayload<ExtArgs> | null;
+        category: Prisma.$CategoryPayload<ExtArgs> | null;
         sizes: Prisma.$LehengaSizePayload<ExtArgs>[];
         images: Prisma.$LehengaImagePayload<ExtArgs>[];
         orderItems: Prisma.$RentalOrderItemPayload<ExtArgs>[];
@@ -1589,7 +1596,7 @@ export type $LehengaPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
         pickupAvailable: boolean;
         status: $Enums.ProductStatus;
         isFeatured: boolean;
-        collectionId: string | null;
+        categoryId: string | null;
         createdAt: Date;
         updatedAt: Date;
     }, ExtArgs["result"]["lehenga"]>;
@@ -1921,7 +1928,7 @@ export interface LehengaDelegate<ExtArgs extends runtime.Types.Extensions.Intern
  */
 export interface Prisma__LehengaClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise";
-    collection<T extends Prisma.Lehenga$collectionArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Lehenga$collectionArgs<ExtArgs>>): Prisma.Prisma__CollectionClient<runtime.Types.Result.GetResult<Prisma.$CollectionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>;
+    category<T extends Prisma.Lehenga$categoryArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Lehenga$categoryArgs<ExtArgs>>): Prisma.Prisma__CategoryClient<runtime.Types.Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>;
     sizes<T extends Prisma.Lehenga$sizesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Lehenga$sizesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LehengaSizePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>;
     images<T extends Prisma.Lehenga$imagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Lehenga$imagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LehengaImagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>;
     orderItems<T extends Prisma.Lehenga$orderItemsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Lehenga$orderItemsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RentalOrderItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>;
@@ -1970,7 +1977,7 @@ export interface LehengaFieldRefs {
     readonly pickupAvailable: Prisma.FieldRef<"Lehenga", 'Boolean'>;
     readonly status: Prisma.FieldRef<"Lehenga", 'ProductStatus'>;
     readonly isFeatured: Prisma.FieldRef<"Lehenga", 'Boolean'>;
-    readonly collectionId: Prisma.FieldRef<"Lehenga", 'String'>;
+    readonly categoryId: Prisma.FieldRef<"Lehenga", 'String'>;
     readonly createdAt: Prisma.FieldRef<"Lehenga", 'DateTime'>;
     readonly updatedAt: Prisma.FieldRef<"Lehenga", 'DateTime'>;
 }
@@ -2357,22 +2364,22 @@ export type LehengaDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Inter
     limit?: number;
 };
 /**
- * Lehenga.collection
+ * Lehenga.category
  */
-export type Lehenga$collectionArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type Lehenga$categoryArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the Collection
+     * Select specific fields to fetch from the Category
      */
-    select?: Prisma.CollectionSelect<ExtArgs> | null;
+    select?: Prisma.CategorySelect<ExtArgs> | null;
     /**
-     * Omit specific fields from the Collection
+     * Omit specific fields from the Category
      */
-    omit?: Prisma.CollectionOmit<ExtArgs> | null;
+    omit?: Prisma.CategoryOmit<ExtArgs> | null;
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: Prisma.CollectionInclude<ExtArgs> | null;
-    where?: Prisma.CollectionWhereInput;
+    include?: Prisma.CategoryInclude<ExtArgs> | null;
+    where?: Prisma.CategoryWhereInput;
 };
 /**
  * Lehenga.sizes
