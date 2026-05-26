@@ -44,6 +44,18 @@ export declare const PaymentStatus: {
     readonly FAILED: "FAILED";
 };
 export type PaymentStatus = (typeof PaymentStatus)[keyof typeof PaymentStatus];
+export declare const PaymentMethod: {
+    readonly ONLINE: "ONLINE";
+    readonly PICKUP: "PICKUP";
+};
+export type PaymentMethod = (typeof PaymentMethod)[keyof typeof PaymentMethod];
+export declare const DepositRefundStatus: {
+    readonly NOT_APPLICABLE: "NOT_APPLICABLE";
+    readonly PENDING: "PENDING";
+    readonly REFUNDED: "REFUNDED";
+    readonly FAILED: "FAILED";
+};
+export type DepositRefundStatus = (typeof DepositRefundStatus)[keyof typeof DepositRefundStatus];
 export declare const RentalItemType: {
     readonly LEHENGA: "LEHENGA";
     readonly JEWELLERY: "JEWELLERY";

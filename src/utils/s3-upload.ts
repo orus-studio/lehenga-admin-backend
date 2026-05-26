@@ -12,6 +12,8 @@ const s3Client = new S3Client({
   },
 });
 
+let uploadsDisabled = false;
+
 const dataUrlPattern = /^data:(?<mime>[-\w.+/]+);base64,(?<payload>.+)$/;
 
 function sanitizeSegment(value: string) {
@@ -101,7 +103,7 @@ async function uploadDataUrlImage(dataUrl: string, context: UploadContext, sortO
 export async function uploadCatalogImages(images: InputImage[], context: UploadContext): Promise<OutputImage[]> {
   return Promise.all(
     images.map(async (image, index) => {
-      if (!image.imageUrl.startsWith("data:")) {
+      if (!image.imageUrl.startsWith("data:") || uploadsDisabled) {
         return image;
       }
 
@@ -112,6 +114,13 @@ export async function uploadCatalogImages(images: InputImage[], context: UploadC
       } catch (error) {
         if (error instanceof AppError) {
           throw error;
+        }
+
+        const errorCode =
+          typeof error === "object" && error !== null && "Code" in error ? String(error.Code) : undefined;
+
+        if (errorCode === "NoSuchBucket") {
+          uploadsDisabled = true;
         }
 
         console.error("S3 upload failed, keeping inline image payload", error);

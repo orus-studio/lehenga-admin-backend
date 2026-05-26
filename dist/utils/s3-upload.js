@@ -9,6 +9,7 @@ const s3Client = new S3Client({
         secretAccessKey: env.awsSecretAccessKey,
     },
 });
+let uploadsDisabled = false;
 const dataUrlPattern = /^data:(?<mime>[-\w.+/]+);base64,(?<payload>.+)$/;
 function sanitizeSegment(value) {
     return value
@@ -67,7 +68,7 @@ async function uploadDataUrlImage(dataUrl, context, sortOrder) {
 }
 export async function uploadCatalogImages(images, context) {
     return Promise.all(images.map(async (image, index) => {
-        if (!image.imageUrl.startsWith("data:")) {
+        if (!image.imageUrl.startsWith("data:") || uploadsDisabled) {
             return image;
         }
         let imageUrl = image.imageUrl;
@@ -77,6 +78,10 @@ export async function uploadCatalogImages(images, context) {
         catch (error) {
             if (error instanceof AppError) {
                 throw error;
+            }
+            const errorCode = typeof error === "object" && error !== null && "Code" in error ? String(error.Code) : undefined;
+            if (errorCode === "NoSuchBucket") {
+                uploadsDisabled = true;
             }
             console.error("S3 upload failed, keeping inline image payload", error);
         }

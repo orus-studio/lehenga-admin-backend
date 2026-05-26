@@ -37,6 +37,7 @@ export declare const ModelName: {
     readonly StoreLocation: "StoreLocation";
     readonly RentalOrder: "RentalOrder";
     readonly RentalOrderItem: "RentalOrderItem";
+    readonly ProductReview: "ProductReview";
 };
 export type ModelName = (typeof ModelName)[keyof typeof ModelName];
 export declare const TransactionIsolationLevel: {
@@ -195,6 +196,7 @@ export declare const RentalOrderScalarFieldEnum: {
     readonly createdByAdminId: "createdByAdminId";
     readonly status: "status";
     readonly paymentStatus: "paymentStatus";
+    readonly paymentMethod: "paymentMethod";
     readonly rentalStartDate: "rentalStartDate";
     readonly rentalEndDate: "rentalEndDate";
     readonly pickupDate: "pickupDate";
@@ -204,6 +206,16 @@ export declare const RentalOrderScalarFieldEnum: {
     readonly discountAmount: "discountAmount";
     readonly totalAmount: "totalAmount";
     readonly amountPaid: "amountPaid";
+    readonly amountDueAtPickup: "amountDueAtPickup";
+    readonly depositRefundStatus: "depositRefundStatus";
+    readonly depositRefundedAmount: "depositRefundedAmount";
+    readonly depositRefundedAt: "depositRefundedAt";
+    readonly depositRefundReference: "depositRefundReference";
+    readonly depositRefundNotes: "depositRefundNotes";
+    readonly paymentGatewayOrderId: "paymentGatewayOrderId";
+    readonly paymentGatewayPaymentId: "paymentGatewayPaymentId";
+    readonly paymentGatewaySignature: "paymentGatewaySignature";
+    readonly paymentCapturedAt: "paymentCapturedAt";
     readonly specialInstructions: "specialInstructions";
     readonly internalNotes: "internalNotes";
     readonly createdAt: "createdAt";
@@ -221,13 +233,34 @@ export declare const RentalOrderItemScalarFieldEnum: {
     readonly skuSnapshot: "skuSnapshot";
     readonly sizeLabelSnapshot: "sizeLabelSnapshot";
     readonly quantity: "quantity";
+    readonly rentalStartDate: "rentalStartDate";
+    readonly rentalEndDate: "rentalEndDate";
     readonly pricePerDay: "pricePerDay";
     readonly rentalDays: "rentalDays";
     readonly lineTotal: "lineTotal";
     readonly depositAmount: "depositAmount";
+    readonly measurementUpper: "measurementUpper";
+    readonly measurementChest: "measurementChest";
+    readonly measurementWaist: "measurementWaist";
+    readonly measurementArmHole: "measurementArmHole";
+    readonly measurementMori: "measurementMori";
+    readonly measurementNotes: "measurementNotes";
     readonly createdAt: "createdAt";
 };
 export type RentalOrderItemScalarFieldEnum = (typeof RentalOrderItemScalarFieldEnum)[keyof typeof RentalOrderItemScalarFieldEnum];
+export declare const ProductReviewScalarFieldEnum: {
+    readonly id: "id";
+    readonly customerId: "customerId";
+    readonly itemType: "itemType";
+    readonly lehengaId: "lehengaId";
+    readonly jewelleryId: "jewelleryId";
+    readonly rating: "rating";
+    readonly comment: "comment";
+    readonly isVisible: "isVisible";
+    readonly createdAt: "createdAt";
+    readonly updatedAt: "updatedAt";
+};
+export type ProductReviewScalarFieldEnum = (typeof ProductReviewScalarFieldEnum)[keyof typeof ProductReviewScalarFieldEnum];
 export declare const SortOrder: {
     readonly asc: "asc";
     readonly desc: "desc";

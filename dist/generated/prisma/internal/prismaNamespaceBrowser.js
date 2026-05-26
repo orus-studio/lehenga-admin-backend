@@ -49,7 +49,8 @@ export const ModelName = {
     JewelleryImage: 'JewelleryImage',
     StoreLocation: 'StoreLocation',
     RentalOrder: 'RentalOrder',
-    RentalOrderItem: 'RentalOrderItem'
+    RentalOrderItem: 'RentalOrderItem',
+    ProductReview: 'ProductReview'
 };
 /*
  * Enums
@@ -200,6 +201,7 @@ export const RentalOrderScalarFieldEnum = {
     createdByAdminId: 'createdByAdminId',
     status: 'status',
     paymentStatus: 'paymentStatus',
+    paymentMethod: 'paymentMethod',
     rentalStartDate: 'rentalStartDate',
     rentalEndDate: 'rentalEndDate',
     pickupDate: 'pickupDate',
@@ -209,6 +211,16 @@ export const RentalOrderScalarFieldEnum = {
     discountAmount: 'discountAmount',
     totalAmount: 'totalAmount',
     amountPaid: 'amountPaid',
+    amountDueAtPickup: 'amountDueAtPickup',
+    depositRefundStatus: 'depositRefundStatus',
+    depositRefundedAmount: 'depositRefundedAmount',
+    depositRefundedAt: 'depositRefundedAt',
+    depositRefundReference: 'depositRefundReference',
+    depositRefundNotes: 'depositRefundNotes',
+    paymentGatewayOrderId: 'paymentGatewayOrderId',
+    paymentGatewayPaymentId: 'paymentGatewayPaymentId',
+    paymentGatewaySignature: 'paymentGatewaySignature',
+    paymentCapturedAt: 'paymentCapturedAt',
     specialInstructions: 'specialInstructions',
     internalNotes: 'internalNotes',
     createdAt: 'createdAt',
@@ -225,11 +237,31 @@ export const RentalOrderItemScalarFieldEnum = {
     skuSnapshot: 'skuSnapshot',
     sizeLabelSnapshot: 'sizeLabelSnapshot',
     quantity: 'quantity',
+    rentalStartDate: 'rentalStartDate',
+    rentalEndDate: 'rentalEndDate',
     pricePerDay: 'pricePerDay',
     rentalDays: 'rentalDays',
     lineTotal: 'lineTotal',
     depositAmount: 'depositAmount',
+    measurementUpper: 'measurementUpper',
+    measurementChest: 'measurementChest',
+    measurementWaist: 'measurementWaist',
+    measurementArmHole: 'measurementArmHole',
+    measurementMori: 'measurementMori',
+    measurementNotes: 'measurementNotes',
     createdAt: 'createdAt'
+};
+export const ProductReviewScalarFieldEnum = {
+    id: 'id',
+    customerId: 'customerId',
+    itemType: 'itemType',
+    lehengaId: 'lehengaId',
+    jewelleryId: 'jewelleryId',
+    rating: 'rating',
+    comment: 'comment',
+    isVisible: 'isVisible',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
 };
 export const SortOrder = {
     asc: 'asc',

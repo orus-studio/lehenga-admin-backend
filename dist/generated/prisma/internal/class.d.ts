@@ -238,6 +238,17 @@ export interface PrismaClient<in LogOpts extends Prisma.LogLevel = never, in out
     get rentalOrderItem(): Prisma.RentalOrderItemDelegate<ExtArgs, {
         omit: OmitOpts;
     }>;
+    /**
+     * `prisma.productReview`: Exposes CRUD operations for the **ProductReview** model.
+      * Example usage:
+      * ```ts
+      * // Fetch zero or more ProductReviews
+      * const productReviews = await prisma.productReview.findMany()
+      * ```
+      */
+    get productReview(): Prisma.ProductReviewDelegate<ExtArgs, {
+        omit: OmitOpts;
+    }>;
 }
 export declare function getPrismaClientClass(): PrismaClientConstructor;
 //# sourceMappingURL=class.d.ts.map

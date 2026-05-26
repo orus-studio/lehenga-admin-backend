@@ -332,6 +332,7 @@ export type JewelleryWhereInput = {
     category?: Prisma.XOR<Prisma.CategoryNullableScalarRelationFilter, Prisma.CategoryWhereInput> | null;
     images?: Prisma.JewelleryImageListRelationFilter;
     orderItems?: Prisma.RentalOrderItemListRelationFilter;
+    reviews?: Prisma.ProductReviewListRelationFilter;
 };
 export type JewelleryOrderByWithRelationInput = {
     id?: Prisma.SortOrder;
@@ -360,6 +361,7 @@ export type JewelleryOrderByWithRelationInput = {
     category?: Prisma.CategoryOrderByWithRelationInput;
     images?: Prisma.JewelleryImageOrderByRelationAggregateInput;
     orderItems?: Prisma.RentalOrderItemOrderByRelationAggregateInput;
+    reviews?: Prisma.ProductReviewOrderByRelationAggregateInput;
 };
 export type JewelleryWhereUniqueInput = Prisma.AtLeast<{
     id?: string;
@@ -391,6 +393,7 @@ export type JewelleryWhereUniqueInput = Prisma.AtLeast<{
     category?: Prisma.XOR<Prisma.CategoryNullableScalarRelationFilter, Prisma.CategoryWhereInput> | null;
     images?: Prisma.JewelleryImageListRelationFilter;
     orderItems?: Prisma.RentalOrderItemListRelationFilter;
+    reviews?: Prisma.ProductReviewListRelationFilter;
 }, "id" | "slug" | "sku">;
 export type JewelleryOrderByWithAggregationInput = {
     id?: Prisma.SortOrder;
@@ -476,6 +479,7 @@ export type JewelleryCreateInput = {
     category?: Prisma.CategoryCreateNestedOneWithoutJewelleryItemsInput;
     images?: Prisma.JewelleryImageCreateNestedManyWithoutJewelleryInput;
     orderItems?: Prisma.RentalOrderItemCreateNestedManyWithoutJewelleryInput;
+    reviews?: Prisma.ProductReviewCreateNestedManyWithoutJewelleryInput;
 };
 export type JewelleryUncheckedCreateInput = {
     id?: string;
@@ -503,6 +507,7 @@ export type JewelleryUncheckedCreateInput = {
     updatedAt?: Date | string;
     images?: Prisma.JewelleryImageUncheckedCreateNestedManyWithoutJewelleryInput;
     orderItems?: Prisma.RentalOrderItemUncheckedCreateNestedManyWithoutJewelleryInput;
+    reviews?: Prisma.ProductReviewUncheckedCreateNestedManyWithoutJewelleryInput;
 };
 export type JewelleryUpdateInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -530,6 +535,7 @@ export type JewelleryUpdateInput = {
     category?: Prisma.CategoryUpdateOneWithoutJewelleryItemsNestedInput;
     images?: Prisma.JewelleryImageUpdateManyWithoutJewelleryNestedInput;
     orderItems?: Prisma.RentalOrderItemUpdateManyWithoutJewelleryNestedInput;
+    reviews?: Prisma.ProductReviewUpdateManyWithoutJewelleryNestedInput;
 };
 export type JewelleryUncheckedUpdateInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -557,6 +563,7 @@ export type JewelleryUncheckedUpdateInput = {
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     images?: Prisma.JewelleryImageUncheckedUpdateManyWithoutJewelleryNestedInput;
     orderItems?: Prisma.RentalOrderItemUncheckedUpdateManyWithoutJewelleryNestedInput;
+    reviews?: Prisma.ProductReviewUncheckedUpdateManyWithoutJewelleryNestedInput;
 };
 export type JewelleryCreateManyInput = {
     id?: string;
@@ -804,6 +811,20 @@ export type JewelleryUpdateOneWithoutOrderItemsNestedInput = {
     connect?: Prisma.JewelleryWhereUniqueInput;
     update?: Prisma.XOR<Prisma.XOR<Prisma.JewelleryUpdateToOneWithWhereWithoutOrderItemsInput, Prisma.JewelleryUpdateWithoutOrderItemsInput>, Prisma.JewelleryUncheckedUpdateWithoutOrderItemsInput>;
 };
+export type JewelleryCreateNestedOneWithoutReviewsInput = {
+    create?: Prisma.XOR<Prisma.JewelleryCreateWithoutReviewsInput, Prisma.JewelleryUncheckedCreateWithoutReviewsInput>;
+    connectOrCreate?: Prisma.JewelleryCreateOrConnectWithoutReviewsInput;
+    connect?: Prisma.JewelleryWhereUniqueInput;
+};
+export type JewelleryUpdateOneWithoutReviewsNestedInput = {
+    create?: Prisma.XOR<Prisma.JewelleryCreateWithoutReviewsInput, Prisma.JewelleryUncheckedCreateWithoutReviewsInput>;
+    connectOrCreate?: Prisma.JewelleryCreateOrConnectWithoutReviewsInput;
+    upsert?: Prisma.JewelleryUpsertWithoutReviewsInput;
+    disconnect?: Prisma.JewelleryWhereInput | boolean;
+    delete?: Prisma.JewelleryWhereInput | boolean;
+    connect?: Prisma.JewelleryWhereUniqueInput;
+    update?: Prisma.XOR<Prisma.XOR<Prisma.JewelleryUpdateToOneWithWhereWithoutReviewsInput, Prisma.JewelleryUpdateWithoutReviewsInput>, Prisma.JewelleryUncheckedUpdateWithoutReviewsInput>;
+};
 export type JewelleryCreateWithoutCategoryInput = {
     id?: string;
     name: string;
@@ -829,6 +850,7 @@ export type JewelleryCreateWithoutCategoryInput = {
     updatedAt?: Date | string;
     images?: Prisma.JewelleryImageCreateNestedManyWithoutJewelleryInput;
     orderItems?: Prisma.RentalOrderItemCreateNestedManyWithoutJewelleryInput;
+    reviews?: Prisma.ProductReviewCreateNestedManyWithoutJewelleryInput;
 };
 export type JewelleryUncheckedCreateWithoutCategoryInput = {
     id?: string;
@@ -855,6 +877,7 @@ export type JewelleryUncheckedCreateWithoutCategoryInput = {
     updatedAt?: Date | string;
     images?: Prisma.JewelleryImageUncheckedCreateNestedManyWithoutJewelleryInput;
     orderItems?: Prisma.RentalOrderItemUncheckedCreateNestedManyWithoutJewelleryInput;
+    reviews?: Prisma.ProductReviewUncheckedCreateNestedManyWithoutJewelleryInput;
 };
 export type JewelleryCreateOrConnectWithoutCategoryInput = {
     where: Prisma.JewelleryWhereUniqueInput;
@@ -930,6 +953,7 @@ export type JewelleryCreateWithoutImagesInput = {
     updatedAt?: Date | string;
     category?: Prisma.CategoryCreateNestedOneWithoutJewelleryItemsInput;
     orderItems?: Prisma.RentalOrderItemCreateNestedManyWithoutJewelleryInput;
+    reviews?: Prisma.ProductReviewCreateNestedManyWithoutJewelleryInput;
 };
 export type JewelleryUncheckedCreateWithoutImagesInput = {
     id?: string;
@@ -956,6 +980,7 @@ export type JewelleryUncheckedCreateWithoutImagesInput = {
     createdAt?: Date | string;
     updatedAt?: Date | string;
     orderItems?: Prisma.RentalOrderItemUncheckedCreateNestedManyWithoutJewelleryInput;
+    reviews?: Prisma.ProductReviewUncheckedCreateNestedManyWithoutJewelleryInput;
 };
 export type JewelleryCreateOrConnectWithoutImagesInput = {
     where: Prisma.JewelleryWhereUniqueInput;
@@ -995,6 +1020,7 @@ export type JewelleryUpdateWithoutImagesInput = {
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     category?: Prisma.CategoryUpdateOneWithoutJewelleryItemsNestedInput;
     orderItems?: Prisma.RentalOrderItemUpdateManyWithoutJewelleryNestedInput;
+    reviews?: Prisma.ProductReviewUpdateManyWithoutJewelleryNestedInput;
 };
 export type JewelleryUncheckedUpdateWithoutImagesInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -1021,6 +1047,7 @@ export type JewelleryUncheckedUpdateWithoutImagesInput = {
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     orderItems?: Prisma.RentalOrderItemUncheckedUpdateManyWithoutJewelleryNestedInput;
+    reviews?: Prisma.ProductReviewUncheckedUpdateManyWithoutJewelleryNestedInput;
 };
 export type JewelleryCreateWithoutOrderItemsInput = {
     id?: string;
@@ -1047,6 +1074,7 @@ export type JewelleryCreateWithoutOrderItemsInput = {
     updatedAt?: Date | string;
     category?: Prisma.CategoryCreateNestedOneWithoutJewelleryItemsInput;
     images?: Prisma.JewelleryImageCreateNestedManyWithoutJewelleryInput;
+    reviews?: Prisma.ProductReviewCreateNestedManyWithoutJewelleryInput;
 };
 export type JewelleryUncheckedCreateWithoutOrderItemsInput = {
     id?: string;
@@ -1073,6 +1101,7 @@ export type JewelleryUncheckedCreateWithoutOrderItemsInput = {
     createdAt?: Date | string;
     updatedAt?: Date | string;
     images?: Prisma.JewelleryImageUncheckedCreateNestedManyWithoutJewelleryInput;
+    reviews?: Prisma.ProductReviewUncheckedCreateNestedManyWithoutJewelleryInput;
 };
 export type JewelleryCreateOrConnectWithoutOrderItemsInput = {
     where: Prisma.JewelleryWhereUniqueInput;
@@ -1112,6 +1141,7 @@ export type JewelleryUpdateWithoutOrderItemsInput = {
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     category?: Prisma.CategoryUpdateOneWithoutJewelleryItemsNestedInput;
     images?: Prisma.JewelleryImageUpdateManyWithoutJewelleryNestedInput;
+    reviews?: Prisma.ProductReviewUpdateManyWithoutJewelleryNestedInput;
 };
 export type JewelleryUncheckedUpdateWithoutOrderItemsInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -1138,6 +1168,128 @@ export type JewelleryUncheckedUpdateWithoutOrderItemsInput = {
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     images?: Prisma.JewelleryImageUncheckedUpdateManyWithoutJewelleryNestedInput;
+    reviews?: Prisma.ProductReviewUncheckedUpdateManyWithoutJewelleryNestedInput;
+};
+export type JewelleryCreateWithoutReviewsInput = {
+    id?: string;
+    name: string;
+    slug: string;
+    sku: string;
+    shortDescription?: string | null;
+    description?: string | null;
+    type?: $Enums.JewelleryType;
+    material?: string | null;
+    color?: string | null;
+    finish?: string | null;
+    stoneDetails?: string | null;
+    occasion?: string | null;
+    rentalPricePerDay: runtime.Decimal | runtime.DecimalJsLike | number | string;
+    securityDeposit?: runtime.Decimal | runtime.DecimalJsLike | number | string | null;
+    originalPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null;
+    minimumRentalDays?: number;
+    stockQuantity?: number;
+    pickupAvailable?: boolean;
+    status?: $Enums.ProductStatus;
+    isFeatured?: boolean;
+    createdAt?: Date | string;
+    updatedAt?: Date | string;
+    category?: Prisma.CategoryCreateNestedOneWithoutJewelleryItemsInput;
+    images?: Prisma.JewelleryImageCreateNestedManyWithoutJewelleryInput;
+    orderItems?: Prisma.RentalOrderItemCreateNestedManyWithoutJewelleryInput;
+};
+export type JewelleryUncheckedCreateWithoutReviewsInput = {
+    id?: string;
+    name: string;
+    slug: string;
+    sku: string;
+    shortDescription?: string | null;
+    description?: string | null;
+    type?: $Enums.JewelleryType;
+    material?: string | null;
+    color?: string | null;
+    finish?: string | null;
+    stoneDetails?: string | null;
+    occasion?: string | null;
+    rentalPricePerDay: runtime.Decimal | runtime.DecimalJsLike | number | string;
+    securityDeposit?: runtime.Decimal | runtime.DecimalJsLike | number | string | null;
+    originalPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null;
+    minimumRentalDays?: number;
+    stockQuantity?: number;
+    pickupAvailable?: boolean;
+    status?: $Enums.ProductStatus;
+    isFeatured?: boolean;
+    categoryId?: string | null;
+    createdAt?: Date | string;
+    updatedAt?: Date | string;
+    images?: Prisma.JewelleryImageUncheckedCreateNestedManyWithoutJewelleryInput;
+    orderItems?: Prisma.RentalOrderItemUncheckedCreateNestedManyWithoutJewelleryInput;
+};
+export type JewelleryCreateOrConnectWithoutReviewsInput = {
+    where: Prisma.JewelleryWhereUniqueInput;
+    create: Prisma.XOR<Prisma.JewelleryCreateWithoutReviewsInput, Prisma.JewelleryUncheckedCreateWithoutReviewsInput>;
+};
+export type JewelleryUpsertWithoutReviewsInput = {
+    update: Prisma.XOR<Prisma.JewelleryUpdateWithoutReviewsInput, Prisma.JewelleryUncheckedUpdateWithoutReviewsInput>;
+    create: Prisma.XOR<Prisma.JewelleryCreateWithoutReviewsInput, Prisma.JewelleryUncheckedCreateWithoutReviewsInput>;
+    where?: Prisma.JewelleryWhereInput;
+};
+export type JewelleryUpdateToOneWithWhereWithoutReviewsInput = {
+    where?: Prisma.JewelleryWhereInput;
+    data: Prisma.XOR<Prisma.JewelleryUpdateWithoutReviewsInput, Prisma.JewelleryUncheckedUpdateWithoutReviewsInput>;
+};
+export type JewelleryUpdateWithoutReviewsInput = {
+    id?: Prisma.StringFieldUpdateOperationsInput | string;
+    name?: Prisma.StringFieldUpdateOperationsInput | string;
+    slug?: Prisma.StringFieldUpdateOperationsInput | string;
+    sku?: Prisma.StringFieldUpdateOperationsInput | string;
+    shortDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    type?: Prisma.EnumJewelleryTypeFieldUpdateOperationsInput | $Enums.JewelleryType;
+    material?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    finish?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    stoneDetails?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    occasion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    rentalPricePerDay?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
+    securityDeposit?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null;
+    originalPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null;
+    minimumRentalDays?: Prisma.IntFieldUpdateOperationsInput | number;
+    stockQuantity?: Prisma.IntFieldUpdateOperationsInput | number;
+    pickupAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus;
+    isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    category?: Prisma.CategoryUpdateOneWithoutJewelleryItemsNestedInput;
+    images?: Prisma.JewelleryImageUpdateManyWithoutJewelleryNestedInput;
+    orderItems?: Prisma.RentalOrderItemUpdateManyWithoutJewelleryNestedInput;
+};
+export type JewelleryUncheckedUpdateWithoutReviewsInput = {
+    id?: Prisma.StringFieldUpdateOperationsInput | string;
+    name?: Prisma.StringFieldUpdateOperationsInput | string;
+    slug?: Prisma.StringFieldUpdateOperationsInput | string;
+    sku?: Prisma.StringFieldUpdateOperationsInput | string;
+    shortDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    type?: Prisma.EnumJewelleryTypeFieldUpdateOperationsInput | $Enums.JewelleryType;
+    material?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    finish?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    stoneDetails?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    occasion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    rentalPricePerDay?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
+    securityDeposit?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null;
+    originalPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null;
+    minimumRentalDays?: Prisma.IntFieldUpdateOperationsInput | number;
+    stockQuantity?: Prisma.IntFieldUpdateOperationsInput | number;
+    pickupAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus;
+    isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    categoryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    images?: Prisma.JewelleryImageUncheckedUpdateManyWithoutJewelleryNestedInput;
+    orderItems?: Prisma.RentalOrderItemUncheckedUpdateManyWithoutJewelleryNestedInput;
 };
 export type JewelleryCreateManyCategoryInput = {
     id?: string;
@@ -1188,6 +1340,7 @@ export type JewelleryUpdateWithoutCategoryInput = {
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     images?: Prisma.JewelleryImageUpdateManyWithoutJewelleryNestedInput;
     orderItems?: Prisma.RentalOrderItemUpdateManyWithoutJewelleryNestedInput;
+    reviews?: Prisma.ProductReviewUpdateManyWithoutJewelleryNestedInput;
 };
 export type JewelleryUncheckedUpdateWithoutCategoryInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -1214,6 +1367,7 @@ export type JewelleryUncheckedUpdateWithoutCategoryInput = {
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     images?: Prisma.JewelleryImageUncheckedUpdateManyWithoutJewelleryNestedInput;
     orderItems?: Prisma.RentalOrderItemUncheckedUpdateManyWithoutJewelleryNestedInput;
+    reviews?: Prisma.ProductReviewUncheckedUpdateManyWithoutJewelleryNestedInput;
 };
 export type JewelleryUncheckedUpdateManyWithoutCategoryInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -1245,10 +1399,12 @@ export type JewelleryUncheckedUpdateManyWithoutCategoryInput = {
 export type JewelleryCountOutputType = {
     images: number;
     orderItems: number;
+    reviews: number;
 };
 export type JewelleryCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     images?: boolean | JewelleryCountOutputTypeCountImagesArgs;
     orderItems?: boolean | JewelleryCountOutputTypeCountOrderItemsArgs;
+    reviews?: boolean | JewelleryCountOutputTypeCountReviewsArgs;
 };
 /**
  * JewelleryCountOutputType without action
@@ -1270,6 +1426,12 @@ export type JewelleryCountOutputTypeCountImagesArgs<ExtArgs extends runtime.Type
  */
 export type JewelleryCountOutputTypeCountOrderItemsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     where?: Prisma.RentalOrderItemWhereInput;
+};
+/**
+ * JewelleryCountOutputType without action
+ */
+export type JewelleryCountOutputTypeCountReviewsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    where?: Prisma.ProductReviewWhereInput;
 };
 export type JewellerySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
     id?: boolean;
@@ -1298,6 +1460,7 @@ export type JewellerySelect<ExtArgs extends runtime.Types.Extensions.InternalArg
     category?: boolean | Prisma.Jewellery$categoryArgs<ExtArgs>;
     images?: boolean | Prisma.Jewellery$imagesArgs<ExtArgs>;
     orderItems?: boolean | Prisma.Jewellery$orderItemsArgs<ExtArgs>;
+    reviews?: boolean | Prisma.Jewellery$reviewsArgs<ExtArgs>;
     _count?: boolean | Prisma.JewelleryCountOutputTypeDefaultArgs<ExtArgs>;
 }, ExtArgs["result"]["jewellery"]>;
 export type JewellerySelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1382,6 +1545,7 @@ export type JewelleryInclude<ExtArgs extends runtime.Types.Extensions.InternalAr
     category?: boolean | Prisma.Jewellery$categoryArgs<ExtArgs>;
     images?: boolean | Prisma.Jewellery$imagesArgs<ExtArgs>;
     orderItems?: boolean | Prisma.Jewellery$orderItemsArgs<ExtArgs>;
+    reviews?: boolean | Prisma.Jewellery$reviewsArgs<ExtArgs>;
     _count?: boolean | Prisma.JewelleryCountOutputTypeDefaultArgs<ExtArgs>;
 };
 export type JewelleryIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1396,6 +1560,7 @@ export type $JewelleryPayload<ExtArgs extends runtime.Types.Extensions.InternalA
         category: Prisma.$CategoryPayload<ExtArgs> | null;
         images: Prisma.$JewelleryImagePayload<ExtArgs>[];
         orderItems: Prisma.$RentalOrderItemPayload<ExtArgs>[];
+        reviews: Prisma.$ProductReviewPayload<ExtArgs>[];
     };
     scalars: runtime.Types.Extensions.GetPayloadResult<{
         id: string;
@@ -1753,6 +1918,7 @@ export interface Prisma__JewelleryClient<T, Null = never, ExtArgs extends runtim
     category<T extends Prisma.Jewellery$categoryArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Jewellery$categoryArgs<ExtArgs>>): Prisma.Prisma__CategoryClient<runtime.Types.Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>;
     images<T extends Prisma.Jewellery$imagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Jewellery$imagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$JewelleryImagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>;
     orderItems<T extends Prisma.Jewellery$orderItemsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Jewellery$orderItemsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RentalOrderItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>;
+    reviews<T extends Prisma.Jewellery$reviewsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Jewellery$reviewsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProductReviewPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>;
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2247,6 +2413,29 @@ export type Jewellery$orderItemsArgs<ExtArgs extends runtime.Types.Extensions.In
     take?: number;
     skip?: number;
     distinct?: Prisma.RentalOrderItemScalarFieldEnum | Prisma.RentalOrderItemScalarFieldEnum[];
+};
+/**
+ * Jewellery.reviews
+ */
+export type Jewellery$reviewsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProductReview
+     */
+    select?: Prisma.ProductReviewSelect<ExtArgs> | null;
+    /**
+     * Omit specific fields from the ProductReview
+     */
+    omit?: Prisma.ProductReviewOmit<ExtArgs> | null;
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: Prisma.ProductReviewInclude<ExtArgs> | null;
+    where?: Prisma.ProductReviewWhereInput;
+    orderBy?: Prisma.ProductReviewOrderByWithRelationInput | Prisma.ProductReviewOrderByWithRelationInput[];
+    cursor?: Prisma.ProductReviewWhereUniqueInput;
+    take?: number;
+    skip?: number;
+    distinct?: Prisma.ProductReviewScalarFieldEnum | Prisma.ProductReviewScalarFieldEnum[];
 };
 /**
  * Jewellery without action

@@ -33,6 +33,8 @@ export const env = {
     databaseUrl: getRequiredEnv("DATABASE_URL"),
     jwtSecret: getRequiredEnv("JWT_SECRET"),
     jwtExpiresIn: process.env.JWT_EXPIRES_IN ?? "7d",
+    razorpayKeyId: process.env.RAZORPAY_KEY_ID ?? "",
+    razorpayKeySecret: process.env.RAZORPAY_KEY_SECRET ?? "",
     awsAccessKeyId: getRequiredEnv("AWS_ACCESS_KEY_ID"),
     awsSecretAccessKey: getFirstRequiredEnv("AWS_SECRET_ACCESS_KEY", "AWS_SECRET_KEY_ID"),
     awsRegion: getRequiredEnv("AWS_REGION"),

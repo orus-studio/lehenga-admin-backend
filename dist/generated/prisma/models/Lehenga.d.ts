@@ -329,6 +329,7 @@ export type LehengaWhereInput = {
     sizes?: Prisma.LehengaSizeListRelationFilter;
     images?: Prisma.LehengaImageListRelationFilter;
     orderItems?: Prisma.RentalOrderItemListRelationFilter;
+    reviews?: Prisma.ProductReviewListRelationFilter;
 };
 export type LehengaOrderByWithRelationInput = {
     id?: Prisma.SortOrder;
@@ -358,6 +359,7 @@ export type LehengaOrderByWithRelationInput = {
     sizes?: Prisma.LehengaSizeOrderByRelationAggregateInput;
     images?: Prisma.LehengaImageOrderByRelationAggregateInput;
     orderItems?: Prisma.RentalOrderItemOrderByRelationAggregateInput;
+    reviews?: Prisma.ProductReviewOrderByRelationAggregateInput;
 };
 export type LehengaWhereUniqueInput = Prisma.AtLeast<{
     id?: string;
@@ -390,6 +392,7 @@ export type LehengaWhereUniqueInput = Prisma.AtLeast<{
     sizes?: Prisma.LehengaSizeListRelationFilter;
     images?: Prisma.LehengaImageListRelationFilter;
     orderItems?: Prisma.RentalOrderItemListRelationFilter;
+    reviews?: Prisma.ProductReviewListRelationFilter;
 }, "id" | "slug" | "sku">;
 export type LehengaOrderByWithAggregationInput = {
     id?: Prisma.SortOrder;
@@ -476,6 +479,7 @@ export type LehengaCreateInput = {
     sizes?: Prisma.LehengaSizeCreateNestedManyWithoutLehengaInput;
     images?: Prisma.LehengaImageCreateNestedManyWithoutLehengaInput;
     orderItems?: Prisma.RentalOrderItemCreateNestedManyWithoutLehengaInput;
+    reviews?: Prisma.ProductReviewCreateNestedManyWithoutLehengaInput;
 };
 export type LehengaUncheckedCreateInput = {
     id?: string;
@@ -504,6 +508,7 @@ export type LehengaUncheckedCreateInput = {
     sizes?: Prisma.LehengaSizeUncheckedCreateNestedManyWithoutLehengaInput;
     images?: Prisma.LehengaImageUncheckedCreateNestedManyWithoutLehengaInput;
     orderItems?: Prisma.RentalOrderItemUncheckedCreateNestedManyWithoutLehengaInput;
+    reviews?: Prisma.ProductReviewUncheckedCreateNestedManyWithoutLehengaInput;
 };
 export type LehengaUpdateInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -532,6 +537,7 @@ export type LehengaUpdateInput = {
     sizes?: Prisma.LehengaSizeUpdateManyWithoutLehengaNestedInput;
     images?: Prisma.LehengaImageUpdateManyWithoutLehengaNestedInput;
     orderItems?: Prisma.RentalOrderItemUpdateManyWithoutLehengaNestedInput;
+    reviews?: Prisma.ProductReviewUpdateManyWithoutLehengaNestedInput;
 };
 export type LehengaUncheckedUpdateInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -560,6 +566,7 @@ export type LehengaUncheckedUpdateInput = {
     sizes?: Prisma.LehengaSizeUncheckedUpdateManyWithoutLehengaNestedInput;
     images?: Prisma.LehengaImageUncheckedUpdateManyWithoutLehengaNestedInput;
     orderItems?: Prisma.RentalOrderItemUncheckedUpdateManyWithoutLehengaNestedInput;
+    reviews?: Prisma.ProductReviewUncheckedUpdateManyWithoutLehengaNestedInput;
 };
 export type LehengaCreateManyInput = {
     id?: string;
@@ -838,6 +845,20 @@ export type LehengaUpdateOneWithoutOrderItemsNestedInput = {
     connect?: Prisma.LehengaWhereUniqueInput;
     update?: Prisma.XOR<Prisma.XOR<Prisma.LehengaUpdateToOneWithWhereWithoutOrderItemsInput, Prisma.LehengaUpdateWithoutOrderItemsInput>, Prisma.LehengaUncheckedUpdateWithoutOrderItemsInput>;
 };
+export type LehengaCreateNestedOneWithoutReviewsInput = {
+    create?: Prisma.XOR<Prisma.LehengaCreateWithoutReviewsInput, Prisma.LehengaUncheckedCreateWithoutReviewsInput>;
+    connectOrCreate?: Prisma.LehengaCreateOrConnectWithoutReviewsInput;
+    connect?: Prisma.LehengaWhereUniqueInput;
+};
+export type LehengaUpdateOneWithoutReviewsNestedInput = {
+    create?: Prisma.XOR<Prisma.LehengaCreateWithoutReviewsInput, Prisma.LehengaUncheckedCreateWithoutReviewsInput>;
+    connectOrCreate?: Prisma.LehengaCreateOrConnectWithoutReviewsInput;
+    upsert?: Prisma.LehengaUpsertWithoutReviewsInput;
+    disconnect?: Prisma.LehengaWhereInput | boolean;
+    delete?: Prisma.LehengaWhereInput | boolean;
+    connect?: Prisma.LehengaWhereUniqueInput;
+    update?: Prisma.XOR<Prisma.XOR<Prisma.LehengaUpdateToOneWithWhereWithoutReviewsInput, Prisma.LehengaUpdateWithoutReviewsInput>, Prisma.LehengaUncheckedUpdateWithoutReviewsInput>;
+};
 export type LehengaCreateWithoutCategoryInput = {
     id?: string;
     name: string;
@@ -864,6 +885,7 @@ export type LehengaCreateWithoutCategoryInput = {
     sizes?: Prisma.LehengaSizeCreateNestedManyWithoutLehengaInput;
     images?: Prisma.LehengaImageCreateNestedManyWithoutLehengaInput;
     orderItems?: Prisma.RentalOrderItemCreateNestedManyWithoutLehengaInput;
+    reviews?: Prisma.ProductReviewCreateNestedManyWithoutLehengaInput;
 };
 export type LehengaUncheckedCreateWithoutCategoryInput = {
     id?: string;
@@ -891,6 +913,7 @@ export type LehengaUncheckedCreateWithoutCategoryInput = {
     sizes?: Prisma.LehengaSizeUncheckedCreateNestedManyWithoutLehengaInput;
     images?: Prisma.LehengaImageUncheckedCreateNestedManyWithoutLehengaInput;
     orderItems?: Prisma.RentalOrderItemUncheckedCreateNestedManyWithoutLehengaInput;
+    reviews?: Prisma.ProductReviewUncheckedCreateNestedManyWithoutLehengaInput;
 };
 export type LehengaCreateOrConnectWithoutCategoryInput = {
     where: Prisma.LehengaWhereUniqueInput;
@@ -967,6 +990,7 @@ export type LehengaCreateWithoutSizesInput = {
     category?: Prisma.CategoryCreateNestedOneWithoutLehengasInput;
     images?: Prisma.LehengaImageCreateNestedManyWithoutLehengaInput;
     orderItems?: Prisma.RentalOrderItemCreateNestedManyWithoutLehengaInput;
+    reviews?: Prisma.ProductReviewCreateNestedManyWithoutLehengaInput;
 };
 export type LehengaUncheckedCreateWithoutSizesInput = {
     id?: string;
@@ -994,6 +1018,7 @@ export type LehengaUncheckedCreateWithoutSizesInput = {
     updatedAt?: Date | string;
     images?: Prisma.LehengaImageUncheckedCreateNestedManyWithoutLehengaInput;
     orderItems?: Prisma.RentalOrderItemUncheckedCreateNestedManyWithoutLehengaInput;
+    reviews?: Prisma.ProductReviewUncheckedCreateNestedManyWithoutLehengaInput;
 };
 export type LehengaCreateOrConnectWithoutSizesInput = {
     where: Prisma.LehengaWhereUniqueInput;
@@ -1034,6 +1059,7 @@ export type LehengaUpdateWithoutSizesInput = {
     category?: Prisma.CategoryUpdateOneWithoutLehengasNestedInput;
     images?: Prisma.LehengaImageUpdateManyWithoutLehengaNestedInput;
     orderItems?: Prisma.RentalOrderItemUpdateManyWithoutLehengaNestedInput;
+    reviews?: Prisma.ProductReviewUpdateManyWithoutLehengaNestedInput;
 };
 export type LehengaUncheckedUpdateWithoutSizesInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -1061,6 +1087,7 @@ export type LehengaUncheckedUpdateWithoutSizesInput = {
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     images?: Prisma.LehengaImageUncheckedUpdateManyWithoutLehengaNestedInput;
     orderItems?: Prisma.RentalOrderItemUncheckedUpdateManyWithoutLehengaNestedInput;
+    reviews?: Prisma.ProductReviewUncheckedUpdateManyWithoutLehengaNestedInput;
 };
 export type LehengaCreateWithoutImagesInput = {
     id?: string;
@@ -1088,6 +1115,7 @@ export type LehengaCreateWithoutImagesInput = {
     category?: Prisma.CategoryCreateNestedOneWithoutLehengasInput;
     sizes?: Prisma.LehengaSizeCreateNestedManyWithoutLehengaInput;
     orderItems?: Prisma.RentalOrderItemCreateNestedManyWithoutLehengaInput;
+    reviews?: Prisma.ProductReviewCreateNestedManyWithoutLehengaInput;
 };
 export type LehengaUncheckedCreateWithoutImagesInput = {
     id?: string;
@@ -1115,6 +1143,7 @@ export type LehengaUncheckedCreateWithoutImagesInput = {
     updatedAt?: Date | string;
     sizes?: Prisma.LehengaSizeUncheckedCreateNestedManyWithoutLehengaInput;
     orderItems?: Prisma.RentalOrderItemUncheckedCreateNestedManyWithoutLehengaInput;
+    reviews?: Prisma.ProductReviewUncheckedCreateNestedManyWithoutLehengaInput;
 };
 export type LehengaCreateOrConnectWithoutImagesInput = {
     where: Prisma.LehengaWhereUniqueInput;
@@ -1155,6 +1184,7 @@ export type LehengaUpdateWithoutImagesInput = {
     category?: Prisma.CategoryUpdateOneWithoutLehengasNestedInput;
     sizes?: Prisma.LehengaSizeUpdateManyWithoutLehengaNestedInput;
     orderItems?: Prisma.RentalOrderItemUpdateManyWithoutLehengaNestedInput;
+    reviews?: Prisma.ProductReviewUpdateManyWithoutLehengaNestedInput;
 };
 export type LehengaUncheckedUpdateWithoutImagesInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -1182,6 +1212,7 @@ export type LehengaUncheckedUpdateWithoutImagesInput = {
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     sizes?: Prisma.LehengaSizeUncheckedUpdateManyWithoutLehengaNestedInput;
     orderItems?: Prisma.RentalOrderItemUncheckedUpdateManyWithoutLehengaNestedInput;
+    reviews?: Prisma.ProductReviewUncheckedUpdateManyWithoutLehengaNestedInput;
 };
 export type LehengaCreateWithoutOrderItemsInput = {
     id?: string;
@@ -1209,6 +1240,7 @@ export type LehengaCreateWithoutOrderItemsInput = {
     category?: Prisma.CategoryCreateNestedOneWithoutLehengasInput;
     sizes?: Prisma.LehengaSizeCreateNestedManyWithoutLehengaInput;
     images?: Prisma.LehengaImageCreateNestedManyWithoutLehengaInput;
+    reviews?: Prisma.ProductReviewCreateNestedManyWithoutLehengaInput;
 };
 export type LehengaUncheckedCreateWithoutOrderItemsInput = {
     id?: string;
@@ -1236,6 +1268,7 @@ export type LehengaUncheckedCreateWithoutOrderItemsInput = {
     updatedAt?: Date | string;
     sizes?: Prisma.LehengaSizeUncheckedCreateNestedManyWithoutLehengaInput;
     images?: Prisma.LehengaImageUncheckedCreateNestedManyWithoutLehengaInput;
+    reviews?: Prisma.ProductReviewUncheckedCreateNestedManyWithoutLehengaInput;
 };
 export type LehengaCreateOrConnectWithoutOrderItemsInput = {
     where: Prisma.LehengaWhereUniqueInput;
@@ -1276,6 +1309,7 @@ export type LehengaUpdateWithoutOrderItemsInput = {
     category?: Prisma.CategoryUpdateOneWithoutLehengasNestedInput;
     sizes?: Prisma.LehengaSizeUpdateManyWithoutLehengaNestedInput;
     images?: Prisma.LehengaImageUpdateManyWithoutLehengaNestedInput;
+    reviews?: Prisma.ProductReviewUpdateManyWithoutLehengaNestedInput;
 };
 export type LehengaUncheckedUpdateWithoutOrderItemsInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -1303,6 +1337,132 @@ export type LehengaUncheckedUpdateWithoutOrderItemsInput = {
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     sizes?: Prisma.LehengaSizeUncheckedUpdateManyWithoutLehengaNestedInput;
     images?: Prisma.LehengaImageUncheckedUpdateManyWithoutLehengaNestedInput;
+    reviews?: Prisma.ProductReviewUncheckedUpdateManyWithoutLehengaNestedInput;
+};
+export type LehengaCreateWithoutReviewsInput = {
+    id?: string;
+    name: string;
+    slug: string;
+    sku: string;
+    shortDescription?: string | null;
+    description?: string | null;
+    designer?: string | null;
+    color?: string | null;
+    fabric?: string | null;
+    embroideryDetails?: string | null;
+    occasion?: string | null;
+    setIncludes?: string | null;
+    careInstructions?: string | null;
+    rentalPricePerDay: runtime.Decimal | runtime.DecimalJsLike | number | string;
+    securityDeposit?: runtime.Decimal | runtime.DecimalJsLike | number | string | null;
+    originalPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null;
+    minimumRentalDays?: number;
+    pickupAvailable?: boolean;
+    status?: $Enums.ProductStatus;
+    isFeatured?: boolean;
+    createdAt?: Date | string;
+    updatedAt?: Date | string;
+    category?: Prisma.CategoryCreateNestedOneWithoutLehengasInput;
+    sizes?: Prisma.LehengaSizeCreateNestedManyWithoutLehengaInput;
+    images?: Prisma.LehengaImageCreateNestedManyWithoutLehengaInput;
+    orderItems?: Prisma.RentalOrderItemCreateNestedManyWithoutLehengaInput;
+};
+export type LehengaUncheckedCreateWithoutReviewsInput = {
+    id?: string;
+    name: string;
+    slug: string;
+    sku: string;
+    shortDescription?: string | null;
+    description?: string | null;
+    designer?: string | null;
+    color?: string | null;
+    fabric?: string | null;
+    embroideryDetails?: string | null;
+    occasion?: string | null;
+    setIncludes?: string | null;
+    careInstructions?: string | null;
+    rentalPricePerDay: runtime.Decimal | runtime.DecimalJsLike | number | string;
+    securityDeposit?: runtime.Decimal | runtime.DecimalJsLike | number | string | null;
+    originalPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null;
+    minimumRentalDays?: number;
+    pickupAvailable?: boolean;
+    status?: $Enums.ProductStatus;
+    isFeatured?: boolean;
+    categoryId?: string | null;
+    createdAt?: Date | string;
+    updatedAt?: Date | string;
+    sizes?: Prisma.LehengaSizeUncheckedCreateNestedManyWithoutLehengaInput;
+    images?: Prisma.LehengaImageUncheckedCreateNestedManyWithoutLehengaInput;
+    orderItems?: Prisma.RentalOrderItemUncheckedCreateNestedManyWithoutLehengaInput;
+};
+export type LehengaCreateOrConnectWithoutReviewsInput = {
+    where: Prisma.LehengaWhereUniqueInput;
+    create: Prisma.XOR<Prisma.LehengaCreateWithoutReviewsInput, Prisma.LehengaUncheckedCreateWithoutReviewsInput>;
+};
+export type LehengaUpsertWithoutReviewsInput = {
+    update: Prisma.XOR<Prisma.LehengaUpdateWithoutReviewsInput, Prisma.LehengaUncheckedUpdateWithoutReviewsInput>;
+    create: Prisma.XOR<Prisma.LehengaCreateWithoutReviewsInput, Prisma.LehengaUncheckedCreateWithoutReviewsInput>;
+    where?: Prisma.LehengaWhereInput;
+};
+export type LehengaUpdateToOneWithWhereWithoutReviewsInput = {
+    where?: Prisma.LehengaWhereInput;
+    data: Prisma.XOR<Prisma.LehengaUpdateWithoutReviewsInput, Prisma.LehengaUncheckedUpdateWithoutReviewsInput>;
+};
+export type LehengaUpdateWithoutReviewsInput = {
+    id?: Prisma.StringFieldUpdateOperationsInput | string;
+    name?: Prisma.StringFieldUpdateOperationsInput | string;
+    slug?: Prisma.StringFieldUpdateOperationsInput | string;
+    sku?: Prisma.StringFieldUpdateOperationsInput | string;
+    shortDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    designer?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    fabric?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    embroideryDetails?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    occasion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    setIncludes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    careInstructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    rentalPricePerDay?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
+    securityDeposit?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null;
+    originalPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null;
+    minimumRentalDays?: Prisma.IntFieldUpdateOperationsInput | number;
+    pickupAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus;
+    isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    category?: Prisma.CategoryUpdateOneWithoutLehengasNestedInput;
+    sizes?: Prisma.LehengaSizeUpdateManyWithoutLehengaNestedInput;
+    images?: Prisma.LehengaImageUpdateManyWithoutLehengaNestedInput;
+    orderItems?: Prisma.RentalOrderItemUpdateManyWithoutLehengaNestedInput;
+};
+export type LehengaUncheckedUpdateWithoutReviewsInput = {
+    id?: Prisma.StringFieldUpdateOperationsInput | string;
+    name?: Prisma.StringFieldUpdateOperationsInput | string;
+    slug?: Prisma.StringFieldUpdateOperationsInput | string;
+    sku?: Prisma.StringFieldUpdateOperationsInput | string;
+    shortDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    designer?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    fabric?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    embroideryDetails?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    occasion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    setIncludes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    careInstructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    rentalPricePerDay?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
+    securityDeposit?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null;
+    originalPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null;
+    minimumRentalDays?: Prisma.IntFieldUpdateOperationsInput | number;
+    pickupAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus;
+    isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    categoryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    sizes?: Prisma.LehengaSizeUncheckedUpdateManyWithoutLehengaNestedInput;
+    images?: Prisma.LehengaImageUncheckedUpdateManyWithoutLehengaNestedInput;
+    orderItems?: Prisma.RentalOrderItemUncheckedUpdateManyWithoutLehengaNestedInput;
 };
 export type LehengaCreateManyCategoryInput = {
     id?: string;
@@ -1354,6 +1514,7 @@ export type LehengaUpdateWithoutCategoryInput = {
     sizes?: Prisma.LehengaSizeUpdateManyWithoutLehengaNestedInput;
     images?: Prisma.LehengaImageUpdateManyWithoutLehengaNestedInput;
     orderItems?: Prisma.RentalOrderItemUpdateManyWithoutLehengaNestedInput;
+    reviews?: Prisma.ProductReviewUpdateManyWithoutLehengaNestedInput;
 };
 export type LehengaUncheckedUpdateWithoutCategoryInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -1381,6 +1542,7 @@ export type LehengaUncheckedUpdateWithoutCategoryInput = {
     sizes?: Prisma.LehengaSizeUncheckedUpdateManyWithoutLehengaNestedInput;
     images?: Prisma.LehengaImageUncheckedUpdateManyWithoutLehengaNestedInput;
     orderItems?: Prisma.RentalOrderItemUncheckedUpdateManyWithoutLehengaNestedInput;
+    reviews?: Prisma.ProductReviewUncheckedUpdateManyWithoutLehengaNestedInput;
 };
 export type LehengaUncheckedUpdateManyWithoutCategoryInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -1413,11 +1575,13 @@ export type LehengaCountOutputType = {
     sizes: number;
     images: number;
     orderItems: number;
+    reviews: number;
 };
 export type LehengaCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     sizes?: boolean | LehengaCountOutputTypeCountSizesArgs;
     images?: boolean | LehengaCountOutputTypeCountImagesArgs;
     orderItems?: boolean | LehengaCountOutputTypeCountOrderItemsArgs;
+    reviews?: boolean | LehengaCountOutputTypeCountReviewsArgs;
 };
 /**
  * LehengaCountOutputType without action
@@ -1445,6 +1609,12 @@ export type LehengaCountOutputTypeCountImagesArgs<ExtArgs extends runtime.Types.
  */
 export type LehengaCountOutputTypeCountOrderItemsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     where?: Prisma.RentalOrderItemWhereInput;
+};
+/**
+ * LehengaCountOutputType without action
+ */
+export type LehengaCountOutputTypeCountReviewsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    where?: Prisma.ProductReviewWhereInput;
 };
 export type LehengaSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
     id?: boolean;
@@ -1474,6 +1644,7 @@ export type LehengaSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     sizes?: boolean | Prisma.Lehenga$sizesArgs<ExtArgs>;
     images?: boolean | Prisma.Lehenga$imagesArgs<ExtArgs>;
     orderItems?: boolean | Prisma.Lehenga$orderItemsArgs<ExtArgs>;
+    reviews?: boolean | Prisma.Lehenga$reviewsArgs<ExtArgs>;
     _count?: boolean | Prisma.LehengaCountOutputTypeDefaultArgs<ExtArgs>;
 }, ExtArgs["result"]["lehenga"]>;
 export type LehengaSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1559,6 +1730,7 @@ export type LehengaInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs
     sizes?: boolean | Prisma.Lehenga$sizesArgs<ExtArgs>;
     images?: boolean | Prisma.Lehenga$imagesArgs<ExtArgs>;
     orderItems?: boolean | Prisma.Lehenga$orderItemsArgs<ExtArgs>;
+    reviews?: boolean | Prisma.Lehenga$reviewsArgs<ExtArgs>;
     _count?: boolean | Prisma.LehengaCountOutputTypeDefaultArgs<ExtArgs>;
 };
 export type LehengaIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1574,6 +1746,7 @@ export type $LehengaPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
         sizes: Prisma.$LehengaSizePayload<ExtArgs>[];
         images: Prisma.$LehengaImagePayload<ExtArgs>[];
         orderItems: Prisma.$RentalOrderItemPayload<ExtArgs>[];
+        reviews: Prisma.$ProductReviewPayload<ExtArgs>[];
     };
     scalars: runtime.Types.Extensions.GetPayloadResult<{
         id: string;
@@ -1932,6 +2105,7 @@ export interface Prisma__LehengaClient<T, Null = never, ExtArgs extends runtime.
     sizes<T extends Prisma.Lehenga$sizesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Lehenga$sizesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LehengaSizePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>;
     images<T extends Prisma.Lehenga$imagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Lehenga$imagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LehengaImagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>;
     orderItems<T extends Prisma.Lehenga$orderItemsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Lehenga$orderItemsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RentalOrderItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>;
+    reviews<T extends Prisma.Lehenga$reviewsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Lehenga$reviewsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProductReviewPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>;
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2449,6 +2623,29 @@ export type Lehenga$orderItemsArgs<ExtArgs extends runtime.Types.Extensions.Inte
     take?: number;
     skip?: number;
     distinct?: Prisma.RentalOrderItemScalarFieldEnum | Prisma.RentalOrderItemScalarFieldEnum[];
+};
+/**
+ * Lehenga.reviews
+ */
+export type Lehenga$reviewsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProductReview
+     */
+    select?: Prisma.ProductReviewSelect<ExtArgs> | null;
+    /**
+     * Omit specific fields from the ProductReview
+     */
+    omit?: Prisma.ProductReviewOmit<ExtArgs> | null;
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: Prisma.ProductReviewInclude<ExtArgs> | null;
+    where?: Prisma.ProductReviewWhereInput;
+    orderBy?: Prisma.ProductReviewOrderByWithRelationInput | Prisma.ProductReviewOrderByWithRelationInput[];
+    cursor?: Prisma.ProductReviewWhereUniqueInput;
+    take?: number;
+    skip?: number;
+    distinct?: Prisma.ProductReviewScalarFieldEnum | Prisma.ProductReviewScalarFieldEnum[];
 };
 /**
  * Lehenga without action

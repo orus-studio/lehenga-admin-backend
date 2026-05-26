@@ -48,6 +48,16 @@ export const PaymentStatus = {
     REFUNDED: 'REFUNDED',
     FAILED: 'FAILED'
 };
+export const PaymentMethod = {
+    ONLINE: 'ONLINE',
+    PICKUP: 'PICKUP'
+};
+export const DepositRefundStatus = {
+    NOT_APPLICABLE: 'NOT_APPLICABLE',
+    PENDING: 'PENDING',
+    REFUNDED: 'REFUNDED',
+    FAILED: 'FAILED'
+};
 export const RentalItemType = {
     LEHENGA: 'LEHENGA',
     JEWELLERY: 'JEWELLERY'

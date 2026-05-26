@@ -1,11 +1,14 @@
-import { ProductStatus, RentalItemType } from "../generated/prisma/enums.js";
+import { DepositRefundStatus, PaymentMethod, PaymentStatus, ProductStatus, RentalItemType } from "../generated/prisma/enums.js";
 import { Router } from "express";
 import { prisma } from "../lib/prisma.js";
+import { env } from "../config/env.js";
 import { asyncHandler } from "../utils/async-handler.js";
 import { hashPassword, verifyPassword } from "../utils/admin-auth.js";
 import { createCustomerToken, verifyCustomerToken } from "../utils/customer-auth.js";
 import { AppError } from "../utils/app-error.js";
-import { ensureObject, getOptionalNumber, getOptionalString, getRequiredArray, getRequiredString, } from "../utils/validation.js";
+import { buildInventoryApplyOperations, buildOrderItemCreates, parseCheckoutItems, prepareCheckoutItems, summarizePreparedCheckout, } from "../utils/order-checkout.js";
+import { createRazorpayOrder, verifyRazorpaySignature } from "../utils/razorpay.js";
+import { ensureObject, getOptionalNumber, getOptionalString, getRequiredString, } from "../utils/validation.js";
 const orderedImageInclude = {
     orderBy: {
         sortOrder: "asc",
@@ -19,10 +22,42 @@ const publicLehengaInclude = {
             createdAt: "asc",
         },
     },
+    reviews: {
+        where: {
+            isVisible: true,
+        },
+        orderBy: {
+            createdAt: "desc",
+        },
+        include: {
+            customer: {
+                select: {
+                    firstName: true,
+                    lastName: true,
+                },
+            },
+        },
+    },
 };
 const publicJewelleryInclude = {
     category: true,
     images: orderedImageInclude,
+    reviews: {
+        where: {
+            isVisible: true,
+        },
+        orderBy: {
+            createdAt: "desc",
+        },
+        include: {
+            customer: {
+                select: {
+                    firstName: true,
+                    lastName: true,
+                },
+            },
+        },
+    },
 };
 const publicCategoryInclude = {
     lehengas: {
@@ -70,7 +105,6 @@ const orderInclude = {
         },
     },
 };
-const ONE_DAY_MS = 24 * 60 * 60 * 1000;
 const publicCustomerSelect = {
     id: true,
     firstName: true,
@@ -81,20 +115,6 @@ const publicCustomerSelect = {
     createdAt: true,
     updatedAt: true,
 };
-function parseDateValue(value, key) {
-    const date = new Date(value);
-    if (Number.isNaN(date.getTime())) {
-        throw new AppError(`${key} must be a valid date`, 400);
-    }
-    return date;
-}
-function getRentalDays(startDate, endDate) {
-    const diff = endDate.getTime() - startDate.getTime();
-    if (diff < 0) {
-        throw new AppError("rentalEndDate must be on or after rentalStartDate", 400);
-    }
-    return Math.floor(diff / ONE_DAY_MS) + 1;
-}
 async function getDefaultPickupLocation() {
     const existingLocation = await prisma.storeLocation.findFirst({
         where: {
@@ -359,130 +379,49 @@ publicRouter.get("/orders/mine", asyncHandler(async (request, response) => {
         data: orders,
     });
 }));
+publicRouter.post("/orders/preview", asyncHandler(async (request, response) => {
+    await getAuthenticatedCustomer(request.headers.authorization);
+    const body = ensureObject(request.body);
+    const items = parseCheckoutItems(body.items);
+    const preparedItems = await prepareCheckoutItems(items);
+    const summary = summarizePreparedCheckout(preparedItems);
+    response.json({
+        success: true,
+        data: {
+            rentalStartDate: summary.rentalStartDate,
+            rentalEndDate: summary.rentalEndDate,
+            subtotalAmount: summary.subtotalAmount,
+            securityDeposit: summary.securityDeposit,
+            totalAmount: summary.totalAmount,
+            items: preparedItems.map((item) => ({
+                itemType: item.itemType,
+                productNameSnapshot: item.productNameSnapshot,
+                quantity: item.quantity,
+                rentalStartDate: item.rentalStartDate,
+                rentalEndDate: item.rentalEndDate,
+                rentalDays: item.rentalDays,
+                lineTotal: item.lineTotal,
+                depositAmount: item.depositAmount,
+                sizeLabelSnapshot: item.sizeLabelSnapshot,
+            })),
+        },
+    });
+}));
 publicRouter.post("/orders", asyncHandler(async (request, response) => {
     const customer = await getAuthenticatedCustomer(request.headers.authorization);
     const body = ensureObject(request.body);
-    const rentalStartDate = parseDateValue(getRequiredString(body, "rentalStartDate"), "rentalStartDate");
-    const rentalEndDate = parseDateValue(getRequiredString(body, "rentalEndDate"), "rentalEndDate");
     const specialInstructions = getOptionalString(body, "specialInstructions");
     const firstName = getOptionalString(body, "customerName");
     const email = getOptionalString(body, "customerEmail")?.toLowerCase();
-    const items = getRequiredArray(body, "items").map((entry, index) => {
-        const item = ensureObject(entry, `items[${index}] must be an object`);
-        const itemType = getRequiredString(item, "itemType");
-        const quantity = getOptionalNumber(item, "quantity") ?? 1;
-        if (!Number.isInteger(quantity) || quantity <= 0) {
-            throw new AppError(`items[${index}].quantity must be a positive integer`, 400);
-        }
-        if (itemType === RentalItemType.LEHENGA) {
-            return {
-                itemType,
-                quantity,
-                lehengaId: getRequiredString(item, "lehengaId"),
-                lehengaSizeId: getOptionalString(item, "lehengaSizeId"),
-            };
-        }
-        if (itemType === RentalItemType.JEWELLERY) {
-            return {
-                itemType,
-                quantity,
-                jewelleryId: getRequiredString(item, "jewelleryId"),
-            };
-        }
-        throw new AppError(`items[${index}].itemType must be LEHENGA or JEWELLERY`, 400);
-    });
-    const rentalDays = getRentalDays(rentalStartDate, rentalEndDate);
+    const rawPaymentMethod = getRequiredString(body, "paymentMethod");
+    const paymentMethod = rawPaymentMethod === PaymentMethod.ONLINE ? PaymentMethod.ONLINE : rawPaymentMethod === PaymentMethod.PICKUP ? PaymentMethod.PICKUP : null;
+    if (!paymentMethod) {
+        throw new AppError("paymentMethod must be ONLINE or PICKUP", 400);
+    }
+    const items = parseCheckoutItems(body.items);
     const pickupLocation = await getDefaultPickupLocation();
-    const lehengaItems = items.filter((item) => item.itemType === RentalItemType.LEHENGA);
-    const jewelleryItems = items.filter((item) => item.itemType === RentalItemType.JEWELLERY);
-    const [lehengas, jewelleryProducts] = await Promise.all([
-        lehengaItems.length
-            ? prisma.lehenga.findMany({
-                where: {
-                    id: {
-                        in: lehengaItems.map((item) => item.lehengaId),
-                    },
-                },
-                include: {
-                    sizes: true,
-                },
-            })
-            : Promise.resolve([]),
-        jewelleryItems.length
-            ? prisma.jewellery.findMany({
-                where: {
-                    id: {
-                        in: jewelleryItems.map((item) => item.jewelleryId),
-                    },
-                },
-            })
-            : Promise.resolve([]),
-    ]);
-    if (lehengas.length !== lehengaItems.length) {
-        throw new AppError("One or more selected lehengas were not found", 404);
-    }
-    if (jewelleryProducts.length !== jewelleryItems.length) {
-        throw new AppError("One or more selected jewellery items were not found", 404);
-    }
-    const lehengasById = new Map(lehengas.map((lehenga) => [lehenga.id, lehenga]));
-    const jewelleryById = new Map(jewelleryProducts.map((jewellery) => [jewellery.id, jewellery]));
-    const preparedItems = items.map((item) => {
-        if (item.itemType === RentalItemType.LEHENGA) {
-            const lehenga = lehengasById.get(item.lehengaId);
-            if (!lehenga) {
-                throw new AppError("Selected lehenga was not found", 404);
-            }
-            const selectedSize = (item.lehengaSizeId
-                ? lehenga.sizes.find((size) => size.id === item.lehengaSizeId)
-                : lehenga.sizes[0]) ?? null;
-            if (item.lehengaSizeId && !selectedSize) {
-                throw new AppError(`Selected size is not available for ${lehenga.name}`, 400);
-            }
-            if (selectedSize && selectedSize.quantityReserved + item.quantity > selectedSize.quantityTotal) {
-                throw new AppError(`Only limited stock is available for ${lehenga.name} (${selectedSize.sizeLabel})`, 400);
-            }
-            const pricePerDay = Number(lehenga.rentalPricePerDay);
-            const depositAmount = Number(lehenga.securityDeposit ?? 0);
-            const lineTotal = pricePerDay * rentalDays * item.quantity;
-            return {
-                itemType: item.itemType,
-                quantity: item.quantity,
-                productNameSnapshot: lehenga.name,
-                skuSnapshot: lehenga.sku,
-                pricePerDay,
-                rentalDays,
-                lineTotal,
-                depositAmount: depositAmount * item.quantity,
-                sizeLabelSnapshot: selectedSize?.sizeLabel,
-                lehengaId: lehenga.id,
-                lehengaSizeId: selectedSize?.id,
-            };
-        }
-        const jewellery = jewelleryById.get(item.jewelleryId);
-        if (!jewellery) {
-            throw new AppError("Selected jewellery item was not found", 404);
-        }
-        if (item.quantity > jewellery.stockQuantity) {
-            throw new AppError(`Only limited stock is available for ${jewellery.name}`, 400);
-        }
-        const pricePerDay = Number(jewellery.rentalPricePerDay);
-        const depositAmount = Number(jewellery.securityDeposit ?? 0);
-        const lineTotal = pricePerDay * rentalDays * item.quantity;
-        return {
-            itemType: item.itemType,
-            quantity: item.quantity,
-            productNameSnapshot: jewellery.name,
-            skuSnapshot: jewellery.sku,
-            pricePerDay,
-            rentalDays,
-            lineTotal,
-            depositAmount: depositAmount * item.quantity,
-            jewelleryId: jewellery.id,
-        };
-    });
-    const subtotalAmount = preparedItems.reduce((sum, item) => sum + item.lineTotal, 0);
-    const securityDeposit = preparedItems.reduce((sum, item) => sum + item.depositAmount, 0);
-    const totalAmount = subtotalAmount + securityDeposit;
+    const preparedItems = await prepareCheckoutItems(items);
+    const summary = summarizePreparedCheckout(preparedItems);
     if (email) {
         const existingEmailOwner = await prisma.customer.findFirst({
             where: {
@@ -500,8 +439,19 @@ publicRouter.post("/orders", asyncHandler(async (request, response) => {
         }
     }
     const orderNumber = generateOrderNumber();
-    // Avoid interactive transactions here because pooled Postgres connections can
-    // stall on long-lived tx callbacks during checkout.
+    const depositRefundStatus = paymentMethod === PaymentMethod.ONLINE && summary.securityDeposit > 0
+        ? DepositRefundStatus.PENDING
+        : DepositRefundStatus.NOT_APPLICABLE;
+    const razorpayOrder = paymentMethod === PaymentMethod.ONLINE
+        ? await createRazorpayOrder({
+            amountInPaise: Math.round(summary.totalAmount * 100),
+            receipt: orderNumber,
+            notes: {
+                orderNumber,
+                customerId: customer.id,
+            },
+        })
+        : null;
     await prisma.$transaction([
         prisma.customer.update({
             where: { id: customer.id },
@@ -519,72 +469,24 @@ publicRouter.post("/orders", asyncHandler(async (request, response) => {
                 pickupLocation: {
                     connect: { id: pickupLocation.id },
                 },
-                rentalStartDate,
-                rentalEndDate,
-                subtotalAmount,
-                securityDeposit,
-                totalAmount,
+                paymentMethod,
+                paymentStatus: PaymentStatus.PENDING,
+                rentalStartDate: summary.rentalStartDate,
+                rentalEndDate: summary.rentalEndDate,
+                subtotalAmount: summary.subtotalAmount,
+                securityDeposit: summary.securityDeposit,
+                totalAmount: summary.totalAmount,
+                amountPaid: paymentMethod === PaymentMethod.PICKUP ? 0 : 0,
+                amountDueAtPickup: paymentMethod === PaymentMethod.PICKUP ? summary.totalAmount : 0,
+                depositRefundStatus,
+                ...(razorpayOrder ? { paymentGatewayOrderId: razorpayOrder.id } : {}),
                 ...(specialInstructions ? { specialInstructions } : {}),
                 items: {
-                    create: preparedItems.map((item) => ({
-                        itemType: item.itemType,
-                        ...(item.lehengaId
-                            ? {
-                                lehenga: {
-                                    connect: { id: item.lehengaId },
-                                },
-                            }
-                            : {}),
-                        ...(item.lehengaSizeId
-                            ? {
-                                lehengaSize: {
-                                    connect: { id: item.lehengaSizeId },
-                                },
-                                ...(item.sizeLabelSnapshot ? { sizeLabelSnapshot: item.sizeLabelSnapshot } : {}),
-                            }
-                            : {}),
-                        ...(item.jewelleryId
-                            ? {
-                                jewellery: {
-                                    connect: { id: item.jewelleryId },
-                                },
-                            }
-                            : {}),
-                        productNameSnapshot: item.productNameSnapshot,
-                        skuSnapshot: item.skuSnapshot,
-                        quantity: item.quantity,
-                        pricePerDay: item.pricePerDay,
-                        rentalDays: item.rentalDays,
-                        lineTotal: item.lineTotal,
-                        depositAmount: item.depositAmount,
-                    })),
+                    create: buildOrderItemCreates(preparedItems),
                 },
             },
         }),
-        ...preparedItems.flatMap((item) => {
-            const operations = [];
-            if (item.lehengaSizeId) {
-                operations.push(prisma.lehengaSize.update({
-                    where: { id: item.lehengaSizeId },
-                    data: {
-                        quantityReserved: {
-                            increment: item.quantity,
-                        },
-                    },
-                }));
-            }
-            if (item.jewelleryId) {
-                operations.push(prisma.jewellery.update({
-                    where: { id: item.jewelleryId },
-                    data: {
-                        stockQuantity: {
-                            decrement: item.quantity,
-                        },
-                    },
-                }));
-            }
-            return operations;
-        }),
+        ...buildInventoryApplyOperations(preparedItems),
     ]);
     const order = await prisma.rentalOrder.findUniqueOrThrow({
         where: {
@@ -594,8 +496,149 @@ publicRouter.post("/orders", asyncHandler(async (request, response) => {
     });
     response.status(201).json({
         success: true,
-        message: "Order created successfully",
-        data: order,
+        message: paymentMethod === PaymentMethod.ONLINE ? "Order created. Complete the payment to confirm it." : "Order placed successfully",
+        data: {
+            order,
+            ...(razorpayOrder
+                ? {
+                    razorpayOrder: {
+                        id: razorpayOrder.id,
+                        amount: razorpayOrder.amount,
+                        currency: razorpayOrder.currency,
+                        keyId: env.razorpayKeyId,
+                        name: "Lehenga Rental",
+                        description: `Payment for ${order.orderNumber}`,
+                    },
+                }
+                : {}),
+        },
+    });
+}));
+publicRouter.post("/payments/razorpay/verify", asyncHandler(async (request, response) => {
+    const customer = await getAuthenticatedCustomer(request.headers.authorization);
+    const body = ensureObject(request.body);
+    const orderId = getRequiredString(body, "orderId");
+    const razorpayOrderId = getRequiredString(body, "razorpayOrderId");
+    const razorpayPaymentId = getRequiredString(body, "razorpayPaymentId");
+    const razorpaySignature = getRequiredString(body, "razorpaySignature");
+    const order = await prisma.rentalOrder.findFirst({
+        where: {
+            id: orderId,
+            customerId: customer.id,
+        },
+        include: orderInclude,
+    });
+    if (!order) {
+        throw new AppError("Order not found", 404);
+    }
+    if (order.paymentMethod !== PaymentMethod.ONLINE) {
+        throw new AppError("This order is not configured for online payment", 400);
+    }
+    if (!verifyRazorpaySignature({ razorpayOrderId, razorpayPaymentId, razorpaySignature })) {
+        throw new AppError("Invalid Razorpay payment signature", 400);
+    }
+    const updatedOrder = await prisma.rentalOrder.update({
+        where: {
+            id: order.id,
+        },
+        data: {
+            paymentStatus: PaymentStatus.PAID,
+            amountPaid: order.totalAmount,
+            amountDueAtPickup: 0,
+            paymentGatewayOrderId: razorpayOrderId,
+            paymentGatewayPaymentId: razorpayPaymentId,
+            paymentGatewaySignature: razorpaySignature,
+            paymentCapturedAt: new Date(),
+            depositRefundStatus: Number(order.securityDeposit) > 0 ? DepositRefundStatus.PENDING : DepositRefundStatus.NOT_APPLICABLE,
+        },
+        include: orderInclude,
+    });
+    response.json({
+        success: true,
+        message: "Payment verified successfully",
+        data: updatedOrder,
+    });
+}));
+publicRouter.post("/reviews", asyncHandler(async (request, response) => {
+    const customer = await getAuthenticatedCustomer(request.headers.authorization);
+    const body = ensureObject(request.body);
+    const itemType = getRequiredString(body, "itemType");
+    const rating = getOptionalNumber(body, "rating");
+    const comment = getRequiredString(body, "comment");
+    if (itemType !== RentalItemType.LEHENGA && itemType !== RentalItemType.JEWELLERY) {
+        throw new AppError("itemType must be LEHENGA or JEWELLERY", 400);
+    }
+    if (!rating || !Number.isInteger(rating) || rating < 1 || rating > 5) {
+        throw new AppError("rating must be an integer between 1 and 5", 400);
+    }
+    const lehengaId = itemType === RentalItemType.LEHENGA ? getRequiredString(body, "lehengaId") : undefined;
+    const jewelleryId = itemType === RentalItemType.JEWELLERY ? getRequiredString(body, "jewelleryId") : undefined;
+    const matchingOrderItem = await prisma.rentalOrderItem.findFirst({
+        where: {
+            order: {
+                customerId: customer.id,
+            },
+            ...(lehengaId ? { lehengaId } : {}),
+            ...(jewelleryId ? { jewelleryId } : {}),
+        },
+        select: {
+            id: true,
+        },
+    });
+    if (!matchingOrderItem) {
+        throw new AppError("You can review only products you have ordered", 403);
+    }
+    const existingReview = await prisma.productReview.findFirst({
+        where: {
+            customerId: customer.id,
+            ...(lehengaId ? { lehengaId } : {}),
+            ...(jewelleryId ? { jewelleryId } : {}),
+        },
+    });
+    const review = existingReview
+        ? await prisma.productReview.update({
+            where: {
+                id: existingReview.id,
+            },
+            data: {
+                rating,
+                comment,
+                isVisible: true,
+            },
+            include: {
+                customer: {
+                    select: {
+                        firstName: true,
+                        lastName: true,
+                    },
+                },
+            },
+        })
+        : await prisma.productReview.create({
+            data: {
+                customer: {
+                    connect: { id: customer.id },
+                },
+                itemType: itemType,
+                ...(lehengaId ? { lehenga: { connect: { id: lehengaId } } } : {}),
+                ...(jewelleryId ? { jewellery: { connect: { id: jewelleryId } } } : {}),
+                rating,
+                comment,
+                isVisible: true,
+            },
+            include: {
+                customer: {
+                    select: {
+                        firstName: true,
+                        lastName: true,
+                    },
+                },
+            },
+        });
+    response.status(201).json({
+        success: true,
+        message: "Review saved successfully",
+        data: review,
     });
 }));
 //# sourceMappingURL=public.routes.js.map

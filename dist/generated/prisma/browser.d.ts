@@ -57,4 +57,9 @@ export type RentalOrder = Prisma.RentalOrderModel;
  *
  */
 export type RentalOrderItem = Prisma.RentalOrderItemModel;
+/**
+ * Model ProductReview
+ *
+ */
+export type ProductReview = Prisma.ProductReviewModel;
 //# sourceMappingURL=browser.d.ts.map

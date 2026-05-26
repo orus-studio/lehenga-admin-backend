@@ -4,6 +4,8 @@ export declare const env: {
     databaseUrl: string;
     jwtSecret: string;
     jwtExpiresIn: string;
+    razorpayKeyId: string;
+    razorpayKeySecret: string;
     awsAccessKeyId: string;
     awsSecretAccessKey: string;
     awsRegion: string;

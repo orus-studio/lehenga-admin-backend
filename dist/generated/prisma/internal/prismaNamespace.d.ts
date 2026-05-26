@@ -242,6 +242,7 @@ export declare const ModelName: {
     readonly StoreLocation: "StoreLocation";
     readonly RentalOrder: "RentalOrder";
     readonly RentalOrderItem: "RentalOrderItem";
+    readonly ProductReview: "ProductReview";
 };
 export type ModelName = (typeof ModelName)[keyof typeof ModelName];
 export interface TypeMapCb<GlobalOmitOptions = {}> extends runtime.Types.Utils.Fn<{
@@ -254,7 +255,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         omit: GlobalOmitOptions;
     };
     meta: {
-        modelProps: "adminUser" | "customer" | "category" | "lehenga" | "lehengaSize" | "lehengaImage" | "jewellery" | "jewelleryImage" | "storeLocation" | "rentalOrder" | "rentalOrderItem";
+        modelProps: "adminUser" | "customer" | "category" | "lehenga" | "lehengaSize" | "lehengaImage" | "jewellery" | "jewelleryImage" | "storeLocation" | "rentalOrder" | "rentalOrderItem" | "productReview";
         txIsolationLevel: TransactionIsolationLevel;
     };
     model: {
@@ -1072,6 +1073,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
                 };
             };
         };
+        ProductReview: {
+            payload: Prisma.$ProductReviewPayload<ExtArgs>;
+            fields: Prisma.ProductReviewFieldRefs;
+            operations: {
+                findUnique: {
+                    args: Prisma.ProductReviewFindUniqueArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductReviewPayload> | null;
+                };
+                findUniqueOrThrow: {
+                    args: Prisma.ProductReviewFindUniqueOrThrowArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductReviewPayload>;
+                };
+                findFirst: {
+                    args: Prisma.ProductReviewFindFirstArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductReviewPayload> | null;
+                };
+                findFirstOrThrow: {
+                    args: Prisma.ProductReviewFindFirstOrThrowArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductReviewPayload>;
+                };
+                findMany: {
+                    args: Prisma.ProductReviewFindManyArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductReviewPayload>[];
+                };
+                create: {
+                    args: Prisma.ProductReviewCreateArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductReviewPayload>;
+                };
+                createMany: {
+                    args: Prisma.ProductReviewCreateManyArgs<ExtArgs>;
+                    result: BatchPayload;
+                };
+                createManyAndReturn: {
+                    args: Prisma.ProductReviewCreateManyAndReturnArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductReviewPayload>[];
+                };
+                delete: {
+                    args: Prisma.ProductReviewDeleteArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductReviewPayload>;
+                };
+                update: {
+                    args: Prisma.ProductReviewUpdateArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductReviewPayload>;
+                };
+                deleteMany: {
+                    args: Prisma.ProductReviewDeleteManyArgs<ExtArgs>;
+                    result: BatchPayload;
+                };
+                updateMany: {
+                    args: Prisma.ProductReviewUpdateManyArgs<ExtArgs>;
+                    result: BatchPayload;
+                };
+                updateManyAndReturn: {
+                    args: Prisma.ProductReviewUpdateManyAndReturnArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductReviewPayload>[];
+                };
+                upsert: {
+                    args: Prisma.ProductReviewUpsertArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductReviewPayload>;
+                };
+                aggregate: {
+                    args: Prisma.ProductReviewAggregateArgs<ExtArgs>;
+                    result: runtime.Types.Utils.Optional<Prisma.AggregateProductReview>;
+                };
+                groupBy: {
+                    args: Prisma.ProductReviewGroupByArgs<ExtArgs>;
+                    result: runtime.Types.Utils.Optional<Prisma.ProductReviewGroupByOutputType>[];
+                };
+                count: {
+                    args: Prisma.ProductReviewCountArgs<ExtArgs>;
+                    result: runtime.Types.Utils.Optional<Prisma.ProductReviewCountAggregateOutputType> | number;
+                };
+            };
+        };
     };
 } & {
     other: {
@@ -1255,6 +1330,7 @@ export declare const RentalOrderScalarFieldEnum: {
     readonly createdByAdminId: "createdByAdminId";
     readonly status: "status";
     readonly paymentStatus: "paymentStatus";
+    readonly paymentMethod: "paymentMethod";
     readonly rentalStartDate: "rentalStartDate";
     readonly rentalEndDate: "rentalEndDate";
     readonly pickupDate: "pickupDate";
@@ -1264,6 +1340,16 @@ export declare const RentalOrderScalarFieldEnum: {
     readonly discountAmount: "discountAmount";
     readonly totalAmount: "totalAmount";
     readonly amountPaid: "amountPaid";
+    readonly amountDueAtPickup: "amountDueAtPickup";
+    readonly depositRefundStatus: "depositRefundStatus";
+    readonly depositRefundedAmount: "depositRefundedAmount";
+    readonly depositRefundedAt: "depositRefundedAt";
+    readonly depositRefundReference: "depositRefundReference";
+    readonly depositRefundNotes: "depositRefundNotes";
+    readonly paymentGatewayOrderId: "paymentGatewayOrderId";
+    readonly paymentGatewayPaymentId: "paymentGatewayPaymentId";
+    readonly paymentGatewaySignature: "paymentGatewaySignature";
+    readonly paymentCapturedAt: "paymentCapturedAt";
     readonly specialInstructions: "specialInstructions";
     readonly internalNotes: "internalNotes";
     readonly createdAt: "createdAt";
@@ -1281,13 +1367,34 @@ export declare const RentalOrderItemScalarFieldEnum: {
     readonly skuSnapshot: "skuSnapshot";
     readonly sizeLabelSnapshot: "sizeLabelSnapshot";
     readonly quantity: "quantity";
+    readonly rentalStartDate: "rentalStartDate";
+    readonly rentalEndDate: "rentalEndDate";
     readonly pricePerDay: "pricePerDay";
     readonly rentalDays: "rentalDays";
     readonly lineTotal: "lineTotal";
     readonly depositAmount: "depositAmount";
+    readonly measurementUpper: "measurementUpper";
+    readonly measurementChest: "measurementChest";
+    readonly measurementWaist: "measurementWaist";
+    readonly measurementArmHole: "measurementArmHole";
+    readonly measurementMori: "measurementMori";
+    readonly measurementNotes: "measurementNotes";
     readonly createdAt: "createdAt";
 };
 export type RentalOrderItemScalarFieldEnum = (typeof RentalOrderItemScalarFieldEnum)[keyof typeof RentalOrderItemScalarFieldEnum];
+export declare const ProductReviewScalarFieldEnum: {
+    readonly id: "id";
+    readonly customerId: "customerId";
+    readonly itemType: "itemType";
+    readonly lehengaId: "lehengaId";
+    readonly jewelleryId: "jewelleryId";
+    readonly rating: "rating";
+    readonly comment: "comment";
+    readonly isVisible: "isVisible";
+    readonly createdAt: "createdAt";
+    readonly updatedAt: "updatedAt";
+};
+export type ProductReviewScalarFieldEnum = (typeof ProductReviewScalarFieldEnum)[keyof typeof ProductReviewScalarFieldEnum];
 export declare const SortOrder: {
     readonly asc: "asc";
     readonly desc: "desc";
@@ -1382,6 +1489,22 @@ export type EnumPaymentStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$Pr
  * Reference to a field of type 'PaymentStatus[]'
  */
 export type ListEnumPaymentStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PaymentStatus[]'>;
+/**
+ * Reference to a field of type 'PaymentMethod'
+ */
+export type EnumPaymentMethodFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PaymentMethod'>;
+/**
+ * Reference to a field of type 'PaymentMethod[]'
+ */
+export type ListEnumPaymentMethodFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PaymentMethod[]'>;
+/**
+ * Reference to a field of type 'DepositRefundStatus'
+ */
+export type EnumDepositRefundStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DepositRefundStatus'>;
+/**
+ * Reference to a field of type 'DepositRefundStatus[]'
+ */
+export type ListEnumDepositRefundStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DepositRefundStatus[]'>;
 /**
  * Reference to a field of type 'RentalItemType'
  */
@@ -1518,6 +1641,7 @@ export type GlobalOmitConfig = {
     storeLocation?: Prisma.StoreLocationOmit;
     rentalOrder?: Prisma.RentalOrderOmit;
     rentalOrderItem?: Prisma.RentalOrderItemOmit;
+    productReview?: Prisma.ProductReviewOmit;
 };
 export type LogLevel = 'info' | 'query' | 'warn' | 'error';
 export type LogDefinition = {
