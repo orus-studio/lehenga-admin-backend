@@ -339,10 +339,53 @@ ordersRouter.post(
       include: orderInclude,
     });
 
+    const updatedOrderWithInventory =
+      refund.status === "processed"
+        ? await prisma.$transaction(async (tx) => {
+            const orderWithItems = await tx.rentalOrder.findUnique({
+              where: { id: order.id },
+              include: { items: true },
+            });
+
+            if (!orderWithItems) {
+              throw new AppError("Order not found", 404);
+            }
+
+            for (const item of orderWithItems.items) {
+              if (item.lehengaSizeId) {
+                await tx.lehengaSize.update({
+                  where: { id: item.lehengaSizeId },
+                  data: {
+                    quantityReserved: {
+                      decrement: item.quantity,
+                    },
+                  },
+                });
+              }
+
+              if (item.jewelleryId) {
+                await tx.jewellery.update({
+                  where: { id: item.jewelleryId },
+                  data: {
+                    stockQuantity: {
+                      increment: item.quantity,
+                    },
+                  },
+                });
+              }
+            }
+
+            return tx.rentalOrder.findUniqueOrThrow({
+              where: { id: order.id },
+              include: orderInclude,
+            });
+          })
+        : updatedOrder;
+
     response.json({
       success: true,
       message: "Security deposit refund initiated successfully",
-      data: updatedOrder,
+      data: updatedOrderWithInventory,
     });
   }),
 );
