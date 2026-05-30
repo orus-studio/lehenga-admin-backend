@@ -1,4 +1,4 @@
-import { DepositRefundStatus, PaymentMethod, PaymentStatus, ProductStatus, RentalItemType } from "../generated/prisma/enums.js";
+import { DepositRefundStatus, OrderStatus, PaymentMethod, PaymentStatus, ProductStatus, RentalItemType } from "../generated/prisma/enums.js";
 import { Router } from "express";
 import { prisma } from "../lib/prisma.js";
 import { env } from "../config/env.js";
@@ -115,6 +115,7 @@ const publicCustomerSelect = {
     createdAt: true,
     updatedAt: true,
 };
+const ONLINE_PAYMENT_HOLD_WINDOW_MS = 15 * 60 * 1000;
 async function getDefaultPickupLocation() {
     const existingLocation = await prisma.storeLocation.findFirst({
         where: {
@@ -143,6 +144,62 @@ async function getDefaultPickupLocation() {
 }
 function generateOrderNumber() {
     return `ORD-${Date.now()}-${Math.floor(1000 + Math.random() * 9000)}`;
+}
+async function cancelUnpaidOnlineOrder(order) {
+    return prisma.$transaction(async (tx) => {
+        for (const item of order.items) {
+            if (item.lehengaSizeId) {
+                await tx.lehengaSize.update({
+                    where: { id: item.lehengaSizeId },
+                    data: {
+                        quantityReserved: {
+                            decrement: item.quantity,
+                        },
+                    },
+                });
+            }
+            if (item.jewelleryId) {
+                await tx.jewellery.update({
+                    where: { id: item.jewelleryId },
+                    data: {
+                        stockQuantity: {
+                            increment: item.quantity,
+                        },
+                    },
+                });
+            }
+        }
+        return tx.rentalOrder.update({
+            where: { id: order.id },
+            data: {
+                status: OrderStatus.CANCELLED,
+                paymentStatus: PaymentStatus.FAILED,
+                amountDueAtPickup: 0,
+                depositRefundStatus: DepositRefundStatus.NOT_APPLICABLE,
+            },
+            include: orderInclude,
+        });
+    });
+}
+async function releaseExpiredPendingOnlineOrders() {
+    const expiredAt = new Date(Date.now() - ONLINE_PAYMENT_HOLD_WINDOW_MS);
+    const staleOrders = await prisma.rentalOrder.findMany({
+        where: {
+            paymentMethod: PaymentMethod.ONLINE,
+            paymentStatus: PaymentStatus.PENDING,
+            status: OrderStatus.PENDING,
+            paymentCapturedAt: null,
+            createdAt: {
+                lt: expiredAt,
+            },
+        },
+        include: {
+            items: true,
+        },
+    });
+    for (const order of staleOrders) {
+        await cancelUnpaidOnlineOrder(order);
+    }
 }
 function getBearerToken(authorization) {
     if (!authorization?.startsWith("Bearer ")) {
@@ -365,9 +422,22 @@ publicRouter.get("/jewellery/:slug", asyncHandler(async (request, response) => {
 }));
 publicRouter.get("/orders/mine", asyncHandler(async (request, response) => {
     const customer = await getAuthenticatedCustomer(request.headers.authorization);
+    await releaseExpiredPendingOnlineOrders();
     const orders = await prisma.rentalOrder.findMany({
         where: {
             customerId: customer.id,
+            NOT: [
+                {
+                    paymentMethod: PaymentMethod.ONLINE,
+                    paymentStatus: PaymentStatus.PENDING,
+                    paymentCapturedAt: null,
+                },
+                {
+                    paymentMethod: PaymentMethod.ONLINE,
+                    paymentStatus: PaymentStatus.FAILED,
+                    status: OrderStatus.CANCELLED,
+                },
+            ],
         },
         orderBy: {
             createdAt: "desc",
@@ -381,6 +451,7 @@ publicRouter.get("/orders/mine", asyncHandler(async (request, response) => {
 }));
 publicRouter.post("/orders/preview", asyncHandler(async (request, response) => {
     await getAuthenticatedCustomer(request.headers.authorization);
+    await releaseExpiredPendingOnlineOrders();
     const body = ensureObject(request.body);
     const items = parseCheckoutItems(body.items);
     const preparedItems = await prepareCheckoutItems(items);
@@ -409,6 +480,7 @@ publicRouter.post("/orders/preview", asyncHandler(async (request, response) => {
 }));
 publicRouter.post("/orders", asyncHandler(async (request, response) => {
     const customer = await getAuthenticatedCustomer(request.headers.authorization);
+    await releaseExpiredPendingOnlineOrders();
     const body = ensureObject(request.body);
     const specialInstructions = getOptionalString(body, "specialInstructions");
     const firstName = getOptionalString(body, "customerName");
@@ -512,6 +584,40 @@ publicRouter.post("/orders", asyncHandler(async (request, response) => {
                 }
                 : {}),
         },
+    });
+}));
+publicRouter.post("/payments/razorpay/cancel", asyncHandler(async (request, response) => {
+    const customer = await getAuthenticatedCustomer(request.headers.authorization);
+    const body = ensureObject(request.body);
+    const orderId = getRequiredString(body, "orderId");
+    const order = await prisma.rentalOrder.findFirst({
+        where: {
+            id: orderId,
+            customerId: customer.id,
+        },
+        include: {
+            items: true,
+        },
+    });
+    if (!order) {
+        throw new AppError("Order not found", 404);
+    }
+    if (order.paymentMethod !== PaymentMethod.ONLINE) {
+        throw new AppError("This order is not configured for online payment", 400);
+    }
+    if (order.paymentStatus === PaymentStatus.PAID) {
+        throw new AppError("This payment is already completed", 409);
+    }
+    const updatedOrder = order.status === OrderStatus.CANCELLED && order.paymentStatus === PaymentStatus.FAILED
+        ? await prisma.rentalOrder.findUniqueOrThrow({
+            where: { id: order.id },
+            include: orderInclude,
+        })
+        : await cancelUnpaidOnlineOrder(order);
+    response.json({
+        success: true,
+        message: "Online checkout was cancelled",
+        data: updatedOrder,
     });
 }));
 publicRouter.post("/payments/razorpay/verify", asyncHandler(async (request, response) => {
