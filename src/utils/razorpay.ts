@@ -14,17 +14,29 @@ function getBasicAuthHeader() {
 }
 
 async function razorpayRequest<T>(path: string, init: RequestInit = {}) {
-  const response = await fetch(`${RAZORPAY_BASE_URL}${path}`, {
-    ...init,
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: getBasicAuthHeader(),
-      ...(init.headers ?? {}),
-    },
-  });
+  let response: Response;
+
+  try {
+    response = await fetch(`${RAZORPAY_BASE_URL}${path}`, {
+      ...init,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: getBasicAuthHeader(),
+        ...(init.headers ?? {}),
+      },
+    });
+  } catch {
+    throw new AppError("Unable to connect to Razorpay from the server", 502);
+  }
 
   const text = await response.text();
-  const json = text ? (JSON.parse(text) as T & { error?: { description?: string } }) : null;
+  let json: (T & { error?: { description?: string } }) | null = null;
+
+  try {
+    json = text ? (JSON.parse(text) as T & { error?: { description?: string } }) : null;
+  } catch {
+    throw new AppError("Razorpay returned an invalid response", 502);
+  }
 
   if (!response.ok) {
     throw new AppError(json?.error?.description ?? "Razorpay request failed", response.status);

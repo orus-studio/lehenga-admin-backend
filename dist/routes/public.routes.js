@@ -6,7 +6,7 @@ import { asyncHandler } from "../utils/async-handler.js";
 import { hashPassword, verifyPassword } from "../utils/admin-auth.js";
 import { createCustomerToken, verifyCustomerToken } from "../utils/customer-auth.js";
 import { AppError } from "../utils/app-error.js";
-import { buildInventoryApplyOperations, buildOrderItemCreates, parseCheckoutItems, prepareCheckoutItems, summarizePreparedCheckout, } from "../utils/order-checkout.js";
+import { buildInventoryApplyOperations, buildInventoryRevertOperations, buildOrderItemCreates, parseCheckoutItems, prepareCheckoutItems, summarizePreparedCheckout, } from "../utils/order-checkout.js";
 import { createRazorpayOrder, verifyRazorpaySignature } from "../utils/razorpay.js";
 import { ensureObject, getOptionalNumber, getOptionalString, getRequiredString, } from "../utils/validation.js";
 const orderedImageInclude = {
@@ -146,30 +146,9 @@ function generateOrderNumber() {
     return `ORD-${Date.now()}-${Math.floor(1000 + Math.random() * 9000)}`;
 }
 async function cancelUnpaidOnlineOrder(order) {
-    return prisma.$transaction(async (tx) => {
-        for (const item of order.items) {
-            if (item.lehengaSizeId) {
-                await tx.lehengaSize.update({
-                    where: { id: item.lehengaSizeId },
-                    data: {
-                        quantityReserved: {
-                            decrement: item.quantity,
-                        },
-                    },
-                });
-            }
-            if (item.jewelleryId) {
-                await tx.jewellery.update({
-                    where: { id: item.jewelleryId },
-                    data: {
-                        stockQuantity: {
-                            increment: item.quantity,
-                        },
-                    },
-                });
-            }
-        }
-        return tx.rentalOrder.update({
+    const transactionOperations = [
+        ...buildInventoryRevertOperations(order),
+        prisma.rentalOrder.update({
             where: { id: order.id },
             data: {
                 status: OrderStatus.CANCELLED,
@@ -178,17 +157,29 @@ async function cancelUnpaidOnlineOrder(order) {
                 depositRefundStatus: DepositRefundStatus.NOT_APPLICABLE,
             },
             include: orderInclude,
-        });
-    });
+        }),
+    ];
+    const results = await prisma.$transaction(transactionOperations);
+    return results[results.length - 1];
 }
 async function releaseExpiredPendingOnlineOrders() {
     const expiredAt = new Date(Date.now() - ONLINE_PAYMENT_HOLD_WINDOW_MS);
     const staleOrders = await prisma.rentalOrder.findMany({
         where: {
-            paymentMethod: PaymentMethod.ONLINE,
             paymentStatus: PaymentStatus.PENDING,
             status: OrderStatus.PENDING,
             paymentCapturedAt: null,
+            OR: [
+                {
+                    paymentMethod: PaymentMethod.ONLINE,
+                },
+                {
+                    paymentMethod: PaymentMethod.PICKUP,
+                    paymentGatewayOrderId: {
+                        not: null,
+                    },
+                },
+            ],
             createdAt: {
                 lt: expiredAt,
             },
@@ -217,6 +208,108 @@ async function getAuthenticatedCustomer(authorization) {
         throw new AppError("Customer account not found", 401);
     }
     return customer;
+}
+async function getOptionalAuthenticatedCustomer(authorization) {
+    if (!authorization?.startsWith("Bearer ")) {
+        return null;
+    }
+    return getAuthenticatedCustomer(authorization);
+}
+function splitCustomerName(name) {
+    const trimmedName = name?.trim();
+    if (!trimmedName) {
+        return { firstName: "Guest", lastName: null };
+    }
+    const [firstName, ...rest] = trimmedName.split(/\s+/);
+    return {
+        firstName: firstName || "Guest",
+        lastName: rest.length > 0 ? rest.join(" ") : null,
+    };
+}
+async function findOrCreateCheckoutCustomer({ authorization, customerName, customerEmail, customerPhone, }) {
+    const authenticatedCustomer = await getOptionalAuthenticatedCustomer(authorization);
+    const email = customerEmail?.toLowerCase() || null;
+    const phone = authenticatedCustomer?.phone ?? customerPhone?.trim();
+    const { firstName, lastName } = splitCustomerName(customerName);
+    if (!phone) {
+        throw new AppError("customerPhone is required for guest checkout", 400);
+    }
+    if (authenticatedCustomer) {
+        if (email) {
+            const existingEmailOwner = await prisma.customer.findFirst({
+                where: {
+                    email,
+                    id: {
+                        not: authenticatedCustomer.id,
+                    },
+                },
+                select: {
+                    id: true,
+                },
+            });
+            if (existingEmailOwner) {
+                throw new AppError("This email is already linked to another customer account", 409);
+            }
+        }
+        return prisma.customer.update({
+            where: { id: authenticatedCustomer.id },
+            data: {
+                ...(customerName ? { firstName, lastName } : {}),
+                ...(email ? { email } : {}),
+            },
+        });
+    }
+    const existingPhoneCustomer = await prisma.customer.findUnique({
+        where: {
+            phone,
+        },
+    });
+    if (existingPhoneCustomer) {
+        if (email) {
+            const existingEmailOwner = await prisma.customer.findFirst({
+                where: {
+                    email,
+                    id: {
+                        not: existingPhoneCustomer.id,
+                    },
+                },
+                select: {
+                    id: true,
+                },
+            });
+            if (existingEmailOwner) {
+                throw new AppError("This email is already linked to another customer account", 409);
+            }
+        }
+        return prisma.customer.update({
+            where: { id: existingPhoneCustomer.id },
+            data: {
+                ...(customerName ? { firstName, lastName } : {}),
+                ...(email ? { email } : {}),
+            },
+        });
+    }
+    if (email) {
+        const existingEmailOwner = await prisma.customer.findUnique({
+            where: {
+                email,
+            },
+            select: {
+                id: true,
+            },
+        });
+        if (existingEmailOwner) {
+            throw new AppError("This email is already linked to another customer account", 409);
+        }
+    }
+    return prisma.customer.create({
+        data: {
+            firstName,
+            lastName,
+            email,
+            phone,
+        },
+    });
 }
 function getOptionalPositiveInteger(value, fallback) {
     const parsedValue = Number(value);
@@ -450,7 +543,6 @@ publicRouter.get("/orders/mine", asyncHandler(async (request, response) => {
     });
 }));
 publicRouter.post("/orders/preview", asyncHandler(async (request, response) => {
-    await getAuthenticatedCustomer(request.headers.authorization);
     await releaseExpiredPendingOnlineOrders();
     const body = ensureObject(request.body);
     const items = parseCheckoutItems(body.items);
@@ -479,12 +571,12 @@ publicRouter.post("/orders/preview", asyncHandler(async (request, response) => {
     });
 }));
 publicRouter.post("/orders", asyncHandler(async (request, response) => {
-    const customer = await getAuthenticatedCustomer(request.headers.authorization);
     await releaseExpiredPendingOnlineOrders();
     const body = ensureObject(request.body);
     const specialInstructions = getOptionalString(body, "specialInstructions");
-    const firstName = getOptionalString(body, "customerName");
-    const email = getOptionalString(body, "customerEmail")?.toLowerCase();
+    const customerName = getOptionalString(body, "customerName");
+    const customerEmail = getOptionalString(body, "customerEmail")?.toLowerCase();
+    const customerPhone = getOptionalString(body, "customerPhone");
     const rawPaymentMethod = getRequiredString(body, "paymentMethod");
     const paymentMethod = rawPaymentMethod === PaymentMethod.ONLINE ? PaymentMethod.ONLINE : rawPaymentMethod === PaymentMethod.PICKUP ? PaymentMethod.PICKUP : null;
     if (!paymentMethod) {
@@ -494,29 +586,21 @@ publicRouter.post("/orders", asyncHandler(async (request, response) => {
     const pickupLocation = await getDefaultPickupLocation();
     const preparedItems = await prepareCheckoutItems(items);
     const summary = summarizePreparedCheckout(preparedItems);
-    if (email) {
-        const existingEmailOwner = await prisma.customer.findFirst({
-            where: {
-                email,
-                id: {
-                    not: customer.id,
-                },
-            },
-            select: {
-                id: true,
-            },
-        });
-        if (existingEmailOwner) {
-            throw new AppError("This email is already linked to another customer account", 409);
-        }
-    }
+    const customer = await findOrCreateCheckoutCustomer({
+        authorization: request.headers.authorization,
+        customerName,
+        customerEmail,
+        customerPhone,
+    });
     const orderNumber = generateOrderNumber();
-    const depositRefundStatus = paymentMethod === PaymentMethod.ONLINE && summary.securityDeposit > 0
-        ? DepositRefundStatus.PENDING
-        : DepositRefundStatus.NOT_APPLICABLE;
-    const razorpayOrder = paymentMethod === PaymentMethod.ONLINE
+    const paymentAmount = paymentMethod === PaymentMethod.PICKUP ? summary.securityDeposit : summary.totalAmount;
+    if (paymentMethod === PaymentMethod.PICKUP && paymentAmount <= 0) {
+        throw new AppError("A fixed deposit greater than zero is required for pay at pickup orders", 400);
+    }
+    const depositRefundStatus = paymentAmount > 0 && summary.securityDeposit > 0 ? DepositRefundStatus.PENDING : DepositRefundStatus.NOT_APPLICABLE;
+    const razorpayOrder = paymentAmount > 0
         ? await createRazorpayOrder({
-            amountInPaise: Math.round(summary.totalAmount * 100),
+            amountInPaise: Math.round(paymentAmount * 100),
             receipt: orderNumber,
             notes: {
                 orderNumber,
@@ -525,13 +609,6 @@ publicRouter.post("/orders", asyncHandler(async (request, response) => {
         })
         : null;
     await prisma.$transaction([
-        prisma.customer.update({
-            where: { id: customer.id },
-            data: {
-                ...(firstName ? { firstName } : {}),
-                ...(email ? { email } : {}),
-            },
-        }),
         prisma.rentalOrder.create({
             data: {
                 orderNumber,
@@ -548,8 +625,8 @@ publicRouter.post("/orders", asyncHandler(async (request, response) => {
                 subtotalAmount: summary.subtotalAmount,
                 securityDeposit: summary.securityDeposit,
                 totalAmount: summary.totalAmount,
-                amountPaid: paymentMethod === PaymentMethod.PICKUP ? 0 : 0,
-                amountDueAtPickup: paymentMethod === PaymentMethod.PICKUP ? summary.totalAmount : 0,
+                amountPaid: 0,
+                amountDueAtPickup: paymentMethod === PaymentMethod.PICKUP ? summary.subtotalAmount : 0,
                 depositRefundStatus,
                 ...(razorpayOrder ? { paymentGatewayOrderId: razorpayOrder.id } : {}),
                 ...(specialInstructions ? { specialInstructions } : {}),
@@ -568,7 +645,9 @@ publicRouter.post("/orders", asyncHandler(async (request, response) => {
     });
     response.status(201).json({
         success: true,
-        message: paymentMethod === PaymentMethod.ONLINE ? "Order created. Complete the payment to confirm it." : "Order placed successfully",
+        message: paymentMethod === PaymentMethod.ONLINE
+            ? "Order created. Complete the payment to confirm it."
+            : "Order created. Pay the fixed deposit to confirm pickup.",
         data: {
             order,
             ...(razorpayOrder
@@ -587,13 +666,13 @@ publicRouter.post("/orders", asyncHandler(async (request, response) => {
     });
 }));
 publicRouter.post("/payments/razorpay/cancel", asyncHandler(async (request, response) => {
-    const customer = await getAuthenticatedCustomer(request.headers.authorization);
+    const customer = await getOptionalAuthenticatedCustomer(request.headers.authorization);
     const body = ensureObject(request.body);
     const orderId = getRequiredString(body, "orderId");
     const order = await prisma.rentalOrder.findFirst({
         where: {
             id: orderId,
-            customerId: customer.id,
+            ...(customer ? { customerId: customer.id } : {}),
         },
         include: {
             items: true,
@@ -602,8 +681,8 @@ publicRouter.post("/payments/razorpay/cancel", asyncHandler(async (request, resp
     if (!order) {
         throw new AppError("Order not found", 404);
     }
-    if (order.paymentMethod !== PaymentMethod.ONLINE) {
-        throw new AppError("This order is not configured for online payment", 400);
+    if (order.paymentMethod !== PaymentMethod.ONLINE && order.paymentMethod !== PaymentMethod.PICKUP) {
+        throw new AppError("This order is not configured for gateway payment", 400);
     }
     if (order.paymentStatus === PaymentStatus.PAID) {
         throw new AppError("This payment is already completed", 409);
@@ -621,7 +700,7 @@ publicRouter.post("/payments/razorpay/cancel", asyncHandler(async (request, resp
     });
 }));
 publicRouter.post("/payments/razorpay/verify", asyncHandler(async (request, response) => {
-    const customer = await getAuthenticatedCustomer(request.headers.authorization);
+    const customer = await getOptionalAuthenticatedCustomer(request.headers.authorization);
     const body = ensureObject(request.body);
     const orderId = getRequiredString(body, "orderId");
     const razorpayOrderId = getRequiredString(body, "razorpayOrderId");
@@ -630,27 +709,33 @@ publicRouter.post("/payments/razorpay/verify", asyncHandler(async (request, resp
     const order = await prisma.rentalOrder.findFirst({
         where: {
             id: orderId,
-            customerId: customer.id,
+            ...(customer ? { customerId: customer.id } : {}),
         },
         include: orderInclude,
     });
     if (!order) {
         throw new AppError("Order not found", 404);
     }
-    if (order.paymentMethod !== PaymentMethod.ONLINE) {
-        throw new AppError("This order is not configured for online payment", 400);
+    if (order.paymentMethod !== PaymentMethod.ONLINE && order.paymentMethod !== PaymentMethod.PICKUP) {
+        throw new AppError("This order is not configured for gateway payment", 400);
+    }
+    if (order.paymentGatewayOrderId !== razorpayOrderId) {
+        throw new AppError("Payment gateway order does not match this order", 400);
     }
     if (!verifyRazorpaySignature({ razorpayOrderId, razorpayPaymentId, razorpaySignature })) {
         throw new AppError("Invalid Razorpay payment signature", 400);
     }
+    const amountPaid = order.paymentMethod === PaymentMethod.PICKUP ? Number(order.securityDeposit) : Number(order.totalAmount);
+    const amountDueAtPickup = order.paymentMethod === PaymentMethod.PICKUP ? Math.max(0, Number(order.totalAmount) - amountPaid) : 0;
+    const paymentStatus = amountDueAtPickup > 0 ? PaymentStatus.PARTIALLY_PAID : PaymentStatus.PAID;
     const updatedOrder = await prisma.rentalOrder.update({
         where: {
             id: order.id,
         },
         data: {
-            paymentStatus: PaymentStatus.PAID,
-            amountPaid: order.totalAmount,
-            amountDueAtPickup: 0,
+            paymentStatus,
+            amountPaid,
+            amountDueAtPickup,
             paymentGatewayOrderId: razorpayOrderId,
             paymentGatewayPaymentId: razorpayPaymentId,
             paymentGatewaySignature: razorpaySignature,

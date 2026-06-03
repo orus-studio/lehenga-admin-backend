@@ -243,11 +243,8 @@ ordersRouter.post("/:id/refund-deposit", asyncHandler(async (request, response) 
     if (!order) {
         throw new AppError("Order not found", 404);
     }
-    if (order.paymentMethod !== PaymentMethod.ONLINE) {
-        throw new AppError("Deposit refunds are available only for online payments", 400);
-    }
     if (!order.paymentGatewayPaymentId) {
-        throw new AppError("No online payment reference exists for this order", 400);
+        throw new AppError("No gateway payment reference exists for this order", 400);
     }
     if (order.depositRefundStatus === DepositRefundStatus.REFUNDED) {
         throw new AppError("The security deposit has already been refunded", 409);
