@@ -3,7 +3,7 @@ import { config } from "dotenv";
 config();
 
 function getRequiredEnv(name: string): string {
-  const value = process.env[name];
+  const value = process.env[name]?.trim();
 
   if (!value) {
     throw new Error(`Missing required environment variable: ${name}`);
@@ -14,7 +14,7 @@ function getRequiredEnv(name: string): string {
 
 function getFirstRequiredEnv(...names: string[]): string {
   for (const name of names) {
-    const value = process.env[name];
+    const value = process.env[name]?.trim();
 
     if (value) {
       return value;
@@ -52,4 +52,9 @@ export const env = {
   awsSecretAccessKey: getFirstRequiredEnv("AWS_SECRET_ACCESS_KEY", "AWS_SECRET_KEY_ID"),
   awsRegion: getRequiredEnv("AWS_REGION"),
   s3BucketName: getRequiredEnv("S3_BUCKET_NAME"),
+  cloudfrontDomain: process.env.CLOUDFRONT_DOMAIN?.trim().replace(/\/$/, ""),
+  redisUrl: (process.env.REDIS_URL ?? process.env.KV_URL)?.trim(),
+  catalogCacheTtlSeconds: getNumberEnv("CATALOG_CACHE_TTL_SECONDS", 300),
+  catalogCacheStaleTtlSeconds: getNumberEnv("CATALOG_CACHE_STALE_TTL_SECONDS", 86400),
+  catalogCacheDisabled: process.env.CATALOG_CACHE_DISABLED === "true",
 };

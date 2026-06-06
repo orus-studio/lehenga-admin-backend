@@ -3,6 +3,7 @@ import { randomUUID } from "node:crypto";
 
 import { env } from "../config/env.js";
 import { AppError } from "./app-error.js";
+import { getCatalogImageUrl, normalizeCatalogImageUrl } from "./catalog-image-url.js";
 
 const s3Client = new S3Client({
   region: env.awsRegion,
@@ -11,8 +12,6 @@ const s3Client = new S3Client({
     secretAccessKey: env.awsSecretAccessKey,
   },
 });
-
-let uploadsDisabled = false;
 
 const dataUrlPattern = /^data:(?<mime>[-\w.+/]+);base64,(?<payload>.+)$/;
 
@@ -41,10 +40,6 @@ function getExtensionFromMimeType(mimeType: string) {
   }
 }
 
-function getPublicUrl(key: string) {
-  return `https://${env.s3BucketName}.s3.${env.awsRegion}.amazonaws.com/${key}`;
-}
-
 type UploadContext = {
   category: "lehengas" | "jewellery";
   categorySlug: string | undefined;
@@ -59,6 +54,30 @@ type InputImage = {
 };
 
 type OutputImage = InputImage;
+
+export async function uploadCatalogImageBuffer(input: {
+  buffer: Buffer;
+  contentType: string;
+  key: string;
+}) {
+  try {
+    await s3Client.send(
+      new PutObjectCommand({
+        Bucket: env.s3BucketName,
+        Key: input.key,
+        Body: input.buffer,
+        ContentType: input.contentType,
+        CacheControl: "public, max-age=31536000, immutable",
+        ContentDisposition: "inline",
+      }),
+    );
+  } catch (error) {
+    console.error("S3 catalog image upload failed", error);
+    throw new AppError("Image upload failed. Please try again.", 502);
+  }
+
+  return getCatalogImageUrl(input.key);
+}
 
 async function uploadDataUrlImage(dataUrl: string, context: UploadContext, sortOrder: number) {
   const match = dataUrl.match(dataUrlPattern);
@@ -88,48 +107,20 @@ async function uploadDataUrlImage(dataUrl: string, context: UploadContext, sortO
     `${String(sortOrder + 1).padStart(2, "0")}-${randomUUID()}.${extension}`,
   ].join("/");
 
-  await s3Client.send(
-    new PutObjectCommand({
-      Bucket: env.s3BucketName,
-      Key: key,
-      Body: buffer,
-      ContentType: mimeType,
-    }),
-  );
-
-  return getPublicUrl(key);
+  return uploadCatalogImageBuffer({
+    buffer,
+    contentType: mimeType,
+    key,
+  });
 }
 
 export async function uploadCatalogImages(images: InputImage[], context: UploadContext): Promise<OutputImage[]> {
   return Promise.all(
-    images.map(async (image, index) => {
-      if (!image.imageUrl.startsWith("data:") || uploadsDisabled) {
-        return image;
-      }
-
-      let imageUrl = image.imageUrl;
-
-      try {
-        imageUrl = await uploadDataUrlImage(image.imageUrl, context, index);
-      } catch (error) {
-        if (error instanceof AppError) {
-          throw error;
-        }
-
-        const errorCode =
-          typeof error === "object" && error !== null && "Code" in error ? String(error.Code) : undefined;
-
-        if (errorCode === "NoSuchBucket") {
-          uploadsDisabled = true;
-        }
-
-        console.error("S3 upload failed, keeping inline image payload", error);
-      }
-
-      return {
-        ...image,
-        imageUrl,
-      };
-    }),
+    images.map(async (image, index) => ({
+      ...image,
+      imageUrl: image.imageUrl.startsWith("data:")
+        ? await uploadDataUrlImage(image.imageUrl, context, index)
+        : normalizeCatalogImageUrl(image.imageUrl),
+    })),
   );
 }

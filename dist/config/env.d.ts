@@ -10,5 +10,10 @@ export declare const env: {
     awsSecretAccessKey: string;
     awsRegion: string;
     s3BucketName: string;
+    cloudfrontDomain: string | undefined;
+    redisUrl: string | undefined;
+    catalogCacheTtlSeconds: number;
+    catalogCacheStaleTtlSeconds: number;
+    catalogCacheDisabled: boolean;
 };
 //# sourceMappingURL=env.d.ts.map

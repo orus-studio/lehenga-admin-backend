@@ -1,6 +1,7 @@
 import { DepositRefundStatus, OrderStatus, PaymentMethod, PaymentStatus, ProductStatus, RentalItemType } from "../generated/prisma/enums.js";
 import { Router } from "express";
 
+import { sendCachedCatalogResponse } from "../lib/catalog-cache.js";
 import { prisma } from "../lib/prisma.js";
 import { env } from "../config/env.js";
 import { asyncHandler } from "../utils/async-handler.js";
@@ -531,43 +532,37 @@ publicRouter.get(
     const limit = getOptionalPositiveInteger(request.query.limit, 0);
     const featuredOnly = request.query.featured === "true";
 
-    const categories = await prisma.category.findMany({
-      ...(featuredOnly
-        ? {
-            where: {
-              isFeatured: true,
-            },
-          }
-        : {}),
-      orderBy: [{ createdAt: "asc" }],
-      ...(limit > 0 ? { take: limit } : {}),
-      include: publicCategoryInclude,
-    });
-
-    response.json({
-      success: true,
-      data: categories,
-    });
+    await sendCachedCatalogResponse(response, ["categories", featuredOnly ? "featured" : "all", limit], () =>
+      prisma.category.findMany({
+        ...(featuredOnly
+          ? {
+              where: {
+                isFeatured: true,
+              },
+            }
+          : {}),
+        orderBy: [{ createdAt: "asc" }],
+        ...(limit > 0 ? { take: limit } : {}),
+        include: publicCategoryInclude,
+      }),
+    );
   }),
 );
 
 publicRouter.get(
   "/lehengas",
   asyncHandler(async (_request, response) => {
-    const lehengas = await prisma.lehenga.findMany({
-      where: {
-        status: {
-          not: ProductStatus.ARCHIVED,
+    await sendCachedCatalogResponse(response, ["lehengas", "all"], () =>
+      prisma.lehenga.findMany({
+        where: {
+          status: {
+            not: ProductStatus.ARCHIVED,
+          },
         },
-      },
-      orderBy: { createdAt: "desc" },
-      include: publicLehengaInclude,
-    });
-
-    response.json({
-      success: true,
-      data: lehengas,
-    });
+        orderBy: { createdAt: "desc" },
+        include: publicLehengaInclude,
+      }),
+    );
   }),
 );
 
@@ -576,23 +571,22 @@ publicRouter.get(
   asyncHandler(async (request, response) => {
     const slug = getRequiredString(request.params, "slug");
 
-    const lehenga = await prisma.lehenga.findFirst({
-      where: {
-        slug,
-        status: {
-          not: ProductStatus.ARCHIVED,
+    await sendCachedCatalogResponse(response, ["lehengas", slug], async () => {
+      const lehenga = await prisma.lehenga.findFirst({
+        where: {
+          slug,
+          status: {
+            not: ProductStatus.ARCHIVED,
+          },
         },
-      },
-      include: publicLehengaInclude,
-    });
+        include: publicLehengaInclude,
+      });
 
-    if (!lehenga) {
-      throw new AppError("Lehenga not found", 404);
-    }
+      if (!lehenga) {
+        throw new AppError("Lehenga not found", 404);
+      }
 
-    response.json({
-      success: true,
-      data: lehenga,
+      return lehenga;
     });
   }),
 );
@@ -600,20 +594,17 @@ publicRouter.get(
 publicRouter.get(
   "/jewellery",
   asyncHandler(async (_request, response) => {
-    const jewelleryItems = await prisma.jewellery.findMany({
-      where: {
-        status: {
-          not: ProductStatus.ARCHIVED,
+    await sendCachedCatalogResponse(response, ["jewellery", "all"], () =>
+      prisma.jewellery.findMany({
+        where: {
+          status: {
+            not: ProductStatus.ARCHIVED,
+          },
         },
-      },
-      orderBy: { createdAt: "desc" },
-      include: publicJewelleryInclude,
-    });
-
-    response.json({
-      success: true,
-      data: jewelleryItems,
-    });
+        orderBy: { createdAt: "desc" },
+        include: publicJewelleryInclude,
+      }),
+    );
   }),
 );
 
@@ -622,23 +613,22 @@ publicRouter.get(
   asyncHandler(async (request, response) => {
     const slug = getRequiredString(request.params, "slug");
 
-    const jewellery = await prisma.jewellery.findFirst({
-      where: {
-        slug,
-        status: {
-          not: ProductStatus.ARCHIVED,
+    await sendCachedCatalogResponse(response, ["jewellery", slug], async () => {
+      const jewellery = await prisma.jewellery.findFirst({
+        where: {
+          slug,
+          status: {
+            not: ProductStatus.ARCHIVED,
+          },
         },
-      },
-      include: publicJewelleryInclude,
-    });
+        include: publicJewelleryInclude,
+      });
 
-    if (!jewellery) {
-      throw new AppError("Jewellery not found", 404);
-    }
+      if (!jewellery) {
+        throw new AppError("Jewellery not found", 404);
+      }
 
-    response.json({
-      success: true,
-      data: jewellery,
+      return jewellery;
     });
   }),
 );

@@ -94,6 +94,7 @@ export declare function buildOrderItemCreates(items: PreparedCheckoutItem[]): {
     itemType: "JEWELLERY" | "LEHENGA";
 }[];
 export declare function buildInventoryApplyOperations(items: PreparedCheckoutItem[]): (import("../generated/prisma/models.js").Prisma__JewelleryClient<{
+    type: import("../generated/prisma/enums.js").JewelleryType;
     id: string;
     name: string;
     createdAt: Date;
@@ -113,7 +114,6 @@ export declare function buildInventoryApplyOperations(items: PreparedCheckoutIte
     pickupAvailable: boolean;
     status: import("../generated/prisma/enums.js").ProductStatus;
     categoryId: string | null;
-    type: import("../generated/prisma/enums.js").JewelleryType;
     material: string | null;
     stoneDetails: string | null;
     stockQuantity: number;
@@ -137,6 +137,7 @@ export declare function buildInventoryApplyOperations(items: PreparedCheckoutIte
     omit: import("../generated/prisma/internal/prismaNamespace.js").GlobalOmitConfig | undefined;
 }>)[];
 export declare function buildInventoryRevertOperations(existingOrder: ExistingEditableOrder): (import("../generated/prisma/models.js").Prisma__JewelleryClient<{
+    type: import("../generated/prisma/enums.js").JewelleryType;
     id: string;
     name: string;
     createdAt: Date;
@@ -156,7 +157,6 @@ export declare function buildInventoryRevertOperations(existingOrder: ExistingEd
     pickupAvailable: boolean;
     status: import("../generated/prisma/enums.js").ProductStatus;
     categoryId: string | null;
-    type: import("../generated/prisma/enums.js").JewelleryType;
     material: string | null;
     stoneDetails: string | null;
     stockQuantity: number;

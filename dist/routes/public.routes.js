@@ -1,5 +1,6 @@
 import { DepositRefundStatus, OrderStatus, PaymentMethod, PaymentStatus, ProductStatus, RentalItemType } from "../generated/prisma/enums.js";
 import { Router } from "express";
+import { sendCachedCatalogResponse } from "../lib/catalog-cache.js";
 import { prisma } from "../lib/prisma.js";
 import { env } from "../config/env.js";
 import { asyncHandler } from "../utils/async-handler.js";
@@ -428,7 +429,7 @@ publicRouter.get("/auth/me", asyncHandler(async (request, response) => {
 publicRouter.get("/categories", asyncHandler(async (request, response) => {
     const limit = getOptionalPositiveInteger(request.query.limit, 0);
     const featuredOnly = request.query.featured === "true";
-    const categories = await prisma.category.findMany({
+    await sendCachedCatalogResponse(response, ["categories", featuredOnly ? "featured" : "all", limit], () => prisma.category.findMany({
         ...(featuredOnly
             ? {
                 where: {
@@ -439,14 +440,10 @@ publicRouter.get("/categories", asyncHandler(async (request, response) => {
         orderBy: [{ createdAt: "asc" }],
         ...(limit > 0 ? { take: limit } : {}),
         include: publicCategoryInclude,
-    });
-    response.json({
-        success: true,
-        data: categories,
-    });
+    }));
 }));
 publicRouter.get("/lehengas", asyncHandler(async (_request, response) => {
-    const lehengas = await prisma.lehenga.findMany({
+    await sendCachedCatalogResponse(response, ["lehengas", "all"], () => prisma.lehenga.findMany({
         where: {
             status: {
                 not: ProductStatus.ARCHIVED,
@@ -454,33 +451,28 @@ publicRouter.get("/lehengas", asyncHandler(async (_request, response) => {
         },
         orderBy: { createdAt: "desc" },
         include: publicLehengaInclude,
-    });
-    response.json({
-        success: true,
-        data: lehengas,
-    });
+    }));
 }));
 publicRouter.get("/lehengas/:slug", asyncHandler(async (request, response) => {
     const slug = getRequiredString(request.params, "slug");
-    const lehenga = await prisma.lehenga.findFirst({
-        where: {
-            slug,
-            status: {
-                not: ProductStatus.ARCHIVED,
+    await sendCachedCatalogResponse(response, ["lehengas", slug], async () => {
+        const lehenga = await prisma.lehenga.findFirst({
+            where: {
+                slug,
+                status: {
+                    not: ProductStatus.ARCHIVED,
+                },
             },
-        },
-        include: publicLehengaInclude,
-    });
-    if (!lehenga) {
-        throw new AppError("Lehenga not found", 404);
-    }
-    response.json({
-        success: true,
-        data: lehenga,
+            include: publicLehengaInclude,
+        });
+        if (!lehenga) {
+            throw new AppError("Lehenga not found", 404);
+        }
+        return lehenga;
     });
 }));
 publicRouter.get("/jewellery", asyncHandler(async (_request, response) => {
-    const jewelleryItems = await prisma.jewellery.findMany({
+    await sendCachedCatalogResponse(response, ["jewellery", "all"], () => prisma.jewellery.findMany({
         where: {
             status: {
                 not: ProductStatus.ARCHIVED,
@@ -488,29 +480,24 @@ publicRouter.get("/jewellery", asyncHandler(async (_request, response) => {
         },
         orderBy: { createdAt: "desc" },
         include: publicJewelleryInclude,
-    });
-    response.json({
-        success: true,
-        data: jewelleryItems,
-    });
+    }));
 }));
 publicRouter.get("/jewellery/:slug", asyncHandler(async (request, response) => {
     const slug = getRequiredString(request.params, "slug");
-    const jewellery = await prisma.jewellery.findFirst({
-        where: {
-            slug,
-            status: {
-                not: ProductStatus.ARCHIVED,
+    await sendCachedCatalogResponse(response, ["jewellery", slug], async () => {
+        const jewellery = await prisma.jewellery.findFirst({
+            where: {
+                slug,
+                status: {
+                    not: ProductStatus.ARCHIVED,
+                },
             },
-        },
-        include: publicJewelleryInclude,
-    });
-    if (!jewellery) {
-        throw new AppError("Jewellery not found", 404);
-    }
-    response.json({
-        success: true,
-        data: jewellery,
+            include: publicJewelleryInclude,
+        });
+        if (!jewellery) {
+            throw new AppError("Jewellery not found", 404);
+        }
+        return jewellery;
     });
 }));
 publicRouter.get("/orders/mine", asyncHandler(async (request, response) => {
