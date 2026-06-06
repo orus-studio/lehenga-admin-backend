@@ -405,6 +405,7 @@ export type RentalOrderWhereInput = {
     pickupLocation?: Prisma.XOR<Prisma.StoreLocationScalarRelationFilter, Prisma.StoreLocationWhereInput>;
     createdByAdmin?: Prisma.XOR<Prisma.AdminUserNullableScalarRelationFilter, Prisma.AdminUserWhereInput> | null;
     items?: Prisma.RentalOrderItemListRelationFilter;
+    paymentAttempt?: Prisma.XOR<Prisma.CheckoutPaymentAttemptNullableScalarRelationFilter, Prisma.CheckoutPaymentAttemptWhereInput> | null;
 };
 export type RentalOrderOrderByWithRelationInput = {
     id?: Prisma.SortOrder;
@@ -442,10 +443,12 @@ export type RentalOrderOrderByWithRelationInput = {
     pickupLocation?: Prisma.StoreLocationOrderByWithRelationInput;
     createdByAdmin?: Prisma.AdminUserOrderByWithRelationInput;
     items?: Prisma.RentalOrderItemOrderByRelationAggregateInput;
+    paymentAttempt?: Prisma.CheckoutPaymentAttemptOrderByWithRelationInput;
 };
 export type RentalOrderWhereUniqueInput = Prisma.AtLeast<{
     id?: string;
     orderNumber?: string;
+    paymentGatewayPaymentId?: string;
     AND?: Prisma.RentalOrderWhereInput | Prisma.RentalOrderWhereInput[];
     OR?: Prisma.RentalOrderWhereInput[];
     NOT?: Prisma.RentalOrderWhereInput | Prisma.RentalOrderWhereInput[];
@@ -471,7 +474,6 @@ export type RentalOrderWhereUniqueInput = Prisma.AtLeast<{
     depositRefundReference?: Prisma.StringNullableFilter<"RentalOrder"> | string | null;
     depositRefundNotes?: Prisma.StringNullableFilter<"RentalOrder"> | string | null;
     paymentGatewayOrderId?: Prisma.StringNullableFilter<"RentalOrder"> | string | null;
-    paymentGatewayPaymentId?: Prisma.StringNullableFilter<"RentalOrder"> | string | null;
     paymentGatewaySignature?: Prisma.StringNullableFilter<"RentalOrder"> | string | null;
     paymentCapturedAt?: Prisma.DateTimeNullableFilter<"RentalOrder"> | Date | string | null;
     specialInstructions?: Prisma.StringNullableFilter<"RentalOrder"> | string | null;
@@ -482,7 +484,8 @@ export type RentalOrderWhereUniqueInput = Prisma.AtLeast<{
     pickupLocation?: Prisma.XOR<Prisma.StoreLocationScalarRelationFilter, Prisma.StoreLocationWhereInput>;
     createdByAdmin?: Prisma.XOR<Prisma.AdminUserNullableScalarRelationFilter, Prisma.AdminUserWhereInput> | null;
     items?: Prisma.RentalOrderItemListRelationFilter;
-}, "id" | "orderNumber">;
+    paymentAttempt?: Prisma.XOR<Prisma.CheckoutPaymentAttemptNullableScalarRelationFilter, Prisma.CheckoutPaymentAttemptWhereInput> | null;
+}, "id" | "orderNumber" | "paymentGatewayPaymentId">;
 export type RentalOrderOrderByWithAggregationInput = {
     id?: Prisma.SortOrder;
     orderNumber?: Prisma.SortOrder;
@@ -590,6 +593,7 @@ export type RentalOrderCreateInput = {
     pickupLocation: Prisma.StoreLocationCreateNestedOneWithoutOrdersInput;
     createdByAdmin?: Prisma.AdminUserCreateNestedOneWithoutCreatedOrdersInput;
     items?: Prisma.RentalOrderItemCreateNestedManyWithoutOrderInput;
+    paymentAttempt?: Prisma.CheckoutPaymentAttemptCreateNestedOneWithoutRentalOrderInput;
 };
 export type RentalOrderUncheckedCreateInput = {
     id?: string;
@@ -624,6 +628,7 @@ export type RentalOrderUncheckedCreateInput = {
     createdAt?: Date | string;
     updatedAt?: Date | string;
     items?: Prisma.RentalOrderItemUncheckedCreateNestedManyWithoutOrderInput;
+    paymentAttempt?: Prisma.CheckoutPaymentAttemptUncheckedCreateNestedOneWithoutRentalOrderInput;
 };
 export type RentalOrderUpdateInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -658,6 +663,7 @@ export type RentalOrderUpdateInput = {
     pickupLocation?: Prisma.StoreLocationUpdateOneRequiredWithoutOrdersNestedInput;
     createdByAdmin?: Prisma.AdminUserUpdateOneWithoutCreatedOrdersNestedInput;
     items?: Prisma.RentalOrderItemUpdateManyWithoutOrderNestedInput;
+    paymentAttempt?: Prisma.CheckoutPaymentAttemptUpdateOneWithoutRentalOrderNestedInput;
 };
 export type RentalOrderUncheckedUpdateInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -692,6 +698,7 @@ export type RentalOrderUncheckedUpdateInput = {
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     items?: Prisma.RentalOrderItemUncheckedUpdateManyWithoutOrderNestedInput;
+    paymentAttempt?: Prisma.CheckoutPaymentAttemptUncheckedUpdateOneWithoutRentalOrderNestedInput;
 };
 export type RentalOrderCreateManyInput = {
     id?: string;
@@ -914,6 +921,10 @@ export type RentalOrderSumOrderByAggregateInput = {
     amountDueAtPickup?: Prisma.SortOrder;
     depositRefundedAmount?: Prisma.SortOrder;
 };
+export type RentalOrderNullableScalarRelationFilter = {
+    is?: Prisma.RentalOrderWhereInput | null;
+    isNot?: Prisma.RentalOrderWhereInput | null;
+};
 export type RentalOrderScalarRelationFilter = {
     is?: Prisma.RentalOrderWhereInput;
     isNot?: Prisma.RentalOrderWhereInput;
@@ -1044,6 +1055,20 @@ export type EnumPaymentMethodFieldUpdateOperationsInput = {
 export type EnumDepositRefundStatusFieldUpdateOperationsInput = {
     set?: $Enums.DepositRefundStatus;
 };
+export type RentalOrderCreateNestedOneWithoutPaymentAttemptInput = {
+    create?: Prisma.XOR<Prisma.RentalOrderCreateWithoutPaymentAttemptInput, Prisma.RentalOrderUncheckedCreateWithoutPaymentAttemptInput>;
+    connectOrCreate?: Prisma.RentalOrderCreateOrConnectWithoutPaymentAttemptInput;
+    connect?: Prisma.RentalOrderWhereUniqueInput;
+};
+export type RentalOrderUpdateOneWithoutPaymentAttemptNestedInput = {
+    create?: Prisma.XOR<Prisma.RentalOrderCreateWithoutPaymentAttemptInput, Prisma.RentalOrderUncheckedCreateWithoutPaymentAttemptInput>;
+    connectOrCreate?: Prisma.RentalOrderCreateOrConnectWithoutPaymentAttemptInput;
+    upsert?: Prisma.RentalOrderUpsertWithoutPaymentAttemptInput;
+    disconnect?: Prisma.RentalOrderWhereInput | boolean;
+    delete?: Prisma.RentalOrderWhereInput | boolean;
+    connect?: Prisma.RentalOrderWhereUniqueInput;
+    update?: Prisma.XOR<Prisma.XOR<Prisma.RentalOrderUpdateToOneWithWhereWithoutPaymentAttemptInput, Prisma.RentalOrderUpdateWithoutPaymentAttemptInput>, Prisma.RentalOrderUncheckedUpdateWithoutPaymentAttemptInput>;
+};
 export type RentalOrderCreateNestedOneWithoutItemsInput = {
     create?: Prisma.XOR<Prisma.RentalOrderCreateWithoutItemsInput, Prisma.RentalOrderUncheckedCreateWithoutItemsInput>;
     connectOrCreate?: Prisma.RentalOrderCreateOrConnectWithoutItemsInput;
@@ -1088,6 +1113,7 @@ export type RentalOrderCreateWithoutCreatedByAdminInput = {
     customer: Prisma.CustomerCreateNestedOneWithoutOrdersInput;
     pickupLocation: Prisma.StoreLocationCreateNestedOneWithoutOrdersInput;
     items?: Prisma.RentalOrderItemCreateNestedManyWithoutOrderInput;
+    paymentAttempt?: Prisma.CheckoutPaymentAttemptCreateNestedOneWithoutRentalOrderInput;
 };
 export type RentalOrderUncheckedCreateWithoutCreatedByAdminInput = {
     id?: string;
@@ -1121,6 +1147,7 @@ export type RentalOrderUncheckedCreateWithoutCreatedByAdminInput = {
     createdAt?: Date | string;
     updatedAt?: Date | string;
     items?: Prisma.RentalOrderItemUncheckedCreateNestedManyWithoutOrderInput;
+    paymentAttempt?: Prisma.CheckoutPaymentAttemptUncheckedCreateNestedOneWithoutRentalOrderInput;
 };
 export type RentalOrderCreateOrConnectWithoutCreatedByAdminInput = {
     where: Prisma.RentalOrderWhereUniqueInput;
@@ -1211,6 +1238,7 @@ export type RentalOrderCreateWithoutCustomerInput = {
     pickupLocation: Prisma.StoreLocationCreateNestedOneWithoutOrdersInput;
     createdByAdmin?: Prisma.AdminUserCreateNestedOneWithoutCreatedOrdersInput;
     items?: Prisma.RentalOrderItemCreateNestedManyWithoutOrderInput;
+    paymentAttempt?: Prisma.CheckoutPaymentAttemptCreateNestedOneWithoutRentalOrderInput;
 };
 export type RentalOrderUncheckedCreateWithoutCustomerInput = {
     id?: string;
@@ -1244,6 +1272,7 @@ export type RentalOrderUncheckedCreateWithoutCustomerInput = {
     createdAt?: Date | string;
     updatedAt?: Date | string;
     items?: Prisma.RentalOrderItemUncheckedCreateNestedManyWithoutOrderInput;
+    paymentAttempt?: Prisma.CheckoutPaymentAttemptUncheckedCreateNestedOneWithoutRentalOrderInput;
 };
 export type RentalOrderCreateOrConnectWithoutCustomerInput = {
     where: Prisma.RentalOrderWhereUniqueInput;
@@ -1298,6 +1327,7 @@ export type RentalOrderCreateWithoutPickupLocationInput = {
     customer: Prisma.CustomerCreateNestedOneWithoutOrdersInput;
     createdByAdmin?: Prisma.AdminUserCreateNestedOneWithoutCreatedOrdersInput;
     items?: Prisma.RentalOrderItemCreateNestedManyWithoutOrderInput;
+    paymentAttempt?: Prisma.CheckoutPaymentAttemptCreateNestedOneWithoutRentalOrderInput;
 };
 export type RentalOrderUncheckedCreateWithoutPickupLocationInput = {
     id?: string;
@@ -1331,6 +1361,7 @@ export type RentalOrderUncheckedCreateWithoutPickupLocationInput = {
     createdAt?: Date | string;
     updatedAt?: Date | string;
     items?: Prisma.RentalOrderItemUncheckedCreateNestedManyWithoutOrderInput;
+    paymentAttempt?: Prisma.CheckoutPaymentAttemptUncheckedCreateNestedOneWithoutRentalOrderInput;
 };
 export type RentalOrderCreateOrConnectWithoutPickupLocationInput = {
     where: Prisma.RentalOrderWhereUniqueInput;
@@ -1352,6 +1383,155 @@ export type RentalOrderUpdateWithWhereUniqueWithoutPickupLocationInput = {
 export type RentalOrderUpdateManyWithWhereWithoutPickupLocationInput = {
     where: Prisma.RentalOrderScalarWhereInput;
     data: Prisma.XOR<Prisma.RentalOrderUpdateManyMutationInput, Prisma.RentalOrderUncheckedUpdateManyWithoutPickupLocationInput>;
+};
+export type RentalOrderCreateWithoutPaymentAttemptInput = {
+    id?: string;
+    orderNumber: string;
+    status?: $Enums.OrderStatus;
+    paymentStatus?: $Enums.PaymentStatus;
+    paymentMethod?: $Enums.PaymentMethod;
+    rentalStartDate: Date | string;
+    rentalEndDate: Date | string;
+    pickupDate?: Date | string | null;
+    returnDate?: Date | string | null;
+    subtotalAmount: runtime.Decimal | runtime.DecimalJsLike | number | string;
+    securityDeposit?: runtime.Decimal | runtime.DecimalJsLike | number | string;
+    discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string;
+    totalAmount: runtime.Decimal | runtime.DecimalJsLike | number | string;
+    amountPaid?: runtime.Decimal | runtime.DecimalJsLike | number | string;
+    amountDueAtPickup?: runtime.Decimal | runtime.DecimalJsLike | number | string;
+    depositRefundStatus?: $Enums.DepositRefundStatus;
+    depositRefundedAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string;
+    depositRefundedAt?: Date | string | null;
+    depositRefundReference?: string | null;
+    depositRefundNotes?: string | null;
+    paymentGatewayOrderId?: string | null;
+    paymentGatewayPaymentId?: string | null;
+    paymentGatewaySignature?: string | null;
+    paymentCapturedAt?: Date | string | null;
+    specialInstructions?: string | null;
+    internalNotes?: string | null;
+    createdAt?: Date | string;
+    updatedAt?: Date | string;
+    customer: Prisma.CustomerCreateNestedOneWithoutOrdersInput;
+    pickupLocation: Prisma.StoreLocationCreateNestedOneWithoutOrdersInput;
+    createdByAdmin?: Prisma.AdminUserCreateNestedOneWithoutCreatedOrdersInput;
+    items?: Prisma.RentalOrderItemCreateNestedManyWithoutOrderInput;
+};
+export type RentalOrderUncheckedCreateWithoutPaymentAttemptInput = {
+    id?: string;
+    orderNumber: string;
+    customerId: string;
+    pickupLocationId: string;
+    createdByAdminId?: string | null;
+    status?: $Enums.OrderStatus;
+    paymentStatus?: $Enums.PaymentStatus;
+    paymentMethod?: $Enums.PaymentMethod;
+    rentalStartDate: Date | string;
+    rentalEndDate: Date | string;
+    pickupDate?: Date | string | null;
+    returnDate?: Date | string | null;
+    subtotalAmount: runtime.Decimal | runtime.DecimalJsLike | number | string;
+    securityDeposit?: runtime.Decimal | runtime.DecimalJsLike | number | string;
+    discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string;
+    totalAmount: runtime.Decimal | runtime.DecimalJsLike | number | string;
+    amountPaid?: runtime.Decimal | runtime.DecimalJsLike | number | string;
+    amountDueAtPickup?: runtime.Decimal | runtime.DecimalJsLike | number | string;
+    depositRefundStatus?: $Enums.DepositRefundStatus;
+    depositRefundedAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string;
+    depositRefundedAt?: Date | string | null;
+    depositRefundReference?: string | null;
+    depositRefundNotes?: string | null;
+    paymentGatewayOrderId?: string | null;
+    paymentGatewayPaymentId?: string | null;
+    paymentGatewaySignature?: string | null;
+    paymentCapturedAt?: Date | string | null;
+    specialInstructions?: string | null;
+    internalNotes?: string | null;
+    createdAt?: Date | string;
+    updatedAt?: Date | string;
+    items?: Prisma.RentalOrderItemUncheckedCreateNestedManyWithoutOrderInput;
+};
+export type RentalOrderCreateOrConnectWithoutPaymentAttemptInput = {
+    where: Prisma.RentalOrderWhereUniqueInput;
+    create: Prisma.XOR<Prisma.RentalOrderCreateWithoutPaymentAttemptInput, Prisma.RentalOrderUncheckedCreateWithoutPaymentAttemptInput>;
+};
+export type RentalOrderUpsertWithoutPaymentAttemptInput = {
+    update: Prisma.XOR<Prisma.RentalOrderUpdateWithoutPaymentAttemptInput, Prisma.RentalOrderUncheckedUpdateWithoutPaymentAttemptInput>;
+    create: Prisma.XOR<Prisma.RentalOrderCreateWithoutPaymentAttemptInput, Prisma.RentalOrderUncheckedCreateWithoutPaymentAttemptInput>;
+    where?: Prisma.RentalOrderWhereInput;
+};
+export type RentalOrderUpdateToOneWithWhereWithoutPaymentAttemptInput = {
+    where?: Prisma.RentalOrderWhereInput;
+    data: Prisma.XOR<Prisma.RentalOrderUpdateWithoutPaymentAttemptInput, Prisma.RentalOrderUncheckedUpdateWithoutPaymentAttemptInput>;
+};
+export type RentalOrderUpdateWithoutPaymentAttemptInput = {
+    id?: Prisma.StringFieldUpdateOperationsInput | string;
+    orderNumber?: Prisma.StringFieldUpdateOperationsInput | string;
+    status?: Prisma.EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus;
+    paymentStatus?: Prisma.EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus;
+    paymentMethod?: Prisma.EnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod;
+    rentalStartDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    rentalEndDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    pickupDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+    returnDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+    subtotalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
+    securityDeposit?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
+    discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
+    totalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
+    amountPaid?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
+    amountDueAtPickup?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
+    depositRefundStatus?: Prisma.EnumDepositRefundStatusFieldUpdateOperationsInput | $Enums.DepositRefundStatus;
+    depositRefundedAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
+    depositRefundedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+    depositRefundReference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    depositRefundNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    paymentGatewayOrderId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    paymentGatewayPaymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    paymentGatewaySignature?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    paymentCapturedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+    specialInstructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    internalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    customer?: Prisma.CustomerUpdateOneRequiredWithoutOrdersNestedInput;
+    pickupLocation?: Prisma.StoreLocationUpdateOneRequiredWithoutOrdersNestedInput;
+    createdByAdmin?: Prisma.AdminUserUpdateOneWithoutCreatedOrdersNestedInput;
+    items?: Prisma.RentalOrderItemUpdateManyWithoutOrderNestedInput;
+};
+export type RentalOrderUncheckedUpdateWithoutPaymentAttemptInput = {
+    id?: Prisma.StringFieldUpdateOperationsInput | string;
+    orderNumber?: Prisma.StringFieldUpdateOperationsInput | string;
+    customerId?: Prisma.StringFieldUpdateOperationsInput | string;
+    pickupLocationId?: Prisma.StringFieldUpdateOperationsInput | string;
+    createdByAdminId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    status?: Prisma.EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus;
+    paymentStatus?: Prisma.EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus;
+    paymentMethod?: Prisma.EnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod;
+    rentalStartDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    rentalEndDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    pickupDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+    returnDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+    subtotalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
+    securityDeposit?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
+    discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
+    totalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
+    amountPaid?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
+    amountDueAtPickup?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
+    depositRefundStatus?: Prisma.EnumDepositRefundStatusFieldUpdateOperationsInput | $Enums.DepositRefundStatus;
+    depositRefundedAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
+    depositRefundedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+    depositRefundReference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    depositRefundNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    paymentGatewayOrderId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    paymentGatewayPaymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    paymentGatewaySignature?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    paymentCapturedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+    specialInstructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    internalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    items?: Prisma.RentalOrderItemUncheckedUpdateManyWithoutOrderNestedInput;
 };
 export type RentalOrderCreateWithoutItemsInput = {
     id?: string;
@@ -1385,6 +1565,7 @@ export type RentalOrderCreateWithoutItemsInput = {
     customer: Prisma.CustomerCreateNestedOneWithoutOrdersInput;
     pickupLocation: Prisma.StoreLocationCreateNestedOneWithoutOrdersInput;
     createdByAdmin?: Prisma.AdminUserCreateNestedOneWithoutCreatedOrdersInput;
+    paymentAttempt?: Prisma.CheckoutPaymentAttemptCreateNestedOneWithoutRentalOrderInput;
 };
 export type RentalOrderUncheckedCreateWithoutItemsInput = {
     id?: string;
@@ -1418,6 +1599,7 @@ export type RentalOrderUncheckedCreateWithoutItemsInput = {
     internalNotes?: string | null;
     createdAt?: Date | string;
     updatedAt?: Date | string;
+    paymentAttempt?: Prisma.CheckoutPaymentAttemptUncheckedCreateNestedOneWithoutRentalOrderInput;
 };
 export type RentalOrderCreateOrConnectWithoutItemsInput = {
     where: Prisma.RentalOrderWhereUniqueInput;
@@ -1464,6 +1646,7 @@ export type RentalOrderUpdateWithoutItemsInput = {
     customer?: Prisma.CustomerUpdateOneRequiredWithoutOrdersNestedInput;
     pickupLocation?: Prisma.StoreLocationUpdateOneRequiredWithoutOrdersNestedInput;
     createdByAdmin?: Prisma.AdminUserUpdateOneWithoutCreatedOrdersNestedInput;
+    paymentAttempt?: Prisma.CheckoutPaymentAttemptUpdateOneWithoutRentalOrderNestedInput;
 };
 export type RentalOrderUncheckedUpdateWithoutItemsInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -1497,6 +1680,7 @@ export type RentalOrderUncheckedUpdateWithoutItemsInput = {
     internalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    paymentAttempt?: Prisma.CheckoutPaymentAttemptUncheckedUpdateOneWithoutRentalOrderNestedInput;
 };
 export type RentalOrderCreateManyCreatedByAdminInput = {
     id?: string;
@@ -1562,6 +1746,7 @@ export type RentalOrderUpdateWithoutCreatedByAdminInput = {
     customer?: Prisma.CustomerUpdateOneRequiredWithoutOrdersNestedInput;
     pickupLocation?: Prisma.StoreLocationUpdateOneRequiredWithoutOrdersNestedInput;
     items?: Prisma.RentalOrderItemUpdateManyWithoutOrderNestedInput;
+    paymentAttempt?: Prisma.CheckoutPaymentAttemptUpdateOneWithoutRentalOrderNestedInput;
 };
 export type RentalOrderUncheckedUpdateWithoutCreatedByAdminInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -1595,6 +1780,7 @@ export type RentalOrderUncheckedUpdateWithoutCreatedByAdminInput = {
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     items?: Prisma.RentalOrderItemUncheckedUpdateManyWithoutOrderNestedInput;
+    paymentAttempt?: Prisma.CheckoutPaymentAttemptUncheckedUpdateOneWithoutRentalOrderNestedInput;
 };
 export type RentalOrderUncheckedUpdateManyWithoutCreatedByAdminInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -1692,6 +1878,7 @@ export type RentalOrderUpdateWithoutCustomerInput = {
     pickupLocation?: Prisma.StoreLocationUpdateOneRequiredWithoutOrdersNestedInput;
     createdByAdmin?: Prisma.AdminUserUpdateOneWithoutCreatedOrdersNestedInput;
     items?: Prisma.RentalOrderItemUpdateManyWithoutOrderNestedInput;
+    paymentAttempt?: Prisma.CheckoutPaymentAttemptUpdateOneWithoutRentalOrderNestedInput;
 };
 export type RentalOrderUncheckedUpdateWithoutCustomerInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -1725,6 +1912,7 @@ export type RentalOrderUncheckedUpdateWithoutCustomerInput = {
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     items?: Prisma.RentalOrderItemUncheckedUpdateManyWithoutOrderNestedInput;
+    paymentAttempt?: Prisma.CheckoutPaymentAttemptUncheckedUpdateOneWithoutRentalOrderNestedInput;
 };
 export type RentalOrderUncheckedUpdateManyWithoutCustomerInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -1822,6 +2010,7 @@ export type RentalOrderUpdateWithoutPickupLocationInput = {
     customer?: Prisma.CustomerUpdateOneRequiredWithoutOrdersNestedInput;
     createdByAdmin?: Prisma.AdminUserUpdateOneWithoutCreatedOrdersNestedInput;
     items?: Prisma.RentalOrderItemUpdateManyWithoutOrderNestedInput;
+    paymentAttempt?: Prisma.CheckoutPaymentAttemptUpdateOneWithoutRentalOrderNestedInput;
 };
 export type RentalOrderUncheckedUpdateWithoutPickupLocationInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -1855,6 +2044,7 @@ export type RentalOrderUncheckedUpdateWithoutPickupLocationInput = {
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     items?: Prisma.RentalOrderItemUncheckedUpdateManyWithoutOrderNestedInput;
+    paymentAttempt?: Prisma.CheckoutPaymentAttemptUncheckedUpdateOneWithoutRentalOrderNestedInput;
 };
 export type RentalOrderUncheckedUpdateManyWithoutPickupLocationInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -1948,6 +2138,7 @@ export type RentalOrderSelect<ExtArgs extends runtime.Types.Extensions.InternalA
     pickupLocation?: boolean | Prisma.StoreLocationDefaultArgs<ExtArgs>;
     createdByAdmin?: boolean | Prisma.RentalOrder$createdByAdminArgs<ExtArgs>;
     items?: boolean | Prisma.RentalOrder$itemsArgs<ExtArgs>;
+    paymentAttempt?: boolean | Prisma.RentalOrder$paymentAttemptArgs<ExtArgs>;
     _count?: boolean | Prisma.RentalOrderCountOutputTypeDefaultArgs<ExtArgs>;
 }, ExtArgs["result"]["rentalOrder"]>;
 export type RentalOrderSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -2061,6 +2252,7 @@ export type RentalOrderInclude<ExtArgs extends runtime.Types.Extensions.Internal
     pickupLocation?: boolean | Prisma.StoreLocationDefaultArgs<ExtArgs>;
     createdByAdmin?: boolean | Prisma.RentalOrder$createdByAdminArgs<ExtArgs>;
     items?: boolean | Prisma.RentalOrder$itemsArgs<ExtArgs>;
+    paymentAttempt?: boolean | Prisma.RentalOrder$paymentAttemptArgs<ExtArgs>;
     _count?: boolean | Prisma.RentalOrderCountOutputTypeDefaultArgs<ExtArgs>;
 };
 export type RentalOrderIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2080,6 +2272,7 @@ export type $RentalOrderPayload<ExtArgs extends runtime.Types.Extensions.Interna
         pickupLocation: Prisma.$StoreLocationPayload<ExtArgs>;
         createdByAdmin: Prisma.$AdminUserPayload<ExtArgs> | null;
         items: Prisma.$RentalOrderItemPayload<ExtArgs>[];
+        paymentAttempt: Prisma.$CheckoutPaymentAttemptPayload<ExtArgs> | null;
     };
     scalars: runtime.Types.Extensions.GetPayloadResult<{
         id: string;
@@ -2446,6 +2639,7 @@ export interface Prisma__RentalOrderClient<T, Null = never, ExtArgs extends runt
     pickupLocation<T extends Prisma.StoreLocationDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.StoreLocationDefaultArgs<ExtArgs>>): Prisma.Prisma__StoreLocationClient<runtime.Types.Result.GetResult<Prisma.$StoreLocationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>;
     createdByAdmin<T extends Prisma.RentalOrder$createdByAdminArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.RentalOrder$createdByAdminArgs<ExtArgs>>): Prisma.Prisma__AdminUserClient<runtime.Types.Result.GetResult<Prisma.$AdminUserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>;
     items<T extends Prisma.RentalOrder$itemsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.RentalOrder$itemsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RentalOrderItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>;
+    paymentAttempt<T extends Prisma.RentalOrder$paymentAttemptArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.RentalOrder$paymentAttemptArgs<ExtArgs>>): Prisma.Prisma__CheckoutPaymentAttemptClient<runtime.Types.Result.GetResult<Prisma.$CheckoutPaymentAttemptPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>;
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2925,6 +3119,24 @@ export type RentalOrder$itemsArgs<ExtArgs extends runtime.Types.Extensions.Inter
     take?: number;
     skip?: number;
     distinct?: Prisma.RentalOrderItemScalarFieldEnum | Prisma.RentalOrderItemScalarFieldEnum[];
+};
+/**
+ * RentalOrder.paymentAttempt
+ */
+export type RentalOrder$paymentAttemptArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CheckoutPaymentAttempt
+     */
+    select?: Prisma.CheckoutPaymentAttemptSelect<ExtArgs> | null;
+    /**
+     * Omit specific fields from the CheckoutPaymentAttempt
+     */
+    omit?: Prisma.CheckoutPaymentAttemptOmit<ExtArgs> | null;
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: Prisma.CheckoutPaymentAttemptInclude<ExtArgs> | null;
+    where?: Prisma.CheckoutPaymentAttemptWhereInput;
 };
 /**
  * RentalOrder without action

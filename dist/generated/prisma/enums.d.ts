@@ -61,4 +61,11 @@ export declare const RentalItemType: {
     readonly JEWELLERY: "JEWELLERY";
 };
 export type RentalItemType = (typeof RentalItemType)[keyof typeof RentalItemType];
+export declare const CheckoutPaymentAttemptStatus: {
+    readonly INITIATED: "INITIATED";
+    readonly VERIFIED: "VERIFIED";
+    readonly CANCELLED: "CANCELLED";
+    readonly EXPIRED: "EXPIRED";
+};
+export type CheckoutPaymentAttemptStatus = (typeof CheckoutPaymentAttemptStatus)[keyof typeof CheckoutPaymentAttemptStatus];
 //# sourceMappingURL=enums.d.ts.map

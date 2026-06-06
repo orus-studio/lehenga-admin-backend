@@ -62,4 +62,10 @@ export const RentalItemType = {
     LEHENGA: 'LEHENGA',
     JEWELLERY: 'JEWELLERY'
 };
+export const CheckoutPaymentAttemptStatus = {
+    INITIATED: 'INITIATED',
+    VERIFIED: 'VERIFIED',
+    CANCELLED: 'CANCELLED',
+    EXPIRED: 'EXPIRED'
+};
 //# sourceMappingURL=enums.js.map

@@ -8,6 +8,7 @@ export type * from './models/Jewellery.js';
 export type * from './models/JewelleryImage.js';
 export type * from './models/StoreLocation.js';
 export type * from './models/RentalOrder.js';
+export type * from './models/CheckoutPaymentAttempt.js';
 export type * from './models/RentalOrderItem.js';
 export type * from './models/ProductReview.js';
 export type * from './commonInputTypes.js';

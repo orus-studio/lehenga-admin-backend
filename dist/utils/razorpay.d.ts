@@ -5,6 +5,14 @@ export type RazorpayOrderResponse = {
     receipt?: string;
     status: string;
 };
+export type RazorpayPaymentResponse = {
+    id: string;
+    amount: number;
+    currency: string;
+    status: string;
+    order_id: string | null;
+    captured: boolean;
+};
 export type RazorpayRefundResponse = {
     id: string;
     amount: number;
@@ -15,6 +23,7 @@ export declare function createRazorpayOrder(options: {
     receipt: string;
     notes?: Record<string, string>;
 }): Promise<RazorpayOrderResponse>;
+export declare function fetchRazorpayPayment(razorpayPaymentId: string): Promise<RazorpayPaymentResponse>;
 export declare function verifyRazorpaySignature(options: {
     razorpayOrderId: string;
     razorpayPaymentId: string;

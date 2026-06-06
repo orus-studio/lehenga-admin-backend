@@ -241,6 +241,7 @@ export declare const ModelName: {
     readonly JewelleryImage: "JewelleryImage";
     readonly StoreLocation: "StoreLocation";
     readonly RentalOrder: "RentalOrder";
+    readonly CheckoutPaymentAttempt: "CheckoutPaymentAttempt";
     readonly RentalOrderItem: "RentalOrderItem";
     readonly ProductReview: "ProductReview";
 };
@@ -255,7 +256,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         omit: GlobalOmitOptions;
     };
     meta: {
-        modelProps: "adminUser" | "customer" | "category" | "lehenga" | "lehengaSize" | "lehengaImage" | "jewellery" | "jewelleryImage" | "storeLocation" | "rentalOrder" | "rentalOrderItem" | "productReview";
+        modelProps: "adminUser" | "customer" | "category" | "lehenga" | "lehengaSize" | "lehengaImage" | "jewellery" | "jewelleryImage" | "storeLocation" | "rentalOrder" | "checkoutPaymentAttempt" | "rentalOrderItem" | "productReview";
         txIsolationLevel: TransactionIsolationLevel;
     };
     model: {
@@ -999,6 +1000,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
                 };
             };
         };
+        CheckoutPaymentAttempt: {
+            payload: Prisma.$CheckoutPaymentAttemptPayload<ExtArgs>;
+            fields: Prisma.CheckoutPaymentAttemptFieldRefs;
+            operations: {
+                findUnique: {
+                    args: Prisma.CheckoutPaymentAttemptFindUniqueArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$CheckoutPaymentAttemptPayload> | null;
+                };
+                findUniqueOrThrow: {
+                    args: Prisma.CheckoutPaymentAttemptFindUniqueOrThrowArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$CheckoutPaymentAttemptPayload>;
+                };
+                findFirst: {
+                    args: Prisma.CheckoutPaymentAttemptFindFirstArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$CheckoutPaymentAttemptPayload> | null;
+                };
+                findFirstOrThrow: {
+                    args: Prisma.CheckoutPaymentAttemptFindFirstOrThrowArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$CheckoutPaymentAttemptPayload>;
+                };
+                findMany: {
+                    args: Prisma.CheckoutPaymentAttemptFindManyArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$CheckoutPaymentAttemptPayload>[];
+                };
+                create: {
+                    args: Prisma.CheckoutPaymentAttemptCreateArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$CheckoutPaymentAttemptPayload>;
+                };
+                createMany: {
+                    args: Prisma.CheckoutPaymentAttemptCreateManyArgs<ExtArgs>;
+                    result: BatchPayload;
+                };
+                createManyAndReturn: {
+                    args: Prisma.CheckoutPaymentAttemptCreateManyAndReturnArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$CheckoutPaymentAttemptPayload>[];
+                };
+                delete: {
+                    args: Prisma.CheckoutPaymentAttemptDeleteArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$CheckoutPaymentAttemptPayload>;
+                };
+                update: {
+                    args: Prisma.CheckoutPaymentAttemptUpdateArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$CheckoutPaymentAttemptPayload>;
+                };
+                deleteMany: {
+                    args: Prisma.CheckoutPaymentAttemptDeleteManyArgs<ExtArgs>;
+                    result: BatchPayload;
+                };
+                updateMany: {
+                    args: Prisma.CheckoutPaymentAttemptUpdateManyArgs<ExtArgs>;
+                    result: BatchPayload;
+                };
+                updateManyAndReturn: {
+                    args: Prisma.CheckoutPaymentAttemptUpdateManyAndReturnArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$CheckoutPaymentAttemptPayload>[];
+                };
+                upsert: {
+                    args: Prisma.CheckoutPaymentAttemptUpsertArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$CheckoutPaymentAttemptPayload>;
+                };
+                aggregate: {
+                    args: Prisma.CheckoutPaymentAttemptAggregateArgs<ExtArgs>;
+                    result: runtime.Types.Utils.Optional<Prisma.AggregateCheckoutPaymentAttempt>;
+                };
+                groupBy: {
+                    args: Prisma.CheckoutPaymentAttemptGroupByArgs<ExtArgs>;
+                    result: runtime.Types.Utils.Optional<Prisma.CheckoutPaymentAttemptGroupByOutputType>[];
+                };
+                count: {
+                    args: Prisma.CheckoutPaymentAttemptCountArgs<ExtArgs>;
+                    result: runtime.Types.Utils.Optional<Prisma.CheckoutPaymentAttemptCountAggregateOutputType> | number;
+                };
+            };
+        };
         RentalOrderItem: {
             payload: Prisma.$RentalOrderItemPayload<ExtArgs>;
             fields: Prisma.RentalOrderItemFieldRefs;
@@ -1356,6 +1431,21 @@ export declare const RentalOrderScalarFieldEnum: {
     readonly updatedAt: "updatedAt";
 };
 export type RentalOrderScalarFieldEnum = (typeof RentalOrderScalarFieldEnum)[keyof typeof RentalOrderScalarFieldEnum];
+export declare const CheckoutPaymentAttemptScalarFieldEnum: {
+    readonly id: "id";
+    readonly paymentGatewayOrderId: "paymentGatewayOrderId";
+    readonly paymentGatewayPaymentId: "paymentGatewayPaymentId";
+    readonly paymentMethod: "paymentMethod";
+    readonly paymentAmount: "paymentAmount";
+    readonly checkoutPayload: "checkoutPayload";
+    readonly customerId: "customerId";
+    readonly status: "status";
+    readonly expiresAt: "expiresAt";
+    readonly rentalOrderId: "rentalOrderId";
+    readonly createdAt: "createdAt";
+    readonly updatedAt: "updatedAt";
+};
+export type CheckoutPaymentAttemptScalarFieldEnum = (typeof CheckoutPaymentAttemptScalarFieldEnum)[keyof typeof CheckoutPaymentAttemptScalarFieldEnum];
 export declare const RentalOrderItemScalarFieldEnum: {
     readonly id: "id";
     readonly orderId: "orderId";
@@ -1400,6 +1490,10 @@ export declare const SortOrder: {
     readonly desc: "desc";
 };
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder];
+export declare const JsonNullValueInput: {
+    readonly JsonNull: runtime.JsonNullClass;
+};
+export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput];
 export declare const QueryMode: {
     readonly default: "default";
     readonly insensitive: "insensitive";
@@ -1410,6 +1504,12 @@ export declare const NullsOrder: {
     readonly last: "last";
 };
 export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder];
+export declare const JsonNullValueFilter: {
+    readonly DbNull: runtime.DbNullClass;
+    readonly JsonNull: runtime.JsonNullClass;
+    readonly AnyNull: runtime.AnyNullClass;
+};
+export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter];
 /**
  * Field references
  */
@@ -1505,6 +1605,22 @@ export type EnumDepositRefundStatusFieldRefInput<$PrismaModel> = FieldRefInputTy
  * Reference to a field of type 'DepositRefundStatus[]'
  */
 export type ListEnumDepositRefundStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DepositRefundStatus[]'>;
+/**
+ * Reference to a field of type 'Json'
+ */
+export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>;
+/**
+ * Reference to a field of type 'QueryMode'
+ */
+export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QueryMode'>;
+/**
+ * Reference to a field of type 'CheckoutPaymentAttemptStatus'
+ */
+export type EnumCheckoutPaymentAttemptStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CheckoutPaymentAttemptStatus'>;
+/**
+ * Reference to a field of type 'CheckoutPaymentAttemptStatus[]'
+ */
+export type ListEnumCheckoutPaymentAttemptStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CheckoutPaymentAttemptStatus[]'>;
 /**
  * Reference to a field of type 'RentalItemType'
  */
@@ -1640,6 +1756,7 @@ export type GlobalOmitConfig = {
     jewelleryImage?: Prisma.JewelleryImageOmit;
     storeLocation?: Prisma.StoreLocationOmit;
     rentalOrder?: Prisma.RentalOrderOmit;
+    checkoutPaymentAttempt?: Prisma.CheckoutPaymentAttemptOmit;
     rentalOrderItem?: Prisma.RentalOrderItemOmit;
     productReview?: Prisma.ProductReviewOmit;
 };

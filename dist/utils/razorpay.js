@@ -47,6 +47,9 @@ export async function createRazorpayOrder(options) {
         }),
     });
 }
+export async function fetchRazorpayPayment(razorpayPaymentId) {
+    return razorpayRequest(`/payments/${encodeURIComponent(razorpayPaymentId)}`);
+}
 export function verifyRazorpaySignature(options) {
     if (!env.razorpayKeySecret) {
         throw new AppError("Razorpay is not configured on the server", 500);

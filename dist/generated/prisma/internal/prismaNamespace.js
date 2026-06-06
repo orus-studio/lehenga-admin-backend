@@ -78,6 +78,7 @@ export const ModelName = {
     JewelleryImage: 'JewelleryImage',
     StoreLocation: 'StoreLocation',
     RentalOrder: 'RentalOrder',
+    CheckoutPaymentAttempt: 'CheckoutPaymentAttempt',
     RentalOrderItem: 'RentalOrderItem',
     ProductReview: 'ProductReview'
 };
@@ -255,6 +256,20 @@ export const RentalOrderScalarFieldEnum = {
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
 };
+export const CheckoutPaymentAttemptScalarFieldEnum = {
+    id: 'id',
+    paymentGatewayOrderId: 'paymentGatewayOrderId',
+    paymentGatewayPaymentId: 'paymentGatewayPaymentId',
+    paymentMethod: 'paymentMethod',
+    paymentAmount: 'paymentAmount',
+    checkoutPayload: 'checkoutPayload',
+    customerId: 'customerId',
+    status: 'status',
+    expiresAt: 'expiresAt',
+    rentalOrderId: 'rentalOrderId',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+};
 export const RentalOrderItemScalarFieldEnum = {
     id: 'id',
     orderId: 'orderId',
@@ -296,6 +311,9 @@ export const SortOrder = {
     asc: 'asc',
     desc: 'desc'
 };
+export const JsonNullValueInput = {
+    JsonNull: JsonNull
+};
 export const QueryMode = {
     default: 'default',
     insensitive: 'insensitive'
@@ -303,6 +321,11 @@ export const QueryMode = {
 export const NullsOrder = {
     first: 'first',
     last: 'last'
+};
+export const JsonNullValueFilter = {
+    DbNull: DbNull,
+    JsonNull: JsonNull,
+    AnyNull: AnyNull
 };
 export const defineExtension = runtime.Extensions.defineExtension;
 //# sourceMappingURL=prismaNamespace.js.map

@@ -53,6 +53,11 @@ export type StoreLocation = Prisma.StoreLocationModel;
  */
 export type RentalOrder = Prisma.RentalOrderModel;
 /**
+ * Model CheckoutPaymentAttempt
+ *
+ */
+export type CheckoutPaymentAttempt = Prisma.CheckoutPaymentAttemptModel;
+/**
  * Model RentalOrderItem
  *
  */

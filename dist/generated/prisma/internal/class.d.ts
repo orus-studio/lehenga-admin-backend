@@ -228,6 +228,17 @@ export interface PrismaClient<in LogOpts extends Prisma.LogLevel = never, in out
         omit: OmitOpts;
     }>;
     /**
+     * `prisma.checkoutPaymentAttempt`: Exposes CRUD operations for the **CheckoutPaymentAttempt** model.
+      * Example usage:
+      * ```ts
+      * // Fetch zero or more CheckoutPaymentAttempts
+      * const checkoutPaymentAttempts = await prisma.checkoutPaymentAttempt.findMany()
+      * ```
+      */
+    get checkoutPaymentAttempt(): Prisma.CheckoutPaymentAttemptDelegate<ExtArgs, {
+        omit: OmitOpts;
+    }>;
+    /**
      * `prisma.rentalOrderItem`: Exposes CRUD operations for the **RentalOrderItem** model.
       * Example usage:
       * ```ts

@@ -53,6 +53,15 @@ export type RazorpayOrderResponse = {
   status: string;
 };
 
+export type RazorpayPaymentResponse = {
+  id: string;
+  amount: number;
+  currency: string;
+  status: string;
+  order_id: string | null;
+  captured: boolean;
+};
+
 export type RazorpayRefundResponse = {
   id: string;
   amount: number;
@@ -73,6 +82,10 @@ export async function createRazorpayOrder(options: {
       notes: options.notes,
     }),
   });
+}
+
+export async function fetchRazorpayPayment(razorpayPaymentId: string) {
+  return razorpayRequest<RazorpayPaymentResponse>(`/payments/${encodeURIComponent(razorpayPaymentId)}`);
 }
 
 export function verifyRazorpaySignature(options: {

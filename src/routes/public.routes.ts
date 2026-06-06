@@ -1,4 +1,7 @@
-import { DepositRefundStatus, OrderStatus, PaymentMethod, PaymentStatus, ProductStatus, RentalItemType } from "../generated/prisma/enums.js";
+import crypto from "node:crypto";
+
+import { Prisma } from "../generated/prisma/client.js";
+import { CheckoutPaymentAttemptStatus, DepositRefundStatus, OrderStatus, PaymentMethod, PaymentStatus, ProductStatus, RentalItemType } from "../generated/prisma/enums.js";
 import { Router } from "express";
 
 import { sendCachedCatalogResponse } from "../lib/catalog-cache.js";
@@ -16,7 +19,7 @@ import {
   prepareCheckoutItems,
   summarizePreparedCheckout,
 } from "../utils/order-checkout.js";
-import { createRazorpayOrder, verifyRazorpaySignature } from "../utils/razorpay.js";
+import { createRazorpayOrder, fetchRazorpayPayment, verifyRazorpaySignature } from "../utils/razorpay.js";
 import {
   ensureObject,
   getOptionalNumber,
@@ -197,6 +200,20 @@ async function cancelUnpaidOnlineOrder(order: {
   const results = await prisma.$transaction(transactionOperations);
 
   return results[results.length - 1];
+}
+
+async function releaseExpiredPaymentAttempts() {
+  await prisma.checkoutPaymentAttempt.updateMany({
+    where: {
+      status: CheckoutPaymentAttemptStatus.INITIATED,
+      expiresAt: {
+        lt: new Date(),
+      },
+    },
+    data: {
+      status: CheckoutPaymentAttemptStatus.EXPIRED,
+    },
+  });
 }
 
 async function releaseExpiredPendingOnlineOrders() {
@@ -704,50 +721,213 @@ publicRouter.post(
 publicRouter.post(
   "/orders",
   asyncHandler(async (request, response) => {
-    await releaseExpiredPendingOnlineOrders();
+    await Promise.all([releaseExpiredPendingOnlineOrders(), releaseExpiredPaymentAttempts()]);
     const body = ensureObject(request.body);
-    const specialInstructions = getOptionalString(body, "specialInstructions");
-    const customerName = getOptionalString(body, "customerName");
-    const customerEmail = getOptionalString(body, "customerEmail")?.toLowerCase();
-    const customerPhone = getOptionalString(body, "customerPhone");
     const rawPaymentMethod = getRequiredString(body, "paymentMethod");
-    const paymentMethod = rawPaymentMethod === PaymentMethod.ONLINE ? PaymentMethod.ONLINE : rawPaymentMethod === PaymentMethod.PICKUP ? PaymentMethod.PICKUP : null;
+    const paymentMethod =
+      rawPaymentMethod === PaymentMethod.ONLINE
+        ? PaymentMethod.ONLINE
+        : rawPaymentMethod === PaymentMethod.PICKUP
+          ? PaymentMethod.PICKUP
+          : null;
 
     if (!paymentMethod) {
       throw new AppError("paymentMethod must be ONLINE or PICKUP", 400);
     }
 
     const items = parseCheckoutItems(body.items);
-    const pickupLocation = await getDefaultPickupLocation();
     const preparedItems = await prepareCheckoutItems(items);
     const summary = summarizePreparedCheckout(preparedItems);
-    const customer = await findOrCreateCheckoutCustomer({
-      authorization: request.headers.authorization,
-      customerName,
-      customerEmail,
-      customerPhone,
-    });
+    const authenticatedCustomer = await getOptionalAuthenticatedCustomer(request.headers.authorization);
+    const customerPhone = getOptionalString(body, "customerPhone");
 
-    const orderNumber = generateOrderNumber();
-    const paymentAmount = paymentMethod === PaymentMethod.PICKUP ? summary.securityDeposit : summary.totalAmount;
+    if (!authenticatedCustomer && !customerPhone) {
+      throw new AppError("customerPhone is required for guest checkout", 400);
+    }
+
+    const paymentAmount =
+      paymentMethod === PaymentMethod.PICKUP ? summary.securityDeposit : summary.totalAmount;
 
     if (paymentMethod === PaymentMethod.PICKUP && paymentAmount <= 0) {
       throw new AppError("A fixed deposit greater than zero is required for pay at pickup orders", 400);
     }
 
-    const depositRefundStatus =
-      paymentAmount > 0 && summary.securityDeposit > 0 ? DepositRefundStatus.PENDING : DepositRefundStatus.NOT_APPLICABLE;
-    const razorpayOrder =
-      paymentAmount > 0
-        ? await createRazorpayOrder({
-            amountInPaise: Math.round(paymentAmount * 100),
-            receipt: orderNumber,
-            notes: {
-              orderNumber,
-              customerId: customer.id,
-            },
-          })
-        : null;
+    const paymentAttemptId = crypto.randomUUID();
+    const razorpayOrder = await createRazorpayOrder({
+      amountInPaise: Math.round(paymentAmount * 100),
+      receipt: `PAY-${paymentAttemptId.slice(0, 24)}`,
+      notes: {
+        paymentAttemptId,
+        paymentMethod,
+      },
+    });
+
+    await prisma.checkoutPaymentAttempt.create({
+      data: {
+        id: paymentAttemptId,
+        paymentGatewayOrderId: razorpayOrder.id,
+        paymentMethod,
+        paymentAmount,
+        checkoutPayload: JSON.parse(JSON.stringify(body)) as Prisma.InputJsonValue,
+        ...(authenticatedCustomer ? { customerId: authenticatedCustomer.id } : {}),
+        expiresAt: new Date(Date.now() + ONLINE_PAYMENT_HOLD_WINDOW_MS),
+      },
+    });
+
+    response.status(201).json({
+      success: true,
+      message: "Payment checkout created. The order will be placed after payment verification.",
+      data: {
+        paymentAttempt: {
+          id: paymentAttemptId,
+          expiresAt: new Date(Date.now() + ONLINE_PAYMENT_HOLD_WINDOW_MS).toISOString(),
+        },
+        razorpayOrder: {
+          id: razorpayOrder.id,
+          amount: razorpayOrder.amount,
+          currency: razorpayOrder.currency,
+          keyId: env.razorpayKeyId,
+          name: "Lehenga Rental",
+          description:
+            paymentMethod === PaymentMethod.PICKUP
+              ? "Fixed deposit payment"
+              : "Complete rental payment",
+        },
+      },
+    });
+  }),
+);
+
+publicRouter.post(
+  "/payments/razorpay/cancel",
+  asyncHandler(async (request, response) => {
+    const customer = await getOptionalAuthenticatedCustomer(request.headers.authorization);
+    const body = ensureObject(request.body);
+    const paymentAttemptId = getRequiredString(body, "paymentAttemptId");
+
+    const attempt = await prisma.checkoutPaymentAttempt.findUnique({
+      where: { id: paymentAttemptId },
+    });
+
+    if (!attempt || (attempt.customerId && attempt.customerId !== customer?.id)) {
+      throw new AppError("Payment attempt not found", 404);
+    }
+
+    if (attempt.status === CheckoutPaymentAttemptStatus.VERIFIED) {
+      throw new AppError("This payment is already completed", 409);
+    }
+
+    const updatedAttempt = await prisma.checkoutPaymentAttempt.update({
+      where: { id: attempt.id },
+      data: {
+        status: CheckoutPaymentAttemptStatus.CANCELLED,
+      },
+      select: {
+        id: true,
+        status: true,
+      },
+    });
+
+    response.json({
+      success: true,
+      message: "Payment checkout was cancelled. No order was created.",
+      data: updatedAttempt,
+    });
+  }),
+);
+
+publicRouter.post(
+  "/payments/razorpay/verify",
+  asyncHandler(async (request, response) => {
+    await releaseExpiredPaymentAttempts();
+    const authenticatedCustomer = await getOptionalAuthenticatedCustomer(request.headers.authorization);
+    const body = ensureObject(request.body);
+    const paymentAttemptId = getRequiredString(body, "paymentAttemptId");
+    const razorpayOrderId = getRequiredString(body, "razorpayOrderId");
+    const razorpayPaymentId = getRequiredString(body, "razorpayPaymentId");
+    const razorpaySignature = getRequiredString(body, "razorpaySignature");
+
+    const attempt = await prisma.checkoutPaymentAttempt.findUnique({
+      where: { id: paymentAttemptId },
+      include: {
+        rentalOrder: {
+          include: orderInclude,
+        },
+      },
+    });
+
+    if (!attempt || (attempt.customerId && attempt.customerId !== authenticatedCustomer?.id)) {
+      throw new AppError("Payment attempt not found", 404);
+    }
+
+    if (attempt.status === CheckoutPaymentAttemptStatus.VERIFIED && attempt.rentalOrder) {
+      response.json({
+        success: true,
+        message: "Payment was already verified",
+        data: attempt.rentalOrder,
+      });
+      return;
+    }
+
+    if (attempt.status !== CheckoutPaymentAttemptStatus.INITIATED || attempt.expiresAt < new Date()) {
+      throw new AppError("This payment attempt is no longer active", 409);
+    }
+
+    if (attempt.paymentGatewayOrderId !== razorpayOrderId) {
+      throw new AppError("Payment gateway order does not match this checkout", 400);
+    }
+
+    if (!verifyRazorpaySignature({ razorpayOrderId, razorpayPaymentId, razorpaySignature })) {
+      throw new AppError("Invalid Razorpay payment signature", 400);
+    }
+
+    const razorpayPayment = await fetchRazorpayPayment(razorpayPaymentId);
+    const expectedAmountInPaise = Math.round(Number(attempt.paymentAmount) * 100);
+
+    if (
+      razorpayPayment.order_id !== razorpayOrderId ||
+      razorpayPayment.amount !== expectedAmountInPaise ||
+      razorpayPayment.currency !== "INR"
+    ) {
+      throw new AppError("Razorpay payment details do not match this checkout", 400);
+    }
+
+    if (!razorpayPayment.captured || razorpayPayment.status !== "captured") {
+      throw new AppError("Payment has not been captured by Razorpay", 409);
+    }
+
+    const checkoutPayload = ensureObject(attempt.checkoutPayload);
+    const payloadPaymentMethod = getRequiredString(checkoutPayload, "paymentMethod");
+
+    if (payloadPaymentMethod !== attempt.paymentMethod) {
+      throw new AppError("Checkout payment method does not match the payment attempt", 400);
+    }
+
+    const items = parseCheckoutItems(checkoutPayload.items);
+    const preparedItems = await prepareCheckoutItems(items);
+    const summary = summarizePreparedCheckout(preparedItems);
+    const expectedAmount =
+      attempt.paymentMethod === PaymentMethod.PICKUP ? summary.securityDeposit : summary.totalAmount;
+
+    if (Math.round(expectedAmount * 100) !== Math.round(Number(attempt.paymentAmount) * 100)) {
+      throw new AppError("Checkout total changed. Please start payment again.", 409);
+    }
+
+    const customer = await findOrCreateCheckoutCustomer({
+      authorization: request.headers.authorization,
+      customerName: getOptionalString(checkoutPayload, "customerName"),
+      customerEmail: getOptionalString(checkoutPayload, "customerEmail")?.toLowerCase(),
+      customerPhone: getOptionalString(checkoutPayload, "customerPhone"),
+    });
+    const pickupLocation = await getDefaultPickupLocation();
+    const orderNumber = generateOrderNumber();
+    const amountPaid =
+      attempt.paymentMethod === PaymentMethod.PICKUP ? summary.securityDeposit : summary.totalAmount;
+    const amountDueAtPickup =
+      attempt.paymentMethod === PaymentMethod.PICKUP ? summary.subtotalAmount : 0;
+    const paymentStatus =
+      amountDueAtPickup > 0 ? PaymentStatus.PARTIALLY_PAID : PaymentStatus.PAID;
+    const specialInstructions = getOptionalString(checkoutPayload, "specialInstructions");
 
     await prisma.$transaction([
       prisma.rentalOrder.create({
@@ -759,17 +939,23 @@ publicRouter.post(
           pickupLocation: {
             connect: { id: pickupLocation.id },
           },
-          paymentMethod,
-          paymentStatus: PaymentStatus.PENDING,
+          paymentMethod: attempt.paymentMethod,
+          paymentStatus,
           rentalStartDate: summary.rentalStartDate,
           rentalEndDate: summary.rentalEndDate,
           subtotalAmount: summary.subtotalAmount,
           securityDeposit: summary.securityDeposit,
           totalAmount: summary.totalAmount,
-          amountPaid: 0,
-          amountDueAtPickup: paymentMethod === PaymentMethod.PICKUP ? summary.subtotalAmount : 0,
-          depositRefundStatus,
-          ...(razorpayOrder ? { paymentGatewayOrderId: razorpayOrder.id } : {}),
+          amountPaid,
+          amountDueAtPickup,
+          depositRefundStatus:
+            summary.securityDeposit > 0
+              ? DepositRefundStatus.PENDING
+              : DepositRefundStatus.NOT_APPLICABLE,
+          paymentGatewayOrderId: razorpayOrderId,
+          paymentGatewayPaymentId: razorpayPaymentId,
+          paymentGatewaySignature: razorpaySignature,
+          paymentCapturedAt: new Date(),
           ...(specialInstructions ? { specialInstructions } : {}),
           items: {
             create: buildOrderItemCreates(preparedItems),
@@ -777,148 +963,27 @@ publicRouter.post(
         },
       }),
       ...buildInventoryApplyOperations(preparedItems),
+      prisma.checkoutPaymentAttempt.update({
+        where: { id: attempt.id },
+        data: {
+          status: CheckoutPaymentAttemptStatus.VERIFIED,
+          paymentGatewayPaymentId: razorpayPaymentId,
+          rentalOrder: {
+            connect: { orderNumber },
+          },
+        },
+      }),
     ]);
 
     const order = await prisma.rentalOrder.findUniqueOrThrow({
-      where: {
-        orderNumber,
-      },
+      where: { orderNumber },
       include: orderInclude,
     });
 
     response.status(201).json({
       success: true,
-      message:
-        paymentMethod === PaymentMethod.ONLINE
-          ? "Order created. Complete the payment to confirm it."
-          : "Order created. Pay the fixed deposit to confirm pickup.",
-      data: {
-        order,
-        ...(razorpayOrder
-          ? {
-              razorpayOrder: {
-                id: razorpayOrder.id,
-                amount: razorpayOrder.amount,
-                currency: razorpayOrder.currency,
-                keyId: env.razorpayKeyId,
-                name: "Lehenga Rental",
-                description: `Payment for ${order.orderNumber}`,
-              },
-            }
-          : {}),
-      },
-    });
-  }),
-);
-
-publicRouter.post(
-  "/payments/razorpay/cancel",
-  asyncHandler(async (request, response) => {
-    const customer = await getOptionalAuthenticatedCustomer(request.headers.authorization);
-    const body = ensureObject(request.body);
-    const orderId = getRequiredString(body, "orderId");
-
-    const order = await prisma.rentalOrder.findFirst({
-      where: {
-        id: orderId,
-        ...(customer ? { customerId: customer.id } : {}),
-      },
-      include: {
-        items: true,
-      },
-    });
-
-    if (!order) {
-      throw new AppError("Order not found", 404);
-    }
-
-    if (order.paymentMethod !== PaymentMethod.ONLINE && order.paymentMethod !== PaymentMethod.PICKUP) {
-      throw new AppError("This order is not configured for gateway payment", 400);
-    }
-
-    if (order.paymentStatus === PaymentStatus.PAID) {
-      throw new AppError("This payment is already completed", 409);
-    }
-
-    const updatedOrder =
-      order.status === OrderStatus.CANCELLED && order.paymentStatus === PaymentStatus.FAILED
-        ? await prisma.rentalOrder.findUniqueOrThrow({
-            where: { id: order.id },
-            include: orderInclude,
-          })
-        : await cancelUnpaidOnlineOrder(order);
-
-    response.json({
-      success: true,
-      message: "Online checkout was cancelled",
-      data: updatedOrder,
-    });
-  }),
-);
-
-publicRouter.post(
-  "/payments/razorpay/verify",
-  asyncHandler(async (request, response) => {
-    const customer = await getOptionalAuthenticatedCustomer(request.headers.authorization);
-    const body = ensureObject(request.body);
-    const orderId = getRequiredString(body, "orderId");
-    const razorpayOrderId = getRequiredString(body, "razorpayOrderId");
-    const razorpayPaymentId = getRequiredString(body, "razorpayPaymentId");
-    const razorpaySignature = getRequiredString(body, "razorpaySignature");
-
-    const order = await prisma.rentalOrder.findFirst({
-      where: {
-        id: orderId,
-        ...(customer ? { customerId: customer.id } : {}),
-      },
-      include: orderInclude,
-    });
-
-    if (!order) {
-      throw new AppError("Order not found", 404);
-    }
-
-    if (order.paymentMethod !== PaymentMethod.ONLINE && order.paymentMethod !== PaymentMethod.PICKUP) {
-      throw new AppError("This order is not configured for gateway payment", 400);
-    }
-
-    if (order.paymentGatewayOrderId !== razorpayOrderId) {
-      throw new AppError("Payment gateway order does not match this order", 400);
-    }
-
-    if (!verifyRazorpaySignature({ razorpayOrderId, razorpayPaymentId, razorpaySignature })) {
-      throw new AppError("Invalid Razorpay payment signature", 400);
-    }
-
-    const amountPaid =
-      order.paymentMethod === PaymentMethod.PICKUP ? Number(order.securityDeposit) : Number(order.totalAmount);
-    const amountDueAtPickup =
-      order.paymentMethod === PaymentMethod.PICKUP ? Math.max(0, Number(order.totalAmount) - amountPaid) : 0;
-    const paymentStatus =
-      amountDueAtPickup > 0 ? PaymentStatus.PARTIALLY_PAID : PaymentStatus.PAID;
-
-    const updatedOrder = await prisma.rentalOrder.update({
-      where: {
-        id: order.id,
-      },
-      data: {
-        paymentStatus,
-        amountPaid,
-        amountDueAtPickup,
-        paymentGatewayOrderId: razorpayOrderId,
-        paymentGatewayPaymentId: razorpayPaymentId,
-        paymentGatewaySignature: razorpaySignature,
-        paymentCapturedAt: new Date(),
-        depositRefundStatus:
-          Number(order.securityDeposit) > 0 ? DepositRefundStatus.PENDING : DepositRefundStatus.NOT_APPLICABLE,
-      },
-      include: orderInclude,
-    });
-
-    response.json({
-      success: true,
-      message: "Payment verified successfully",
-      data: updatedOrder,
+      message: "Payment verified and order created successfully",
+      data: order,
     });
   }),
 );
