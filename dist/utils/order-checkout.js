@@ -1,4 +1,5 @@
 import { RentalItemType } from "../generated/prisma/enums.js";
+import { getItemAvailability } from "../lib/availability.js";
 import { prisma } from "../lib/prisma.js";
 import { AppError } from "./app-error.js";
 import { ensureObject, getOptionalNumber, getOptionalString, getRequiredArray, getRequiredString } from "./validation.js";
@@ -79,26 +80,9 @@ export function parseCheckoutItems(value) {
         throw new AppError(`items[${index}].itemType must be LEHENGA or JEWELLERY`, 400);
     });
 }
-function buildAdjustmentMaps(existingOrder) {
-    const lehengaSizeAdjustments = new Map();
-    const jewelleryAdjustments = new Map();
-    if (!existingOrder) {
-        return { lehengaSizeAdjustments, jewelleryAdjustments };
-    }
-    for (const item of existingOrder.items) {
-        if (item.lehengaSizeId) {
-            lehengaSizeAdjustments.set(item.lehengaSizeId, (lehengaSizeAdjustments.get(item.lehengaSizeId) ?? 0) + item.quantity);
-        }
-        if (item.jewelleryId) {
-            jewelleryAdjustments.set(item.jewelleryId, (jewelleryAdjustments.get(item.jewelleryId) ?? 0) + item.quantity);
-        }
-    }
-    return { lehengaSizeAdjustments, jewelleryAdjustments };
-}
 export async function prepareCheckoutItems(items, existingOrder) {
     const lehengaItems = items.filter((item) => item.itemType === RentalItemType.LEHENGA);
     const jewelleryItems = items.filter((item) => item.itemType === RentalItemType.JEWELLERY);
-    const { lehengaSizeAdjustments, jewelleryAdjustments } = buildAdjustmentMaps(existingOrder);
     const [lehengas, jewelleryProducts] = await Promise.all([
         lehengaItems.length
             ? prisma.lehenga.findMany({
@@ -130,7 +114,7 @@ export async function prepareCheckoutItems(items, existingOrder) {
     }
     const lehengasById = new Map(lehengas.map((lehenga) => [lehenga.id, lehenga]));
     const jewelleryById = new Map(jewelleryProducts.map((jewellery) => [jewellery.id, jewellery]));
-    return items.map((item) => {
+    return Promise.all(items.map(async (item) => {
         const rentalDays = getRentalDays(item.rentalStartDate, item.rentalEndDate);
         if (item.itemType === RentalItemType.LEHENGA) {
             const lehenga = lehengasById.get(item.lehengaId);
@@ -141,11 +125,17 @@ export async function prepareCheckoutItems(items, existingOrder) {
             if (!selectedSize) {
                 throw new AppError(`No size is available for ${lehenga.name}`, 400);
             }
-            const availableQuantity = selectedSize.quantityTotal -
-                selectedSize.quantityReserved +
-                (lehengaSizeAdjustments.get(selectedSize.id) ?? 0);
-            if (item.quantity > availableQuantity) {
-                throw new AppError(`Only limited stock is available for ${lehenga.name}`, 400);
+            const availability = await getItemAvailability({
+                itemType: RentalItemType.LEHENGA,
+                productId: lehenga.id,
+                sizeId: selectedSize.id,
+                startDate: item.rentalStartDate,
+                endDate: item.rentalEndDate,
+                ...(existingOrder ? { excludeOrderId: existingOrder.id } : {}),
+                useCache: false,
+            });
+            if (item.quantity > availability.quantityAvailable) {
+                throw new AppError(`${lehenga.name} is not available in the selected size for these rental dates`, 409);
             }
             const pricePerDay = Number(lehenga.rentalPricePerDay);
             const depositAmount = Number(lehenga.securityDeposit ?? 0);
@@ -170,9 +160,16 @@ export async function prepareCheckoutItems(items, existingOrder) {
         if (!jewellery) {
             throw new AppError("Selected jewellery item was not found", 404);
         }
-        const availableQuantity = jewellery.stockQuantity + (jewelleryAdjustments.get(jewellery.id) ?? 0);
-        if (item.quantity > availableQuantity) {
-            throw new AppError(`Only limited stock is available for ${jewellery.name}`, 400);
+        const availability = await getItemAvailability({
+            itemType: RentalItemType.JEWELLERY,
+            productId: jewellery.id,
+            startDate: item.rentalStartDate,
+            endDate: item.rentalEndDate,
+            ...(existingOrder ? { excludeOrderId: existingOrder.id } : {}),
+            useCache: false,
+        });
+        if (item.quantity > availability.quantityAvailable) {
+            throw new AppError(`${jewellery.name} is not available for these rental dates`, 409);
         }
         const pricePerDay = Number(jewellery.rentalPricePerDay);
         const depositAmount = Number(jewellery.securityDeposit ?? 0);
@@ -189,7 +186,7 @@ export async function prepareCheckoutItems(items, existingOrder) {
             depositAmount: depositAmount * item.quantity,
             jewelleryId: jewellery.id,
         };
-    });
+    }));
 }
 export function summarizePreparedCheckout(preparedItems) {
     const subtotalAmount = preparedItems.reduce((sum, item) => sum + item.lineTotal, 0);
@@ -252,55 +249,11 @@ export function buildOrderItemCreates(items) {
     }));
 }
 export function buildInventoryApplyOperations(items) {
-    return items.flatMap((item) => {
-        const operations = [];
-        if (item.lehengaSizeId) {
-            operations.push(prisma.lehengaSize.update({
-                where: { id: item.lehengaSizeId },
-                data: {
-                    quantityReserved: {
-                        increment: item.quantity,
-                    },
-                },
-            }));
-        }
-        if (item.jewelleryId) {
-            operations.push(prisma.jewellery.update({
-                where: { id: item.jewelleryId },
-                data: {
-                    stockQuantity: {
-                        decrement: item.quantity,
-                    },
-                },
-            }));
-        }
-        return operations;
-    });
+    void items;
+    return [];
 }
 export function buildInventoryRevertOperations(existingOrder) {
-    return existingOrder.items.flatMap((item) => {
-        const operations = [];
-        if (item.lehengaSizeId) {
-            operations.push(prisma.lehengaSize.update({
-                where: { id: item.lehengaSizeId },
-                data: {
-                    quantityReserved: {
-                        decrement: item.quantity,
-                    },
-                },
-            }));
-        }
-        if (item.jewelleryId) {
-            operations.push(prisma.jewellery.update({
-                where: { id: item.jewelleryId },
-                data: {
-                    stockQuantity: {
-                        increment: item.quantity,
-                    },
-                },
-            }));
-        }
-        return operations;
-    });
+    void existingOrder;
+    return [];
 }
 //# sourceMappingURL=order-checkout.js.map

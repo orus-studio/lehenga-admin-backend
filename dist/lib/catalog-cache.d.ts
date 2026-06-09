@@ -6,7 +6,9 @@ export declare function cachedCatalogRead<T>(keyParts: Array<string | number | u
     data: T;
     status: CacheStatus;
 }>;
+export declare function cachedAvailabilityRead<T>(keyParts: Array<string | number | undefined | null>, loader: () => Promise<T>): Promise<T>;
 export declare function sendCachedCatalogResponse<T>(response: Response, keyParts: Array<string | number | undefined | null>, loader: () => Promise<T>): Promise<void>;
 export declare function invalidateCatalogCache(): Promise<void>;
+export declare function invalidateAvailabilityCache(): Promise<void>;
 export {};
 //# sourceMappingURL=catalog-cache.d.ts.map

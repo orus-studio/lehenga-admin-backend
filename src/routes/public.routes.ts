@@ -4,7 +4,8 @@ import { Prisma } from "../generated/prisma/client.js";
 import { CheckoutPaymentAttemptStatus, DepositRefundStatus, OrderStatus, PaymentMethod, PaymentStatus, ProductStatus, RentalItemType } from "../generated/prisma/enums.js";
 import { Router } from "express";
 
-import { sendCachedCatalogResponse } from "../lib/catalog-cache.js";
+import { invalidateAvailabilityCache, sendCachedCatalogResponse } from "../lib/catalog-cache.js";
+import { getItemAvailability } from "../lib/availability.js";
 import { prisma } from "../lib/prisma.js";
 import { env } from "../config/env.js";
 import { asyncHandler } from "../utils/async-handler.js";
@@ -26,6 +27,8 @@ import {
   getOptionalString,
   getRequiredString,
 } from "../utils/validation.js";
+import { parseDateValue } from "../utils/order-checkout.js";
+import { queueOrderConfirmationWhatsApp } from "../utils/whatsapp.js";
 
 const orderedImageInclude = {
   orderBy: {
@@ -102,6 +105,17 @@ const publicCategoryInclude = {
       createdAt: "desc" as const,
     },
     include: publicJewelleryInclude,
+  },
+};
+
+const storefrontCategoryInclude = {
+  ...publicCategoryInclude,
+  lehengas: {
+    ...publicCategoryInclude.lehengas,
+    where: {
+      ...publicCategoryInclude.lehengas.where,
+      isCategoryFeatured: true,
+    },
   },
 };
 
@@ -198,6 +212,7 @@ async function cancelUnpaidOnlineOrder(order: {
   ];
 
   const results = await prisma.$transaction(transactionOperations);
+  await invalidateAvailabilityCache();
 
   return results[results.length - 1];
 }
@@ -560,7 +575,7 @@ publicRouter.get(
           : {}),
         orderBy: [{ createdAt: "asc" }],
         ...(limit > 0 ? { take: limit } : {}),
-        include: publicCategoryInclude,
+        include: featuredOnly ? storefrontCategoryInclude : publicCategoryInclude,
       }),
     );
   }),
@@ -568,18 +583,51 @@ publicRouter.get(
 
 publicRouter.get(
   "/lehengas",
-  asyncHandler(async (_request, response) => {
-    await sendCachedCatalogResponse(response, ["lehengas", "all"], () =>
+  asyncHandler(async (request, response) => {
+    const featuredOnly = request.query.featured === "true";
+
+    await sendCachedCatalogResponse(response, ["lehengas", featuredOnly ? "featured" : "all"], () =>
       prisma.lehenga.findMany({
         where: {
           status: {
             not: ProductStatus.ARCHIVED,
           },
+          ...(featuredOnly ? { isFeatured: true } : {}),
         },
         orderBy: { createdAt: "desc" },
         include: publicLehengaInclude,
       }),
     );
+  }),
+);
+
+publicRouter.get(
+  "/availability",
+  asyncHandler(async (request, response) => {
+    const itemType = getRequiredString(request.query, "itemType");
+    const productId = getRequiredString(request.query, "productId");
+    const sizeId = getOptionalString(request.query, "sizeId");
+    const startDate = parseDateValue(getRequiredString(request.query, "startDate"), "startDate");
+    const endDate = parseDateValue(getRequiredString(request.query, "endDate"), "endDate");
+
+    if (endDate < startDate) {
+      throw new AppError("endDate must be on or after startDate", 400);
+    }
+
+    if (itemType !== RentalItemType.LEHENGA && itemType !== RentalItemType.JEWELLERY) {
+      throw new AppError("itemType must be LEHENGA or JEWELLERY", 400);
+    }
+
+    const availability = await getItemAvailability({
+      itemType,
+      productId,
+      ...(sizeId ? { sizeId } : {}),
+      startDate,
+      endDate,
+    });
+
+    response.setHeader("Cache-Control", `public, max-age=10, stale-while-revalidate=20`);
+    response.json({ success: true, data: availability });
   }),
 );
 
@@ -979,6 +1027,8 @@ publicRouter.post(
       where: { orderNumber },
       include: orderInclude,
     });
+    await invalidateAvailabilityCache();
+    queueOrderConfirmationWhatsApp(order);
 
     response.status(201).json({
       success: true,

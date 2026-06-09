@@ -57,4 +57,12 @@ export const env = {
   catalogCacheTtlSeconds: getNumberEnv("CATALOG_CACHE_TTL_SECONDS", 300),
   catalogCacheStaleTtlSeconds: getNumberEnv("CATALOG_CACHE_STALE_TTL_SECONDS", 86400),
   catalogCacheDisabled: process.env.CATALOG_CACHE_DISABLED === "true",
+  availabilityCacheTtlSeconds: getNumberEnv("AVAILABILITY_CACHE_TTL_SECONDS", 30),
+  whatsappAccessToken: process.env.WHATSAPP_ACCESS_TOKEN?.trim() ?? "",
+  whatsappPhoneNumberId: process.env.WHATSAPP_PHONE_NUMBER_ID?.trim() ?? "",
+  whatsappApiVersion: process.env.WHATSAPP_API_VERSION?.trim() ?? "v23.0",
+  whatsappOrderTemplateName: process.env.WHATSAPP_ORDER_TEMPLATE_NAME?.trim() ?? "rental_order_confirmation",
+  whatsappTemplateLanguage: process.env.WHATSAPP_TEMPLATE_LANGUAGE?.trim() ?? "en",
+  storeContactPhone: process.env.STORE_CONTACT_PHONE?.trim() ?? "",
+  storeContactEmail: process.env.STORE_CONTACT_EMAIL?.trim() ?? "",
 };

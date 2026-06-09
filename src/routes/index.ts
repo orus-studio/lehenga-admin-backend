@@ -1,6 +1,6 @@
 import { Router } from "express";
 
-import { getCatalogCacheMode } from "../lib/catalog-cache.js";
+import { getCatalogCacheMode, invalidateAvailabilityCache } from "../lib/catalog-cache.js";
 import { requireAdmin } from "../middleware/auth.js";
 import { invalidateCatalogCacheAfterMutation } from "../middleware/catalog-cache-invalidation.js";
 import { authRouter } from "./auth.routes.js";
@@ -27,4 +27,18 @@ apiRouter.use("/admin/categories", requireAdmin, invalidateCatalogCacheAfterMuta
 apiRouter.use("/admin/lehengas", requireAdmin, invalidateCatalogCacheAfterMutation, lehengasRouter);
 apiRouter.use("/admin/jewellery", requireAdmin, invalidateCatalogCacheAfterMutation, jewelleryRouter);
 apiRouter.use("/admin/customers", requireAdmin, customersRouter);
-apiRouter.use("/admin/orders", requireAdmin, ordersRouter);
+apiRouter.use(
+  "/admin/orders",
+  requireAdmin,
+  (request, response, next) => {
+    if (request.method !== "GET") {
+      response.on("finish", () => {
+        if (response.statusCode >= 200 && response.statusCode < 300) {
+          void invalidateAvailabilityCache();
+        }
+      });
+    }
+    next();
+  },
+  ordersRouter,
+);

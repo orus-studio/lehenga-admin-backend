@@ -1,11 +1,13 @@
 import { Router } from "express";
 import { DepositRefundStatus, OrderStatus, PaymentMethod, PaymentStatus } from "../generated/prisma/enums.js";
 import { prisma } from "../lib/prisma.js";
+import { invalidateAvailabilityCache } from "../lib/catalog-cache.js";
 import { asyncHandler } from "../utils/async-handler.js";
 import { AppError } from "../utils/app-error.js";
 import { buildInventoryApplyOperations, buildInventoryRevertOperations, buildOrderItemCreates, parseCheckoutItems, prepareCheckoutItems, summarizePreparedCheckout, } from "../utils/order-checkout.js";
 import { refundRazorpayPayment } from "../utils/razorpay.js";
 import { ensureObject, getOptionalEnum, getOptionalString, getRequiredString, } from "../utils/validation.js";
+import { queueOrderConfirmationWhatsApp } from "../utils/whatsapp.js";
 const orderInclude = {
     customer: true,
     pickupLocation: true,
@@ -68,6 +70,19 @@ async function getDefaultPickupLocation() {
 function generateOrderNumber() {
     return `ORD-${Date.now()}-${Math.floor(1000 + Math.random() * 9000)}`;
 }
+function parseCreatedDateFilter(value, endOfDay = false) {
+    if (typeof value !== "string") {
+        return null;
+    }
+    const dateOnly = /^\d{4}-\d{2}-\d{2}$/.test(value);
+    const date = new Date(dateOnly
+        ? `${value}T${endOfDay ? "23:59:59.999" : "00:00:00.000"}+05:30`
+        : value);
+    if (Number.isNaN(date.getTime())) {
+        throw new AppError("createdFrom and createdTo must be valid dates", 400);
+    }
+    return date;
+}
 async function fetchEditableOrder(orderId) {
     const order = await prisma.rentalOrder.findUnique({
         where: {
@@ -83,8 +98,20 @@ async function fetchEditableOrder(orderId) {
     return order;
 }
 export const ordersRouter = Router();
-ordersRouter.get("/", asyncHandler(async (_request, response) => {
+ordersRouter.get("/", asyncHandler(async (request, response) => {
+    const createdFrom = parseCreatedDateFilter(request.query.createdFrom);
+    const createdTo = parseCreatedDateFilter(request.query.createdTo, true);
     const orders = await prisma.rentalOrder.findMany({
+        ...(createdFrom || createdTo
+            ? {
+                where: {
+                    createdAt: {
+                        ...(createdFrom ? { gte: createdFrom } : {}),
+                        ...(createdTo ? { lte: createdTo } : {}),
+                    },
+                },
+            }
+            : {}),
         orderBy: {
             createdAt: "desc",
         },
@@ -162,6 +189,8 @@ ordersRouter.post("/", asyncHandler(async (request, response) => {
         },
         include: orderInclude,
     });
+    await invalidateAvailabilityCache();
+    queueOrderConfirmationWhatsApp(order);
     response.status(201).json({
         success: true,
         message: "Order created successfully",
@@ -229,6 +258,7 @@ ordersRouter.patch("/:id", asyncHandler(async (request, response) => {
         where: { id: orderId },
         include: orderInclude,
     });
+    await invalidateAvailabilityCache();
     response.json({
         success: true,
         message: "Order updated successfully",

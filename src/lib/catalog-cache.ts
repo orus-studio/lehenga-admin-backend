@@ -6,6 +6,8 @@ import { env } from "../config/env.js";
 const CACHE_VERSION = "v2";
 const CACHE_NAMESPACE = `lehenga:catalog:${CACHE_VERSION}`;
 const CACHE_KEY_SET = `${CACHE_NAMESPACE}:keys`;
+const AVAILABILITY_NAMESPACE = `lehenga:availability:${CACHE_VERSION}`;
+const AVAILABILITY_KEY_SET = `${AVAILABILITY_NAMESPACE}:keys`;
 
 type CacheStatus = "hit" | "miss" | "stale" | "bypass";
 
@@ -15,6 +17,7 @@ type CacheEnvelope<T> = {
 };
 
 const memoryCache = new Map<string, { expiresAt: number; value: string }>();
+const pendingLoads = new Map<string, Promise<unknown>>();
 let redisClientPromise: Promise<RedisClientType | null> | null = null;
 
 function getRedisUrl() {
@@ -75,7 +78,7 @@ async function readCache(key: string) {
   return entry.value;
 }
 
-async function writeCache(key: string, value: string, ttlSeconds: number) {
+async function writeCache(key: string, value: string, ttlSeconds: number, keySet = CACHE_KEY_SET) {
   const redis = await getRedisClient();
 
   if (redis) {
@@ -85,7 +88,7 @@ async function writeCache(key: string, value: string, ttlSeconds: number) {
         value: ttlSeconds,
       },
     });
-    await redis.sAdd(CACHE_KEY_SET, key);
+    await redis.sAdd(keySet, key);
     return;
   }
 
@@ -121,34 +124,82 @@ export async function cachedCatalogRead<T>(
     };
   }
 
-  try {
-    const data = await loader();
-
-    if (!env.catalogCacheDisabled) {
-      await writeCache(
-        key,
-        JSON.stringify({
-          cachedAt: Date.now(),
-          data,
-        } satisfies CacheEnvelope<T>),
-        env.catalogCacheStaleTtlSeconds,
-      );
+  const loadAndCache = async () => {
+    const existingLoad = pendingLoads.get(key) as Promise<T> | undefined;
+    if (existingLoad) {
+      return existingLoad;
     }
+
+    const load = loader()
+      .then(async (data) => {
+        if (!env.catalogCacheDisabled) {
+          await writeCache(
+            key,
+            JSON.stringify({
+              cachedAt: Date.now(),
+              data,
+            } satisfies CacheEnvelope<T>),
+            env.catalogCacheStaleTtlSeconds,
+          );
+        }
+        return data;
+      })
+      .finally(() => {
+        pendingLoads.delete(key);
+      });
+
+    pendingLoads.set(key, load);
+    return load;
+  };
+
+  if (cachedEnvelope) {
+    void loadAndCache().catch((error) => {
+      console.error(`Failed to refresh catalog cache key ${key}`, error);
+    });
+    return {
+      data: cachedEnvelope.data,
+      status: "stale" as CacheStatus,
+    };
+  }
+
+  try {
+    const data = await loadAndCache();
 
     return {
       data,
       status: env.catalogCacheDisabled ? ("bypass" as CacheStatus) : ("miss" as CacheStatus),
     };
   } catch (error) {
-    if (cachedEnvelope) {
-      return {
-        data: cachedEnvelope.data,
-        status: "stale" as CacheStatus,
-      };
-    }
-
     throw error;
   }
+}
+
+export async function cachedAvailabilityRead<T>(
+  keyParts: Array<string | number | undefined | null>,
+  loader: () => Promise<T>,
+) {
+  const key = [AVAILABILITY_NAMESPACE, ...keyParts.filter((part) => part !== undefined && part !== null)].join(":");
+  const cachedEnvelope = env.catalogCacheDisabled ? null : parseEnvelope<T>(await readCache(key));
+
+  if (cachedEnvelope) {
+    return cachedEnvelope.data;
+  }
+
+  const data = await loader();
+
+  if (!env.catalogCacheDisabled) {
+    await writeCache(
+      key,
+      JSON.stringify({
+        cachedAt: Date.now(),
+        data,
+      } satisfies CacheEnvelope<T>),
+      env.availabilityCacheTtlSeconds,
+      AVAILABILITY_KEY_SET,
+    );
+  }
+
+  return data;
 }
 
 export async function sendCachedCatalogResponse<T>(
@@ -158,7 +209,7 @@ export async function sendCachedCatalogResponse<T>(
 ) {
   const result = await cachedCatalogRead(keyParts, loader);
 
-  response.setHeader("Cache-Control", "private, no-store");
+  response.setHeader("Cache-Control", "public, max-age=60, stale-while-revalidate=300");
   response.setHeader("X-Catalog-Cache", result.status);
   response.json({
     success: true,
@@ -182,4 +233,26 @@ export async function invalidateCatalogCache() {
   }
 
   await redis.del(CACHE_KEY_SET);
+}
+
+export async function invalidateAvailabilityCache() {
+  for (const key of memoryCache.keys()) {
+    if (key.startsWith(AVAILABILITY_NAMESPACE)) {
+      memoryCache.delete(key);
+    }
+  }
+
+  const redis = await getRedisClient();
+
+  if (!redis) {
+    return;
+  }
+
+  const keys = await redis.sMembers(AVAILABILITY_KEY_SET);
+
+  if (keys.length > 0) {
+    await redis.del(keys);
+  }
+
+  await redis.del(AVAILABILITY_KEY_SET);
 }

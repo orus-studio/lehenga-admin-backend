@@ -15,5 +15,13 @@ export declare const env: {
     catalogCacheTtlSeconds: number;
     catalogCacheStaleTtlSeconds: number;
     catalogCacheDisabled: boolean;
+    availabilityCacheTtlSeconds: number;
+    whatsappAccessToken: string;
+    whatsappPhoneNumberId: string;
+    whatsappApiVersion: string;
+    whatsappOrderTemplateName: string;
+    whatsappTemplateLanguage: string;
+    storeContactPhone: string;
+    storeContactEmail: string;
 };
 //# sourceMappingURL=env.d.ts.map
