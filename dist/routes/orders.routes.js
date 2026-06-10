@@ -70,16 +70,16 @@ async function getDefaultPickupLocation() {
 function generateOrderNumber() {
     return `ORD-${Date.now()}-${Math.floor(1000 + Math.random() * 9000)}`;
 }
-function parseCreatedDateFilter(value, endOfDay = false) {
+function parseRentalDateFilter(value, endOfDay = false) {
     if (typeof value !== "string") {
         return null;
     }
     const dateOnly = /^\d{4}-\d{2}-\d{2}$/.test(value);
     const date = new Date(dateOnly
-        ? `${value}T${endOfDay ? "23:59:59.999" : "00:00:00.000"}+05:30`
+        ? `${value}T${endOfDay ? "23:59:59.999" : "00:00:00.000"}Z`
         : value);
     if (Number.isNaN(date.getTime())) {
-        throw new AppError("createdFrom and createdTo must be valid dates", 400);
+        throw new AppError("rentalFrom and rentalTo must be valid dates", 400);
     }
     return date;
 }
@@ -99,15 +99,20 @@ async function fetchEditableOrder(orderId) {
 }
 export const ordersRouter = Router();
 ordersRouter.get("/", asyncHandler(async (request, response) => {
-    const createdFrom = parseCreatedDateFilter(request.query.createdFrom);
-    const createdTo = parseCreatedDateFilter(request.query.createdTo, true);
+    const rentalFrom = parseRentalDateFilter(request.query.rentalFrom);
+    const rentalTo = parseRentalDateFilter(request.query.rentalTo, true);
+    if (rentalFrom && rentalTo && rentalTo < rentalFrom) {
+        throw new AppError("rentalTo must be on or after rentalFrom", 400);
+    }
     const orders = await prisma.rentalOrder.findMany({
-        ...(createdFrom || createdTo
+        ...(rentalFrom || rentalTo
             ? {
                 where: {
-                    createdAt: {
-                        ...(createdFrom ? { gte: createdFrom } : {}),
-                        ...(createdTo ? { lte: createdTo } : {}),
+                    items: {
+                        some: {
+                            ...(rentalTo ? { rentalStartDate: { lte: rentalTo } } : {}),
+                            ...(rentalFrom ? { rentalEndDate: { gte: rentalFrom } } : {}),
+                        },
                     },
                 },
             }
