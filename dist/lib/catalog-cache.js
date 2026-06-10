@@ -1,6 +1,6 @@
 import { createClient } from "redis";
 import { env } from "../config/env.js";
-const CACHE_VERSION = "v2";
+const CACHE_VERSION = "v3";
 const CACHE_NAMESPACE = `lehenga:catalog:${CACHE_VERSION}`;
 const CACHE_KEY_SET = `${CACHE_NAMESPACE}:keys`;
 const AVAILABILITY_NAMESPACE = `lehenga:availability:${CACHE_VERSION}`;
@@ -148,6 +148,15 @@ export async function sendCachedCatalogResponse(response, keyParts, loader) {
     const result = await cachedCatalogRead(keyParts, loader);
     response.setHeader("Cache-Control", "public, max-age=60, stale-while-revalidate=300");
     response.setHeader("X-Catalog-Cache", result.status);
+    response.json({
+        success: true,
+        data: result.data,
+    });
+}
+export async function sendCachedAdminResponse(response, keyParts, loader) {
+    const result = await cachedCatalogRead(["admin", ...keyParts], loader);
+    response.setHeader("Cache-Control", "private, no-store");
+    response.setHeader("X-Admin-Cache", result.status);
     response.json({
         success: true,
         data: result.data,

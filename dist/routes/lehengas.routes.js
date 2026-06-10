@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { ProductStatus } from "../generated/prisma/enums.js";
 import { Prisma } from "../generated/prisma/client.js";
+import { sendCachedAdminResponse } from "../lib/catalog-cache.js";
 import { prisma } from "../lib/prisma.js";
 import { asyncHandler } from "../utils/async-handler.js";
 import { AppError } from "../utils/app-error.js";
@@ -35,14 +36,10 @@ async function getCategorySlug(categoryId) {
     return category.slug;
 }
 lehengasRouter.get("/", asyncHandler(async (_request, response) => {
-    const lehengas = await prisma.lehenga.findMany({
+    await sendCachedAdminResponse(response, ["lehengas", "all"], () => prisma.lehenga.findMany({
         orderBy: { createdAt: "desc" },
         include: lehengaInclude,
-    });
-    response.json({
-        success: true,
-        data: lehengas,
-    });
+    }));
 }));
 lehengasRouter.post("/", asyncHandler(async (request, response) => {
     const body = ensureObject(request.body);

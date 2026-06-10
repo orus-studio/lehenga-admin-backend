@@ -2,6 +2,7 @@ import { Router } from "express";
 
 import { JewelleryType, ProductStatus } from "../generated/prisma/enums.js";
 import { Prisma } from "../generated/prisma/client.js";
+import { sendCachedAdminResponse } from "../lib/catalog-cache.js";
 import { prisma } from "../lib/prisma.js";
 import { asyncHandler } from "../utils/async-handler.js";
 import { AppError } from "../utils/app-error.js";
@@ -50,15 +51,12 @@ async function getCategorySlug(categoryId?: string) {
 jewelleryRouter.get(
   "/",
   asyncHandler(async (_request, response) => {
-    const jewelleryItems = await prisma.jewellery.findMany({
-      orderBy: { createdAt: "desc" },
-      include: jewelleryInclude,
-    });
-
-    response.json({
-      success: true,
-      data: jewelleryItems,
-    });
+    await sendCachedAdminResponse(response, ["jewellery", "all"], () =>
+      prisma.jewellery.findMany({
+        orderBy: { createdAt: "desc" },
+        include: jewelleryInclude,
+      }),
+    );
   }),
 );
 

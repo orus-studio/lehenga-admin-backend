@@ -112,10 +112,11 @@ const storefrontCategoryInclude = {
   ...publicCategoryInclude,
   lehengas: {
     ...publicCategoryInclude.lehengas,
-    where: {
-      ...publicCategoryInclude.lehengas.where,
-      isCategoryFeatured: true,
-    },
+    take: 4,
+  },
+  jewelleryItems: {
+    ...publicCategoryInclude.jewelleryItems,
+    take: 4,
   },
 };
 

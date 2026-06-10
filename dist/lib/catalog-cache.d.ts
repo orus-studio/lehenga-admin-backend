@@ -8,6 +8,7 @@ export declare function cachedCatalogRead<T>(keyParts: Array<string | number | u
 }>;
 export declare function cachedAvailabilityRead<T>(keyParts: Array<string | number | undefined | null>, loader: () => Promise<T>): Promise<T>;
 export declare function sendCachedCatalogResponse<T>(response: Response, keyParts: Array<string | number | undefined | null>, loader: () => Promise<T>): Promise<void>;
+export declare function sendCachedAdminResponse<T>(response: Response, keyParts: Array<string | number | undefined | null>, loader: () => Promise<T>): Promise<void>;
 export declare function invalidateCatalogCache(): Promise<void>;
 export declare function invalidateAvailabilityCache(): Promise<void>;
 export {};

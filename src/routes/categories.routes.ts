@@ -2,6 +2,7 @@ import { Router } from "express";
 
 import { CategoryStyle } from "../generated/prisma/enums.js";
 import { Prisma } from "../generated/prisma/client.js";
+import { sendCachedAdminResponse } from "../lib/catalog-cache.js";
 import { prisma } from "../lib/prisma.js";
 import { asyncHandler } from "../utils/async-handler.js";
 import { AppError } from "../utils/app-error.js";
@@ -26,24 +27,21 @@ export const categoriesRouter = Router();
 categoriesRouter.get(
   "/",
   asyncHandler(async (_request, response) => {
-    const categories = await prisma.category.findMany({
-      orderBy: {
-        createdAt: "asc",
-      },
-      include: {
-        _count: {
-          select: {
-            lehengas: true,
-            jewelleryItems: true,
+    await sendCachedAdminResponse(response, ["categories", "all"], () =>
+      prisma.category.findMany({
+        orderBy: {
+          createdAt: "asc",
+        },
+        include: {
+          _count: {
+            select: {
+              lehengas: true,
+              jewelleryItems: true,
+            },
           },
         },
-      },
-    });
-
-    response.json({
-      success: true,
-      data: categories,
-    });
+      }),
+    );
   }),
 );
 

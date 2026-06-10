@@ -1,8 +1,14 @@
 import { invalidateCatalogCache } from "../lib/catalog-cache.js";
-export function invalidateCatalogCacheAfterMutation(request, response, next) {
+export async function invalidateCatalogCacheAfterMutation(request, response, next) {
     if (request.method === "GET" || request.method === "HEAD" || request.method === "OPTIONS") {
         next();
         return;
+    }
+    try {
+        await invalidateCatalogCache();
+    }
+    catch (error) {
+        console.error("Failed to clear catalog cache before mutation", error);
     }
     response.on("finish", () => {
         if (response.statusCode >= 200 && response.statusCode < 300) {
