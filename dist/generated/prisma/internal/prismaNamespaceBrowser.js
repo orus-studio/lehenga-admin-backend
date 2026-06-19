@@ -109,6 +109,7 @@ export const LehengaScalarFieldEnum = {
     setIncludes: 'setIncludes',
     careInstructions: 'careInstructions',
     rentalPricePerDay: 'rentalPricePerDay',
+    discountPercent: 'discountPercent',
     securityDeposit: 'securityDeposit',
     originalPrice: 'originalPrice',
     minimumRentalDays: 'minimumRentalDays',

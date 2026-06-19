@@ -137,6 +137,7 @@ model Lehenga {
   setIncludes       String?
   careInstructions  String?
   rentalPricePerDay Decimal           @db.Decimal(10, 2)
+  discountPercent   Decimal           @default(0) @db.Decimal(5, 2)
   securityDeposit   Decimal?          @db.Decimal(10, 2)
   originalPrice     Decimal?          @db.Decimal(10, 2)
   minimumRentalDays Int               @default(1)

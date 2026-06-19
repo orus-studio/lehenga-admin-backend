@@ -35,6 +35,15 @@ async function getCategorySlug(categoryId) {
     }
     return category.slug;
 }
+function parseDiscountPercent(value) {
+    if (value === undefined) {
+        return undefined;
+    }
+    if (value < 0 || value > 100) {
+        throw new AppError("discountPercent must be between 0 and 100", 400);
+    }
+    return value;
+}
 lehengasRouter.get("/", asyncHandler(async (_request, response) => {
     await sendCachedAdminResponse(response, ["lehengas", "all"], () => prisma.lehenga.findMany({
         orderBy: { createdAt: "desc" },
@@ -81,6 +90,7 @@ lehengasRouter.post("/", asyncHandler(async (request, response) => {
     const careInstructions = getOptionalString(body, "careInstructions");
     const securityDeposit = getOptionalNumber(body, "securityDeposit");
     const originalPrice = getOptionalNumber(body, "originalPrice");
+    const discountPercent = parseDiscountPercent(getOptionalNumber(body, "discountPercent")) ?? 0;
     if (shortDescription !== undefined)
         data.shortDescription = shortDescription;
     if (description !== undefined)
@@ -101,6 +111,7 @@ lehengasRouter.post("/", asyncHandler(async (request, response) => {
         data.securityDeposit = securityDeposit;
     if (originalPrice !== undefined)
         data.originalPrice = originalPrice;
+    data.discountPercent = discountPercent;
     if (categoryId) {
         data.category = {
             connect: { id: categoryId },
@@ -173,6 +184,7 @@ lehengasRouter.patch("/:id", asyncHandler(async (request, response) => {
     const setIncludes = getOptionalString(body, "setIncludes");
     const careInstructions = getOptionalString(body, "careInstructions");
     const rentalPricePerDay = getOptionalNumber(body, "rentalPricePerDay");
+    const discountPercent = parseDiscountPercent(getOptionalNumber(body, "discountPercent"));
     const securityDeposit = getOptionalNumber(body, "securityDeposit");
     const originalPrice = getOptionalNumber(body, "originalPrice");
     const minimumRentalDays = getOptionalNumber(body, "minimumRentalDays");
@@ -200,6 +212,8 @@ lehengasRouter.patch("/:id", asyncHandler(async (request, response) => {
         data.careInstructions = careInstructions;
     if (rentalPricePerDay !== undefined)
         data.rentalPricePerDay = rentalPricePerDay;
+    if (discountPercent !== undefined)
+        data.discountPercent = discountPercent;
     if (securityDeposit !== undefined)
         data.securityDeposit = securityDeposit;
     if (originalPrice !== undefined)
@@ -238,16 +252,40 @@ lehengasRouter.patch("/:id", asyncHandler(async (request, response) => {
             create: images,
         };
     }
-    if (sizes) {
-        data.sizes = {
-            deleteMany: {},
-            create: sizes,
-        };
-    }
-    const lehenga = await prisma.lehenga.update({
-        where: { id: lehengaId },
-        data,
-        include: lehengaInclude,
+    const lehenga = await prisma.$transaction(async (tx) => {
+        await tx.lehenga.update({
+            where: { id: lehengaId },
+            data,
+        });
+        if (sizes) {
+            const existingSizes = await tx.lehengaSize.findMany({
+                where: { lehengaId },
+                orderBy: { createdAt: "asc" },
+            });
+            for (const [index, size] of sizes.entries()) {
+                const existingSize = existingSizes.find((entry) => entry.sizeLabel === size.sizeLabel) ?? existingSizes[index] ?? null;
+                if (existingSize) {
+                    await tx.lehengaSize.update({
+                        where: { id: existingSize.id },
+                        data: size,
+                    });
+                }
+                else {
+                    await tx.lehengaSize.create({
+                        data: {
+                            ...size,
+                            lehenga: {
+                                connect: { id: lehengaId },
+                            },
+                        },
+                    });
+                }
+            }
+        }
+        return tx.lehenga.findUniqueOrThrow({
+            where: { id: lehengaId },
+            include: lehengaInclude,
+        });
     });
     response.json({
         success: true,

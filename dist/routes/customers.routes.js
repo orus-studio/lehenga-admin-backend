@@ -4,6 +4,7 @@ import { asyncHandler } from "../utils/async-handler.js";
 import { hashPassword } from "../utils/admin-auth.js";
 import { AppError } from "../utils/app-error.js";
 import { ensureObject, getOptionalString, getRequiredString } from "../utils/validation.js";
+const ADMIN_CREATED_CUSTOMER_PASSWORD = "Lehenga@123";
 const customerInclude = {
     _count: {
         select: {
@@ -25,6 +26,19 @@ const customerInclude = {
     },
 };
 export const customersRouter = Router();
+function splitCustomerName(name) {
+    const [firstName, ...rest] = name.trim().split(/\s+/);
+    return {
+        firstName: firstName || name.trim(),
+        lastName: rest.length > 0 ? rest.join(" ") : null,
+    };
+}
+function exposeAdminCustomerPassword(customer) {
+    return {
+        ...customer,
+        adminVisiblePassword: customer.email ? null : ADMIN_CREATED_CUSTOMER_PASSWORD,
+    };
+}
 customersRouter.get("/", asyncHandler(async (_request, response) => {
     const customers = await prisma.customer.findMany({
         orderBy: {
@@ -34,20 +48,22 @@ customersRouter.get("/", asyncHandler(async (_request, response) => {
     });
     response.json({
         success: true,
-        data: customers,
+        data: customers.map(exposeAdminCustomerPassword),
     });
 }));
 customersRouter.post("/", asyncHandler(async (request, response) => {
     const body = ensureObject(request.body);
-    const firstName = getRequiredString(body, "firstName");
-    const lastName = getOptionalString(body, "lastName");
-    const email = getRequiredString(body, "email").toLowerCase();
+    const fullName = getOptionalString(body, "name");
+    const nameParts = fullName ? splitCustomerName(fullName) : null;
+    const firstName = nameParts?.firstName ?? getRequiredString(body, "firstName");
+    const lastName = nameParts?.lastName ?? getOptionalString(body, "lastName");
+    const email = getOptionalString(body, "email")?.toLowerCase();
     const phone = getRequiredString(body, "phone");
-    const password = getRequiredString(body, "password");
+    const password = getOptionalString(body, "password") ?? ADMIN_CREATED_CUSTOMER_PASSWORD;
     const notes = getOptionalString(body, "notes");
     const existingCustomer = await prisma.customer.findFirst({
         where: {
-            OR: [{ email }, { phone }],
+            OR: [{ phone }, ...(email ? [{ email }] : [])],
         },
         select: {
             id: true,
@@ -61,7 +77,7 @@ customersRouter.post("/", asyncHandler(async (request, response) => {
         data: {
             firstName,
             lastName: lastName ?? null,
-            email,
+            email: email ?? null,
             phone,
             passwordHash,
             ...(notes ? { notes } : {}),
@@ -71,7 +87,7 @@ customersRouter.post("/", asyncHandler(async (request, response) => {
     response.status(201).json({
         success: true,
         message: "Customer created successfully",
-        data: customer,
+        data: exposeAdminCustomerPassword(customer),
     });
 }));
 //# sourceMappingURL=customers.routes.js.map

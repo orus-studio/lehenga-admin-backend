@@ -18,6 +18,7 @@ import {
 import { refundRazorpayPayment } from "../utils/razorpay.js";
 import {
   ensureObject,
+  getOptionalNumber,
   getOptionalEnum,
   getOptionalString,
   getRequiredString,
@@ -131,6 +132,16 @@ async function fetchEditableOrder(orderId: string) {
   return order;
 }
 
+function assertCanCompleteOrder(order: { status: OrderStatus }) {
+  if (order.status === OrderStatus.FULFILLED) {
+    throw new AppError("This order is already fulfilled", 409);
+  }
+
+  if (order.status === OrderStatus.CANCELLED) {
+    throw new AppError("Cancelled orders cannot be fulfilled", 409);
+  }
+}
+
 export const ordersRouter = Router();
 
 ordersRouter.get(
@@ -185,7 +196,7 @@ ordersRouter.post(
       (getOptionalEnum(body, "paymentMethod", paymentMethodValues) as PaymentMethod | null) ??
       PaymentMethod.PICKUP;
     const pickupLocation = await getDefaultPickupLocation();
-    const items = parseCheckoutItems(body.items);
+    const items = parseCheckoutItems(body.items, { allowPriceDiscountPerDay: true });
     const preparedItems = await prepareCheckoutItems(items);
     const summary = summarizePreparedCheckout(preparedItems);
     const orderNumber = generateOrderNumber();
@@ -224,6 +235,7 @@ ordersRouter.post(
           rentalEndDate: summary.rentalEndDate,
           subtotalAmount: summary.subtotalAmount,
           securityDeposit: summary.securityDeposit,
+          discountAmount: summary.discountAmount,
           totalAmount: summary.totalAmount,
           amountDueAtPickup: paymentMethod === PaymentMethod.PICKUP ? summary.totalAmount : 0,
           depositRefundStatus,
@@ -265,7 +277,7 @@ ordersRouter.patch(
     const nextPaymentMethod = getOptionalEnum(body, "paymentMethod", paymentMethodValues) as PaymentMethod | null;
     const specialInstructions = getOptionalString(body, "specialInstructions");
     const internalNotes = getOptionalString(body, "internalNotes");
-    const items = body.items === undefined ? undefined : parseCheckoutItems(body.items);
+    const items = body.items === undefined ? undefined : parseCheckoutItems(body.items, { allowPriceDiscountPerDay: true });
 
     if (!items) {
       const updateData: Prisma.RentalOrderUpdateInput = {
@@ -297,6 +309,7 @@ ordersRouter.patch(
         rentalEndDate: summary.rentalEndDate,
         subtotalAmount: summary.subtotalAmount,
         securityDeposit: summary.securityDeposit,
+        discountAmount: summary.discountAmount,
         totalAmount: summary.totalAmount,
         amountDueAtPickup: paymentMethod === PaymentMethod.PICKUP ? summary.totalAmount : 0,
         depositRefundStatus,
@@ -328,6 +341,82 @@ ordersRouter.patch(
       success: true,
       message: "Order updated successfully",
       data: order,
+    });
+  }),
+);
+
+ordersRouter.post(
+  "/:id/complete",
+  asyncHandler(async (request, response) => {
+    const orderId = getRequiredString({ id: request.params.id }, "id");
+    const body = ensureObject(request.body);
+    const refundAmount = getOptionalNumber(body, "refundAmount") ?? 0;
+    const refundNotes = getOptionalString(body, "refundNotes");
+
+    if (refundAmount < 0) {
+      throw new AppError("refundAmount must be zero or more", 400);
+    }
+
+    const order = await prisma.rentalOrder.findUnique({
+      where: { id: orderId },
+    });
+
+    if (!order) {
+      throw new AppError("Order not found", 404);
+    }
+
+    assertCanCompleteOrder(order);
+
+    const securityDeposit = Number(order.securityDeposit);
+
+    if (refundAmount > securityDeposit) {
+      throw new AppError("Refund amount cannot be greater than the security deposit", 400);
+    }
+
+    if (refundAmount > 0 && order.depositRefundStatus === DepositRefundStatus.REFUNDED) {
+      throw new AppError("The security deposit has already been refunded", 409);
+    }
+
+    let refundReference: string | null = null;
+    let nextRefundStatus: DepositRefundStatus =
+      securityDeposit > 0 && refundAmount > 0 ? DepositRefundStatus.REFUNDED : DepositRefundStatus.NOT_APPLICABLE;
+
+    if (refundAmount > 0 && order.paymentGatewayPaymentId) {
+      const refund = await refundRazorpayPayment({
+        razorpayPaymentId: order.paymentGatewayPaymentId,
+        amountInPaise: Math.round(refundAmount * 100),
+        notes: {
+          orderNumber: order.orderNumber,
+          reason: refundNotes ?? "Security deposit refund",
+        },
+      });
+
+      refundReference = refund.id;
+      nextRefundStatus = refund.status === "processed" ? DepositRefundStatus.REFUNDED : DepositRefundStatus.PENDING;
+    }
+
+    const updatedOrder = await prisma.rentalOrder.update({
+      where: { id: order.id },
+      data: {
+        status: OrderStatus.FULFILLED,
+        depositRefundStatus: nextRefundStatus,
+        depositRefundedAmount: refundAmount,
+        depositRefundedAt: refundAmount > 0 ? new Date() : null,
+        depositRefundReference: refundReference,
+        depositRefundNotes: refundNotes ?? null,
+      },
+      include: orderInclude,
+    });
+
+    await invalidateAvailabilityCache();
+
+    response.json({
+      success: true,
+      message:
+        refundAmount > 0
+          ? "Order fulfilled and deposit refund recorded"
+          : "Order fulfilled without deposit refund",
+      data: updatedOrder,
     });
   }),
 );

@@ -1306,6 +1306,7 @@ export declare const LehengaScalarFieldEnum: {
     readonly setIncludes: "setIncludes";
     readonly careInstructions: "careInstructions";
     readonly rentalPricePerDay: "rentalPricePerDay";
+    readonly discountPercent: "discountPercent";
     readonly securityDeposit: "securityDeposit";
     readonly originalPrice: "originalPrice";
     readonly minimumRentalDays: "minimumRentalDays";

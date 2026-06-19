@@ -14,6 +14,7 @@ export type CheckoutInputItem = {
     lehengaSizeId?: string;
     rentalStartDate: Date;
     rentalEndDate: Date;
+    priceDiscountPerDay?: number;
     measurements?: ItemMeasurements;
 } | {
     itemType: typeof RentalItemType.JEWELLERY;
@@ -32,6 +33,7 @@ export type PreparedCheckoutItem = {
     rentalEndDate: Date;
     rentalDays: number;
     lineTotal: number;
+    lineDiscountAmount: number;
     depositAmount: number;
     sizeLabelSnapshot?: string;
     lehengaId?: string;
@@ -50,11 +52,15 @@ type ExistingEditableOrder = {
 };
 export declare function parseDateValue(value: string, key: string): Date;
 export declare function getRentalDays(startDate: Date, endDate: Date): number;
-export declare function parseCheckoutItems(value: unknown): CheckoutInputItem[];
+type ParseCheckoutItemsOptions = {
+    allowPriceDiscountPerDay?: boolean;
+};
+export declare function parseCheckoutItems(value: unknown, options?: ParseCheckoutItemsOptions): CheckoutInputItem[];
 export declare function prepareCheckoutItems(items: CheckoutInputItem[], existingOrder?: ExistingEditableOrder): Promise<PreparedCheckoutItem[]>;
 export declare function summarizePreparedCheckout(preparedItems: PreparedCheckoutItem[]): {
     subtotalAmount: number;
     securityDeposit: number;
+    discountAmount: number;
     totalAmount: number;
     rentalStartDate: Date;
     rentalEndDate: Date;

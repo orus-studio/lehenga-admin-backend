@@ -23,6 +23,7 @@ export type CheckoutInputItem =
       lehengaSizeId?: string;
       rentalStartDate: Date;
       rentalEndDate: Date;
+      priceDiscountPerDay?: number;
       measurements?: ItemMeasurements;
     }
   | {
@@ -43,6 +44,7 @@ export type PreparedCheckoutItem = {
   rentalEndDate: Date;
   rentalDays: number;
   lineTotal: number;
+  lineDiscountAmount: number;
   depositAmount: number;
   sizeLabelSnapshot?: string;
   lehengaId?: string;
@@ -81,7 +83,17 @@ export function getRentalDays(startDate: Date, endDate: Date) {
   return Math.floor(diff / ONE_DAY_MS) + 1;
 }
 
-export function parseCheckoutItems(value: unknown): CheckoutInputItem[] {
+type ParseCheckoutItemsOptions = {
+  allowPriceDiscountPerDay?: boolean;
+};
+
+function getDiscountedPricePerDay(pricePerDay: number, discountPercent: number) {
+  const discountMultiplier = Math.max(0, Math.min(100, discountPercent)) / 100;
+
+  return Math.max(0, pricePerDay - pricePerDay * discountMultiplier);
+}
+
+export function parseCheckoutItems(value: unknown, options: ParseCheckoutItemsOptions = {}): CheckoutInputItem[] {
   const items = getRequiredArray({ items: value }, "items");
 
   return items.map((entry, index) => {
@@ -102,9 +114,18 @@ export function parseCheckoutItems(value: unknown): CheckoutInputItem[] {
     }
 
     if (itemType === RentalItemType.LEHENGA) {
+      const priceDiscountPerDay = getOptionalNumber(item, "priceDiscountPerDay");
       const measurementsObject =
         item.measurements && typeof item.measurements === "object" ? ensureObject(item.measurements) : null;
       const parsedMeasurements: ItemMeasurements = {};
+
+      if (priceDiscountPerDay !== undefined && !options.allowPriceDiscountPerDay) {
+        throw new AppError(`items[${index}].priceDiscountPerDay is only allowed for admin orders`, 400);
+      }
+
+      if (priceDiscountPerDay !== undefined && priceDiscountPerDay < 0) {
+        throw new AppError(`items[${index}].priceDiscountPerDay must be zero or more`, 400);
+      }
 
       if (measurementsObject) {
         const upper = getOptionalString(measurementsObject, "upper");
@@ -131,6 +152,7 @@ export function parseCheckoutItems(value: unknown): CheckoutInputItem[] {
           : {}),
         rentalStartDate,
         rentalEndDate,
+        ...(priceDiscountPerDay !== undefined ? { priceDiscountPerDay } : {}),
         ...(Object.keys(parsedMeasurements).length > 0
           ? {
               measurements: parsedMeasurements,
@@ -226,7 +248,17 @@ export async function prepareCheckoutItems(items: CheckoutInputItem[], existingO
         );
       }
 
-      const pricePerDay = Number(lehenga.rentalPricePerDay);
+      const catalogPricePerDay = getDiscountedPricePerDay(
+        Number(lehenga.rentalPricePerDay),
+        Number(lehenga.discountPercent ?? 0),
+      );
+      const priceDiscountPerDay = item.priceDiscountPerDay ?? 0;
+
+      if (priceDiscountPerDay > catalogPricePerDay) {
+        throw new AppError(`Discount cannot be greater than the per-day price for ${lehenga.name}`, 400);
+      }
+
+      const pricePerDay = catalogPricePerDay - priceDiscountPerDay;
       const depositAmount = Number(lehenga.securityDeposit ?? 0);
 
       return {
@@ -239,6 +271,7 @@ export async function prepareCheckoutItems(items: CheckoutInputItem[], existingO
         rentalEndDate: item.rentalEndDate,
         rentalDays,
         lineTotal: pricePerDay * rentalDays * item.quantity,
+        lineDiscountAmount: priceDiscountPerDay * rentalDays * item.quantity,
         depositAmount: depositAmount * item.quantity,
         sizeLabelSnapshot: selectedSize.sizeLabel,
         lehengaId: lehenga.id,
@@ -279,6 +312,7 @@ export async function prepareCheckoutItems(items: CheckoutInputItem[], existingO
       rentalEndDate: item.rentalEndDate,
       rentalDays,
       lineTotal: pricePerDay * rentalDays * item.quantity,
+      lineDiscountAmount: 0,
       depositAmount: depositAmount * item.quantity,
       jewelleryId: jewellery.id,
     };
@@ -288,6 +322,7 @@ export async function prepareCheckoutItems(items: CheckoutInputItem[], existingO
 export function summarizePreparedCheckout(preparedItems: PreparedCheckoutItem[]) {
   const subtotalAmount = preparedItems.reduce((sum, item) => sum + item.lineTotal, 0);
   const securityDeposit = preparedItems.reduce((sum, item) => sum + item.depositAmount, 0);
+  const discountAmount = preparedItems.reduce((sum, item) => sum + item.lineDiscountAmount, 0);
   const totalAmount = subtotalAmount + securityDeposit;
   const startTimes = preparedItems.map((item) => item.rentalStartDate.getTime());
   const endTimes = preparedItems.map((item) => item.rentalEndDate.getTime());
@@ -295,6 +330,7 @@ export function summarizePreparedCheckout(preparedItems: PreparedCheckoutItem[])
   return {
     subtotalAmount,
     securityDeposit,
+    discountAmount,
     totalAmount,
     rentalStartDate: new Date(Math.min(...startTimes)),
     rentalEndDate: new Date(Math.max(...endTimes)),

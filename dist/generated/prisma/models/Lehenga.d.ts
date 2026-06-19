@@ -15,12 +15,14 @@ export type AggregateLehenga = {
 };
 export type LehengaAvgAggregateOutputType = {
     rentalPricePerDay: runtime.Decimal | null;
+    discountPercent: runtime.Decimal | null;
     securityDeposit: runtime.Decimal | null;
     originalPrice: runtime.Decimal | null;
     minimumRentalDays: number | null;
 };
 export type LehengaSumAggregateOutputType = {
     rentalPricePerDay: runtime.Decimal | null;
+    discountPercent: runtime.Decimal | null;
     securityDeposit: runtime.Decimal | null;
     originalPrice: runtime.Decimal | null;
     minimumRentalDays: number | null;
@@ -40,6 +42,7 @@ export type LehengaMinAggregateOutputType = {
     setIncludes: string | null;
     careInstructions: string | null;
     rentalPricePerDay: runtime.Decimal | null;
+    discountPercent: runtime.Decimal | null;
     securityDeposit: runtime.Decimal | null;
     originalPrice: runtime.Decimal | null;
     minimumRentalDays: number | null;
@@ -66,6 +69,7 @@ export type LehengaMaxAggregateOutputType = {
     setIncludes: string | null;
     careInstructions: string | null;
     rentalPricePerDay: runtime.Decimal | null;
+    discountPercent: runtime.Decimal | null;
     securityDeposit: runtime.Decimal | null;
     originalPrice: runtime.Decimal | null;
     minimumRentalDays: number | null;
@@ -92,6 +96,7 @@ export type LehengaCountAggregateOutputType = {
     setIncludes: number;
     careInstructions: number;
     rentalPricePerDay: number;
+    discountPercent: number;
     securityDeposit: number;
     originalPrice: number;
     minimumRentalDays: number;
@@ -106,12 +111,14 @@ export type LehengaCountAggregateOutputType = {
 };
 export type LehengaAvgAggregateInputType = {
     rentalPricePerDay?: true;
+    discountPercent?: true;
     securityDeposit?: true;
     originalPrice?: true;
     minimumRentalDays?: true;
 };
 export type LehengaSumAggregateInputType = {
     rentalPricePerDay?: true;
+    discountPercent?: true;
     securityDeposit?: true;
     originalPrice?: true;
     minimumRentalDays?: true;
@@ -131,6 +138,7 @@ export type LehengaMinAggregateInputType = {
     setIncludes?: true;
     careInstructions?: true;
     rentalPricePerDay?: true;
+    discountPercent?: true;
     securityDeposit?: true;
     originalPrice?: true;
     minimumRentalDays?: true;
@@ -157,6 +165,7 @@ export type LehengaMaxAggregateInputType = {
     setIncludes?: true;
     careInstructions?: true;
     rentalPricePerDay?: true;
+    discountPercent?: true;
     securityDeposit?: true;
     originalPrice?: true;
     minimumRentalDays?: true;
@@ -183,6 +192,7 @@ export type LehengaCountAggregateInputType = {
     setIncludes?: true;
     careInstructions?: true;
     rentalPricePerDay?: true;
+    discountPercent?: true;
     securityDeposit?: true;
     originalPrice?: true;
     minimumRentalDays?: true;
@@ -286,6 +296,7 @@ export type LehengaGroupByOutputType = {
     setIncludes: string | null;
     careInstructions: string | null;
     rentalPricePerDay: runtime.Decimal;
+    discountPercent: runtime.Decimal;
     securityDeposit: runtime.Decimal | null;
     originalPrice: runtime.Decimal | null;
     minimumRentalDays: number;
@@ -323,6 +334,7 @@ export type LehengaWhereInput = {
     setIncludes?: Prisma.StringNullableFilter<"Lehenga"> | string | null;
     careInstructions?: Prisma.StringNullableFilter<"Lehenga"> | string | null;
     rentalPricePerDay?: Prisma.DecimalFilter<"Lehenga"> | runtime.Decimal | runtime.DecimalJsLike | number | string;
+    discountPercent?: Prisma.DecimalFilter<"Lehenga"> | runtime.Decimal | runtime.DecimalJsLike | number | string;
     securityDeposit?: Prisma.DecimalNullableFilter<"Lehenga"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null;
     originalPrice?: Prisma.DecimalNullableFilter<"Lehenga"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null;
     minimumRentalDays?: Prisma.IntFilter<"Lehenga"> | number;
@@ -354,6 +366,7 @@ export type LehengaOrderByWithRelationInput = {
     setIncludes?: Prisma.SortOrderInput | Prisma.SortOrder;
     careInstructions?: Prisma.SortOrderInput | Prisma.SortOrder;
     rentalPricePerDay?: Prisma.SortOrder;
+    discountPercent?: Prisma.SortOrder;
     securityDeposit?: Prisma.SortOrderInput | Prisma.SortOrder;
     originalPrice?: Prisma.SortOrderInput | Prisma.SortOrder;
     minimumRentalDays?: Prisma.SortOrder;
@@ -388,6 +401,7 @@ export type LehengaWhereUniqueInput = Prisma.AtLeast<{
     setIncludes?: Prisma.StringNullableFilter<"Lehenga"> | string | null;
     careInstructions?: Prisma.StringNullableFilter<"Lehenga"> | string | null;
     rentalPricePerDay?: Prisma.DecimalFilter<"Lehenga"> | runtime.Decimal | runtime.DecimalJsLike | number | string;
+    discountPercent?: Prisma.DecimalFilter<"Lehenga"> | runtime.Decimal | runtime.DecimalJsLike | number | string;
     securityDeposit?: Prisma.DecimalNullableFilter<"Lehenga"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null;
     originalPrice?: Prisma.DecimalNullableFilter<"Lehenga"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null;
     minimumRentalDays?: Prisma.IntFilter<"Lehenga"> | number;
@@ -419,6 +433,7 @@ export type LehengaOrderByWithAggregationInput = {
     setIncludes?: Prisma.SortOrderInput | Prisma.SortOrder;
     careInstructions?: Prisma.SortOrderInput | Prisma.SortOrder;
     rentalPricePerDay?: Prisma.SortOrder;
+    discountPercent?: Prisma.SortOrder;
     securityDeposit?: Prisma.SortOrderInput | Prisma.SortOrder;
     originalPrice?: Prisma.SortOrderInput | Prisma.SortOrder;
     minimumRentalDays?: Prisma.SortOrder;
@@ -453,6 +468,7 @@ export type LehengaScalarWhereWithAggregatesInput = {
     setIncludes?: Prisma.StringNullableWithAggregatesFilter<"Lehenga"> | string | null;
     careInstructions?: Prisma.StringNullableWithAggregatesFilter<"Lehenga"> | string | null;
     rentalPricePerDay?: Prisma.DecimalWithAggregatesFilter<"Lehenga"> | runtime.Decimal | runtime.DecimalJsLike | number | string;
+    discountPercent?: Prisma.DecimalWithAggregatesFilter<"Lehenga"> | runtime.Decimal | runtime.DecimalJsLike | number | string;
     securityDeposit?: Prisma.DecimalNullableWithAggregatesFilter<"Lehenga"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null;
     originalPrice?: Prisma.DecimalNullableWithAggregatesFilter<"Lehenga"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null;
     minimumRentalDays?: Prisma.IntWithAggregatesFilter<"Lehenga"> | number;
@@ -479,6 +495,7 @@ export type LehengaCreateInput = {
     setIncludes?: string | null;
     careInstructions?: string | null;
     rentalPricePerDay: runtime.Decimal | runtime.DecimalJsLike | number | string;
+    discountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string;
     securityDeposit?: runtime.Decimal | runtime.DecimalJsLike | number | string | null;
     originalPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null;
     minimumRentalDays?: number;
@@ -509,6 +526,7 @@ export type LehengaUncheckedCreateInput = {
     setIncludes?: string | null;
     careInstructions?: string | null;
     rentalPricePerDay: runtime.Decimal | runtime.DecimalJsLike | number | string;
+    discountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string;
     securityDeposit?: runtime.Decimal | runtime.DecimalJsLike | number | string | null;
     originalPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null;
     minimumRentalDays?: number;
@@ -539,6 +557,7 @@ export type LehengaUpdateInput = {
     setIncludes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     careInstructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     rentalPricePerDay?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
+    discountPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
     securityDeposit?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null;
     originalPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null;
     minimumRentalDays?: Prisma.IntFieldUpdateOperationsInput | number;
@@ -569,6 +588,7 @@ export type LehengaUncheckedUpdateInput = {
     setIncludes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     careInstructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     rentalPricePerDay?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
+    discountPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
     securityDeposit?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null;
     originalPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null;
     minimumRentalDays?: Prisma.IntFieldUpdateOperationsInput | number;
@@ -599,6 +619,7 @@ export type LehengaCreateManyInput = {
     setIncludes?: string | null;
     careInstructions?: string | null;
     rentalPricePerDay: runtime.Decimal | runtime.DecimalJsLike | number | string;
+    discountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string;
     securityDeposit?: runtime.Decimal | runtime.DecimalJsLike | number | string | null;
     originalPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null;
     minimumRentalDays?: number;
@@ -625,6 +646,7 @@ export type LehengaUpdateManyMutationInput = {
     setIncludes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     careInstructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     rentalPricePerDay?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
+    discountPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
     securityDeposit?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null;
     originalPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null;
     minimumRentalDays?: Prisma.IntFieldUpdateOperationsInput | number;
@@ -650,6 +672,7 @@ export type LehengaUncheckedUpdateManyInput = {
     setIncludes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     careInstructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     rentalPricePerDay?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
+    discountPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
     securityDeposit?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null;
     originalPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null;
     minimumRentalDays?: Prisma.IntFieldUpdateOperationsInput | number;
@@ -684,6 +707,7 @@ export type LehengaCountOrderByAggregateInput = {
     setIncludes?: Prisma.SortOrder;
     careInstructions?: Prisma.SortOrder;
     rentalPricePerDay?: Prisma.SortOrder;
+    discountPercent?: Prisma.SortOrder;
     securityDeposit?: Prisma.SortOrder;
     originalPrice?: Prisma.SortOrder;
     minimumRentalDays?: Prisma.SortOrder;
@@ -697,6 +721,7 @@ export type LehengaCountOrderByAggregateInput = {
 };
 export type LehengaAvgOrderByAggregateInput = {
     rentalPricePerDay?: Prisma.SortOrder;
+    discountPercent?: Prisma.SortOrder;
     securityDeposit?: Prisma.SortOrder;
     originalPrice?: Prisma.SortOrder;
     minimumRentalDays?: Prisma.SortOrder;
@@ -716,6 +741,7 @@ export type LehengaMaxOrderByAggregateInput = {
     setIncludes?: Prisma.SortOrder;
     careInstructions?: Prisma.SortOrder;
     rentalPricePerDay?: Prisma.SortOrder;
+    discountPercent?: Prisma.SortOrder;
     securityDeposit?: Prisma.SortOrder;
     originalPrice?: Prisma.SortOrder;
     minimumRentalDays?: Prisma.SortOrder;
@@ -742,6 +768,7 @@ export type LehengaMinOrderByAggregateInput = {
     setIncludes?: Prisma.SortOrder;
     careInstructions?: Prisma.SortOrder;
     rentalPricePerDay?: Prisma.SortOrder;
+    discountPercent?: Prisma.SortOrder;
     securityDeposit?: Prisma.SortOrder;
     originalPrice?: Prisma.SortOrder;
     minimumRentalDays?: Prisma.SortOrder;
@@ -755,6 +782,7 @@ export type LehengaMinOrderByAggregateInput = {
 };
 export type LehengaSumOrderByAggregateInput = {
     rentalPricePerDay?: Prisma.SortOrder;
+    discountPercent?: Prisma.SortOrder;
     securityDeposit?: Prisma.SortOrder;
     originalPrice?: Prisma.SortOrder;
     minimumRentalDays?: Prisma.SortOrder;
@@ -896,6 +924,7 @@ export type LehengaCreateWithoutCategoryInput = {
     setIncludes?: string | null;
     careInstructions?: string | null;
     rentalPricePerDay: runtime.Decimal | runtime.DecimalJsLike | number | string;
+    discountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string;
     securityDeposit?: runtime.Decimal | runtime.DecimalJsLike | number | string | null;
     originalPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null;
     minimumRentalDays?: number;
@@ -925,6 +954,7 @@ export type LehengaUncheckedCreateWithoutCategoryInput = {
     setIncludes?: string | null;
     careInstructions?: string | null;
     rentalPricePerDay: runtime.Decimal | runtime.DecimalJsLike | number | string;
+    discountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string;
     securityDeposit?: runtime.Decimal | runtime.DecimalJsLike | number | string | null;
     originalPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null;
     minimumRentalDays?: number;
@@ -978,6 +1008,7 @@ export type LehengaScalarWhereInput = {
     setIncludes?: Prisma.StringNullableFilter<"Lehenga"> | string | null;
     careInstructions?: Prisma.StringNullableFilter<"Lehenga"> | string | null;
     rentalPricePerDay?: Prisma.DecimalFilter<"Lehenga"> | runtime.Decimal | runtime.DecimalJsLike | number | string;
+    discountPercent?: Prisma.DecimalFilter<"Lehenga"> | runtime.Decimal | runtime.DecimalJsLike | number | string;
     securityDeposit?: Prisma.DecimalNullableFilter<"Lehenga"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null;
     originalPrice?: Prisma.DecimalNullableFilter<"Lehenga"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null;
     minimumRentalDays?: Prisma.IntFilter<"Lehenga"> | number;
@@ -1004,6 +1035,7 @@ export type LehengaCreateWithoutSizesInput = {
     setIncludes?: string | null;
     careInstructions?: string | null;
     rentalPricePerDay: runtime.Decimal | runtime.DecimalJsLike | number | string;
+    discountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string;
     securityDeposit?: runtime.Decimal | runtime.DecimalJsLike | number | string | null;
     originalPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null;
     minimumRentalDays?: number;
@@ -1033,6 +1065,7 @@ export type LehengaUncheckedCreateWithoutSizesInput = {
     setIncludes?: string | null;
     careInstructions?: string | null;
     rentalPricePerDay: runtime.Decimal | runtime.DecimalJsLike | number | string;
+    discountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string;
     securityDeposit?: runtime.Decimal | runtime.DecimalJsLike | number | string | null;
     originalPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null;
     minimumRentalDays?: number;
@@ -1075,6 +1108,7 @@ export type LehengaUpdateWithoutSizesInput = {
     setIncludes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     careInstructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     rentalPricePerDay?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
+    discountPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
     securityDeposit?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null;
     originalPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null;
     minimumRentalDays?: Prisma.IntFieldUpdateOperationsInput | number;
@@ -1104,6 +1138,7 @@ export type LehengaUncheckedUpdateWithoutSizesInput = {
     setIncludes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     careInstructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     rentalPricePerDay?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
+    discountPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
     securityDeposit?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null;
     originalPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null;
     minimumRentalDays?: Prisma.IntFieldUpdateOperationsInput | number;
@@ -1133,6 +1168,7 @@ export type LehengaCreateWithoutImagesInput = {
     setIncludes?: string | null;
     careInstructions?: string | null;
     rentalPricePerDay: runtime.Decimal | runtime.DecimalJsLike | number | string;
+    discountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string;
     securityDeposit?: runtime.Decimal | runtime.DecimalJsLike | number | string | null;
     originalPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null;
     minimumRentalDays?: number;
@@ -1162,6 +1198,7 @@ export type LehengaUncheckedCreateWithoutImagesInput = {
     setIncludes?: string | null;
     careInstructions?: string | null;
     rentalPricePerDay: runtime.Decimal | runtime.DecimalJsLike | number | string;
+    discountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string;
     securityDeposit?: runtime.Decimal | runtime.DecimalJsLike | number | string | null;
     originalPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null;
     minimumRentalDays?: number;
@@ -1204,6 +1241,7 @@ export type LehengaUpdateWithoutImagesInput = {
     setIncludes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     careInstructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     rentalPricePerDay?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
+    discountPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
     securityDeposit?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null;
     originalPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null;
     minimumRentalDays?: Prisma.IntFieldUpdateOperationsInput | number;
@@ -1233,6 +1271,7 @@ export type LehengaUncheckedUpdateWithoutImagesInput = {
     setIncludes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     careInstructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     rentalPricePerDay?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
+    discountPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
     securityDeposit?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null;
     originalPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null;
     minimumRentalDays?: Prisma.IntFieldUpdateOperationsInput | number;
@@ -1262,6 +1301,7 @@ export type LehengaCreateWithoutOrderItemsInput = {
     setIncludes?: string | null;
     careInstructions?: string | null;
     rentalPricePerDay: runtime.Decimal | runtime.DecimalJsLike | number | string;
+    discountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string;
     securityDeposit?: runtime.Decimal | runtime.DecimalJsLike | number | string | null;
     originalPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null;
     minimumRentalDays?: number;
@@ -1291,6 +1331,7 @@ export type LehengaUncheckedCreateWithoutOrderItemsInput = {
     setIncludes?: string | null;
     careInstructions?: string | null;
     rentalPricePerDay: runtime.Decimal | runtime.DecimalJsLike | number | string;
+    discountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string;
     securityDeposit?: runtime.Decimal | runtime.DecimalJsLike | number | string | null;
     originalPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null;
     minimumRentalDays?: number;
@@ -1333,6 +1374,7 @@ export type LehengaUpdateWithoutOrderItemsInput = {
     setIncludes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     careInstructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     rentalPricePerDay?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
+    discountPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
     securityDeposit?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null;
     originalPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null;
     minimumRentalDays?: Prisma.IntFieldUpdateOperationsInput | number;
@@ -1362,6 +1404,7 @@ export type LehengaUncheckedUpdateWithoutOrderItemsInput = {
     setIncludes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     careInstructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     rentalPricePerDay?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
+    discountPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
     securityDeposit?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null;
     originalPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null;
     minimumRentalDays?: Prisma.IntFieldUpdateOperationsInput | number;
@@ -1391,6 +1434,7 @@ export type LehengaCreateWithoutReviewsInput = {
     setIncludes?: string | null;
     careInstructions?: string | null;
     rentalPricePerDay: runtime.Decimal | runtime.DecimalJsLike | number | string;
+    discountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string;
     securityDeposit?: runtime.Decimal | runtime.DecimalJsLike | number | string | null;
     originalPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null;
     minimumRentalDays?: number;
@@ -1420,6 +1464,7 @@ export type LehengaUncheckedCreateWithoutReviewsInput = {
     setIncludes?: string | null;
     careInstructions?: string | null;
     rentalPricePerDay: runtime.Decimal | runtime.DecimalJsLike | number | string;
+    discountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string;
     securityDeposit?: runtime.Decimal | runtime.DecimalJsLike | number | string | null;
     originalPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null;
     minimumRentalDays?: number;
@@ -1462,6 +1507,7 @@ export type LehengaUpdateWithoutReviewsInput = {
     setIncludes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     careInstructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     rentalPricePerDay?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
+    discountPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
     securityDeposit?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null;
     originalPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null;
     minimumRentalDays?: Prisma.IntFieldUpdateOperationsInput | number;
@@ -1491,6 +1537,7 @@ export type LehengaUncheckedUpdateWithoutReviewsInput = {
     setIncludes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     careInstructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     rentalPricePerDay?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
+    discountPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
     securityDeposit?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null;
     originalPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null;
     minimumRentalDays?: Prisma.IntFieldUpdateOperationsInput | number;
@@ -1520,6 +1567,7 @@ export type LehengaCreateManyCategoryInput = {
     setIncludes?: string | null;
     careInstructions?: string | null;
     rentalPricePerDay: runtime.Decimal | runtime.DecimalJsLike | number | string;
+    discountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string;
     securityDeposit?: runtime.Decimal | runtime.DecimalJsLike | number | string | null;
     originalPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null;
     minimumRentalDays?: number;
@@ -1545,6 +1593,7 @@ export type LehengaUpdateWithoutCategoryInput = {
     setIncludes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     careInstructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     rentalPricePerDay?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
+    discountPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
     securityDeposit?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null;
     originalPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null;
     minimumRentalDays?: Prisma.IntFieldUpdateOperationsInput | number;
@@ -1574,6 +1623,7 @@ export type LehengaUncheckedUpdateWithoutCategoryInput = {
     setIncludes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     careInstructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     rentalPricePerDay?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
+    discountPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
     securityDeposit?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null;
     originalPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null;
     minimumRentalDays?: Prisma.IntFieldUpdateOperationsInput | number;
@@ -1603,6 +1653,7 @@ export type LehengaUncheckedUpdateManyWithoutCategoryInput = {
     setIncludes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     careInstructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     rentalPricePerDay?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
+    discountPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string;
     securityDeposit?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null;
     originalPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null;
     minimumRentalDays?: Prisma.IntFieldUpdateOperationsInput | number;
@@ -1676,6 +1727,7 @@ export type LehengaSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     setIncludes?: boolean;
     careInstructions?: boolean;
     rentalPricePerDay?: boolean;
+    discountPercent?: boolean;
     securityDeposit?: boolean;
     originalPrice?: boolean;
     minimumRentalDays?: boolean;
@@ -1708,6 +1760,7 @@ export type LehengaSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
     setIncludes?: boolean;
     careInstructions?: boolean;
     rentalPricePerDay?: boolean;
+    discountPercent?: boolean;
     securityDeposit?: boolean;
     originalPrice?: boolean;
     minimumRentalDays?: boolean;
@@ -1735,6 +1788,7 @@ export type LehengaSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
     setIncludes?: boolean;
     careInstructions?: boolean;
     rentalPricePerDay?: boolean;
+    discountPercent?: boolean;
     securityDeposit?: boolean;
     originalPrice?: boolean;
     minimumRentalDays?: boolean;
@@ -1762,6 +1816,7 @@ export type LehengaSelectScalar = {
     setIncludes?: boolean;
     careInstructions?: boolean;
     rentalPricePerDay?: boolean;
+    discountPercent?: boolean;
     securityDeposit?: boolean;
     originalPrice?: boolean;
     minimumRentalDays?: boolean;
@@ -1773,7 +1828,7 @@ export type LehengaSelectScalar = {
     createdAt?: boolean;
     updatedAt?: boolean;
 };
-export type LehengaOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "slug" | "sku" | "shortDescription" | "description" | "designer" | "color" | "fabric" | "embroideryDetails" | "occasion" | "setIncludes" | "careInstructions" | "rentalPricePerDay" | "securityDeposit" | "originalPrice" | "minimumRentalDays" | "pickupAvailable" | "status" | "isFeatured" | "isCategoryFeatured" | "categoryId" | "createdAt" | "updatedAt", ExtArgs["result"]["lehenga"]>;
+export type LehengaOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "slug" | "sku" | "shortDescription" | "description" | "designer" | "color" | "fabric" | "embroideryDetails" | "occasion" | "setIncludes" | "careInstructions" | "rentalPricePerDay" | "discountPercent" | "securityDeposit" | "originalPrice" | "minimumRentalDays" | "pickupAvailable" | "status" | "isFeatured" | "isCategoryFeatured" | "categoryId" | "createdAt" | "updatedAt", ExtArgs["result"]["lehenga"]>;
 export type LehengaInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     category?: boolean | Prisma.Lehenga$categoryArgs<ExtArgs>;
     sizes?: boolean | Prisma.Lehenga$sizesArgs<ExtArgs>;
@@ -1812,6 +1867,7 @@ export type $LehengaPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
         setIncludes: string | null;
         careInstructions: string | null;
         rentalPricePerDay: runtime.Decimal;
+        discountPercent: runtime.Decimal;
         securityDeposit: runtime.Decimal | null;
         originalPrice: runtime.Decimal | null;
         minimumRentalDays: number;
@@ -2195,6 +2251,7 @@ export interface LehengaFieldRefs {
     readonly setIncludes: Prisma.FieldRef<"Lehenga", 'String'>;
     readonly careInstructions: Prisma.FieldRef<"Lehenga", 'String'>;
     readonly rentalPricePerDay: Prisma.FieldRef<"Lehenga", 'Decimal'>;
+    readonly discountPercent: Prisma.FieldRef<"Lehenga", 'Decimal'>;
     readonly securityDeposit: Prisma.FieldRef<"Lehenga", 'Decimal'>;
     readonly originalPrice: Prisma.FieldRef<"Lehenga", 'Decimal'>;
     readonly minimumRentalDays: Prisma.FieldRef<"Lehenga", 'Int'>;

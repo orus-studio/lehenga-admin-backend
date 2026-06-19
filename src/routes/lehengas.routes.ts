@@ -54,6 +54,18 @@ async function getCategorySlug(categoryId?: string) {
   return category.slug;
 }
 
+function parseDiscountPercent(value: number | undefined) {
+  if (value === undefined) {
+    return undefined;
+  }
+
+  if (value < 0 || value > 100) {
+    throw new AppError("discountPercent must be between 0 and 100", 400);
+  }
+
+  return value;
+}
+
 lehengasRouter.get(
   "/",
   asyncHandler(async (_request, response) => {
@@ -109,6 +121,7 @@ lehengasRouter.post(
     const careInstructions = getOptionalString(body, "careInstructions");
     const securityDeposit = getOptionalNumber(body, "securityDeposit");
     const originalPrice = getOptionalNumber(body, "originalPrice");
+    const discountPercent = parseDiscountPercent(getOptionalNumber(body, "discountPercent")) ?? 0;
 
     if (shortDescription !== undefined) data.shortDescription = shortDescription;
     if (description !== undefined) data.description = description;
@@ -120,6 +133,7 @@ lehengasRouter.post(
     if (careInstructions !== undefined) data.careInstructions = careInstructions;
     if (securityDeposit !== undefined) data.securityDeposit = securityDeposit;
     if (originalPrice !== undefined) data.originalPrice = originalPrice;
+    data.discountPercent = discountPercent;
     if (categoryId) {
       data.category = {
         connect: { id: categoryId },
@@ -207,6 +221,7 @@ lehengasRouter.patch(
     const setIncludes = getOptionalString(body, "setIncludes");
     const careInstructions = getOptionalString(body, "careInstructions");
     const rentalPricePerDay = getOptionalNumber(body, "rentalPricePerDay");
+    const discountPercent = parseDiscountPercent(getOptionalNumber(body, "discountPercent"));
     const securityDeposit = getOptionalNumber(body, "securityDeposit");
     const originalPrice = getOptionalNumber(body, "originalPrice");
     const minimumRentalDays = getOptionalNumber(body, "minimumRentalDays");
@@ -225,6 +240,7 @@ lehengasRouter.patch(
     if (setIncludes !== undefined) data.setIncludes = setIncludes;
     if (careInstructions !== undefined) data.careInstructions = careInstructions;
     if (rentalPricePerDay !== undefined) data.rentalPricePerDay = rentalPricePerDay;
+    if (discountPercent !== undefined) data.discountPercent = discountPercent;
     if (securityDeposit !== undefined) data.securityDeposit = securityDeposit;
     if (originalPrice !== undefined) data.originalPrice = originalPrice;
     if (minimumRentalDays !== undefined) data.minimumRentalDays = minimumRentalDays;
@@ -261,17 +277,44 @@ lehengasRouter.patch(
       };
     }
 
-    if (sizes) {
-      data.sizes = {
-        deleteMany: {},
-        create: sizes,
-      };
-    }
+    const lehenga = await prisma.$transaction(async (tx) => {
+      await tx.lehenga.update({
+        where: { id: lehengaId },
+        data,
+      });
 
-    const lehenga = await prisma.lehenga.update({
-      where: { id: lehengaId },
-      data,
-      include: lehengaInclude,
+      if (sizes) {
+        const existingSizes = await tx.lehengaSize.findMany({
+          where: { lehengaId },
+          orderBy: { createdAt: "asc" },
+        });
+
+        for (const [index, size] of sizes.entries()) {
+          const existingSize =
+            existingSizes.find((entry) => entry.sizeLabel === size.sizeLabel) ?? existingSizes[index] ?? null;
+
+          if (existingSize) {
+            await tx.lehengaSize.update({
+              where: { id: existingSize.id },
+              data: size,
+            });
+          } else {
+            await tx.lehengaSize.create({
+              data: {
+                ...size,
+                lehenga: {
+                  connect: { id: lehengaId },
+                },
+              },
+            });
+          }
+        }
+      }
+
+      return tx.lehenga.findUniqueOrThrow({
+        where: { id: lehengaId },
+        include: lehengaInclude,
+      });
     });
 
     response.json({
